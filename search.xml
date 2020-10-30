@@ -5,4 +5,19 @@
     <url>/posts/0/</url>
     <content><![CDATA[]]></content>
   </entry>
+  <entry>
+    <title>lshtest001</title>
+    <url>/posts/52b3dcca/</url>
+    <content><![CDATA[<h1 id="这是一篇测试文章"><a href="#这是一篇测试文章" class="headerlink" title="这是一篇测试文章"></a>这是一篇测试文章</h1><figure class="highlight python"><table><tr><td class="code"><pre><span class="line">print(<span class="string">&quot;hello world&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+
+
+]]></content>
+      <categories>
+        <category>test</category>
+      </categories>
+      <tags>
+        <tag>test</tag>
+      </tags>
+  </entry>
 </search>

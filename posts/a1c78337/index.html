@@ -24,15 +24,22 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"8.0.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta property="og:type" content="article">
+  <meta name="description" content="off by oneoff-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。">
+<meta property="og:type" content="article">
 <meta property="og:title" content="off by one">
 <meta property="og:url" content="http://example.com/posts/a1c78337/index.html">
 <meta property="og:site_name" content="Lsh">
+<meta property="og:description" content="off by oneoff-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/posts/a1c78337/image-20201116122936249.png">
 <meta property="article:published_time" content="2020-11-16T03:06:57.000Z">
-<meta property="article:modified_time" content="2020-11-16T03:06:57.053Z">
+<meta property="article:modified_time" content="2020-11-16T08:32:48.127Z">
 <meta property="article:author" content="ykx">
+<meta property="article:tag" content="heap">
+<meta property="article:tag" content="pwn">
+<meta property="article:tag" content="ctf">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/posts/a1c78337/image-20201116122936249.png">
 
 
 <link rel="canonical" href="http://example.com/posts/a1c78337/">
@@ -181,7 +188,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -194,6 +201,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#off-by-one"><span class="nav-number">1.</span> <span class="nav-text">off by one</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%96%B9%E5%90%91"><span class="nav-number">1.1.</span> <span class="nav-text">利用方向</span></a></li></ol></li></ol></div>
         </section>
         <!--/noindex-->
 
@@ -283,8 +291,18 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-11-16 11:06:57" itemprop="dateCreated datePublished" datetime="2020-11-16T11:06:57+08:00">2020-11-16</time>
+      <time title="创建时间：2020-11-16 11:06:57 / 修改时间：16:32:48" itemprop="dateCreated datePublished" datetime="2020-11-16T11:06:57+08:00">2020-11-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
+        </span>
     </span>
 
   
@@ -297,7 +315,29 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        
+        <h1 id="off-by-one"><a href="#off-by-one" class="headerlink" title="off by one"></a>off by one</h1><p>off-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。</p>
+<a id="more"></a>
+
+<p>常见的边界验证不严谨有：</p>
+<ul>
+<li>使用循环语句向堆块中写入数据时，循环的次数设置错误（这在 C 语言初学者中很常见）导致多写入了一个字节。</li>
+<li>字符串操作不合适</li>
+</ul>
+<p>off by one漏洞可以出现在各种缓冲区中，但ctf中常用于堆的题目。因此，主要是说明堆上的off by one。</p>
+<h2 id="利用方向"><a href="#利用方向" class="headerlink" title="利用方向"></a>利用方向</h2><p>根据溢出字节是否可控分为两种情况：</p>
+<ul>
+<li>溢出字节为可控制任意字节：通过修改大小造成块结构之间出现重叠，从而泄露其他块数据，或是覆盖其他块数据。也可使用 NULL 字节溢出的方法</li>
+<li>溢出字节为 NULL 字节：在 size 为 0x100 的时候，溢出 NULL 字节可以使得 <code>prev_in_use</code> 位被清，这样前块会被认为是 free 块。（1） 这时可以选择使用 unlink 方法（见 unlink 部分）进行处理。（2） 另外，这时 <code>prev_size</code> 域就会启用，就可以伪造 <code>prev_size</code> ，从而造成块之间发生重叠。此方法的关键在于 unlink 的时候没有检查按照 <code>prev_size</code> 找到的块的大小与<code>prev_size</code> 是否一致。</li>
+</ul>
+<p>这里的0x100是一个例子，原理是，申请chunk时对于申请大小不是2*size_sz的会自动补全，同时对于正在使用的chunk来说，<code>prev_size</code>是没有意义的，因此是与前一块chunk共用。</p>
+<p>size为0x100，用户申请的大小是0xf8。补到0x100，由于chunk头需要0x10的空间，因此正常情况，用户的输入是可以到下一个chunk 的<code>prev_size</code>的。这时候溢出的null字节<code>\x00</code>会覆盖size的最低字节即 <code>prev_in_use</code>。</p>
+<p>一个简单实验说明chunk的实际size大小。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *chunk1,*chunk2;</span><br><span class="line">    chunk1 = <span class="built_in">malloc</span>(<span class="number">56</span>);</span><br><span class="line">    chunk2 = <span class="built_in">malloc</span>(<span class="number">48</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/a1c78337/image-20201116122936249.png" alt="image-20201116122936249"></p>
+<p>无论是哪种情况，off by one本身很难实现攻击，一般只是为之后的攻击创造条件。</p>
+<p>如实现堆交叉之后的UAF、修改<code>prev_in_use</code>之后使用unlink等。</p>
+
     </div>
 
     
@@ -305,6 +345,11 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/heap/" rel="tag"># heap</a>
+              <a href="/tags/pwn/" rel="tag"># pwn</a>
+              <a href="/tags/ctf/" rel="tag"># ctf</a>
+          </div>
 
         
 

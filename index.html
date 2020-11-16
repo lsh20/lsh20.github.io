@@ -281,8 +281,18 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2020-11-16 11:06:57" itemprop="dateCreated datePublished" datetime="2020-11-16T11:06:57+08:00">2020-11-16</time>
+      <time title="创建时间：2020-11-16 11:06:57 / 修改时间：16:32:48" itemprop="dateCreated datePublished" datetime="2020-11-16T11:06:57+08:00">2020-11-16</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
+        </span>
     </span>
 
   
@@ -295,7 +305,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <h1 id="off-by-one"><a href="#off-by-one" class="headerlink" title="off by one"></a>off by one</h1><p>off-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/a1c78337/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -603,7 +621,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/posts/0/" class="post-title-link" itemprop="url">未命名</a>
+            <a href="/posts/0/" class="post-title-link" itemprop="url">Hello World</a>
         </h2>
 
         <div class="post-meta-container">
@@ -613,10 +631,16 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2020-10-30 13:11:11 / 修改时间：13:11:28" itemprop="dateCreated datePublished" datetime="2020-10-30T13:11:11+08:00">2020-10-30</time>
+      <time title="创建时间：2020-10-30 13:11:11" itemprop="dateCreated datePublished" datetime="2020-10-30T13:11:11+08:00">2020-10-30</time>
     </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-11-16 16:36:49" itemprop="dateModified" datetime="2020-11-16T16:36:49+08:00">2020-11-16</time>
+      </span>
 
   
 </div>
@@ -628,7 +652,12 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          
+          <h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><h2 id="1-新建文章"><a href="#1-新建文章" class="headerlink" title="1 新建文章"></a>1 新建文章</h2><p>以hello world为例，在hexo目录下命令行输入<code>hexo new &quot;hello_world&quot;</code>，然后会在source的_posts目录下生成一个hello_world.md文件,在该markdown文件中就可以编辑这篇文章的内容了。编辑完成后刷新博客，博客里便会出现这篇文章，同时hexo也会直接为这篇文章生成一个页面。</p>
+<h2 id="2-新建草稿"><a href="#2-新建草稿" class="headerlink" title="2 新建草稿"></a>2 新建草稿</h2><p>hexo默认配置是新建文章，所以如果需要新建一篇草稿，需要输入<code>hexo new draft &quot;文章名称&quot;</code>，然后再source的目录下会生成一个_drafts文件夹，里面会有所有新建的草稿，如果想要预览草稿，可以输入<code>hexo server --draft</code>命令来预览草稿文件</p>
+<p>当草稿完成以后，可以通过输入<code>hexo publish &quot;文章名称&quot;</code>来发布草稿，然后这篇草稿会从_drafts中被删除，出现在_posts目录下。</p>
+<h2 id="3-删除文章"><a href="#3-删除文章" class="headerlink" title="3 删除文章"></a>3 删除文章</h2><p>删除文章十分简单，只需要把_posts目录下需要删除的markdown删除，然后刷新博客之后这篇文章就不会出现在博客中了。</p>
+<p>当然还有更多的教程可以直接去<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/writing.html">官网</a>学习。</p>
+
       
     </div>
 

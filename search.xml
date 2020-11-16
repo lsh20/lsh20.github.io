@@ -410,7 +410,14 @@
         <category>pwn</category>
       </categories>
       <tags>
-        <tag>-heap -pwn -ctf</tag>
+        <tag>ctf</tag>
+        <tag>pwn</tag>
+        <tag>heap</tag>
       </tags>
+  </entry>
+  <entry>
+    <title>off by one</title>
+    <url>/posts/a1c78337/</url>
+    <content><![CDATA[]]></content>
   </entry>
 </search>

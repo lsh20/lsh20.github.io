@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon.png">
+  <link rel="mask-icon" href="/images/favicon.png" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@5.15.0/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/animate.css@3.1.1/animate.min.css">
+
+<script class="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"8.0.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
+  </script>
+
+  <meta name="description" content="堆基础知识在程序运行过程中，堆可以提供动态分配的内存，允许程序申请大小未知的内存。堆其实就是程序虚拟地址空间的一块连续的线性区域，它由低地址向高地址方向增长。一般称管理堆的那部分程序为堆管理器。不同操作系统对于堆的管理方式不尽相同，以下为ctf比赛中常用的Linux的堆基础知识。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="堆基础">
+<meta property="og:url" content="http://example.com/posts/463ab4ed/index.html">
+<meta property="og:site_name" content="Lsh">
+<meta property="og:description" content="堆基础知识在程序运行过程中，堆可以提供动态分配的内存，允许程序申请大小未知的内存。堆其实就是程序虚拟地址空间的一块连续的线性区域，它由低地址向高地址方向增长。一般称管理堆的那部分程序为堆管理器。不同操作系统对于堆的管理方式不尽相同，以下为ctf比赛中常用的Linux的堆基础知识。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/posts/463ab4ed/RlseGG7.png">
+<meta property="og:image" content="https://img-blog.csdnimg.cn/20190724161429389.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70">
+<meta property="og:image" content="https://i.imgur.com/KYQmNPN.png">
+<meta property="og:image" content="http://example.com/posts/463ab4ed/brk&mmap.png">
+<meta property="og:image" content="http://example.com/posts/463ab4ed/program_virtual_address_memory_space.png">
+<meta property="article:published_time" content="2020-11-15T07:33:03.000Z">
+<meta property="article:modified_time" content="2020-11-16T02:45:24.336Z">
+<meta property="article:author" content="ykx">
+<meta property="article:tag" content="-heap -pwn -ctf">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/posts/463ab4ed/RlseGG7.png">
+
+
+<link rel="canonical" href="http://example.com/posts/463ab4ed/">
+
+
+<script class="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>堆基础 | Lsh</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  body { margin-top: 2rem; }
+
+  .use-motion .menu-item,
+  .use-motion .sidebar,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header {
+    visibility: visible;
+  }
+
+  .use-motion .header,
+  .use-motion .site-brand-container .toggle,
+  .use-motion .footer { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle,
+  .use-motion .custom-logo-image {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line {
+    transform: scaleX(1);
+  }
+
+  .search-pop-overlay, .sidebar-nav { display: none; }
+  .sidebar-panel { display: block; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <h1 class="site-title">Lsh</h1>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu">
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off" maxlength="80"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div class="search-result-container no-result">
+  <div class="search-result-icon">
+    <i class="fa fa-spinner fa-pulse fa-5x"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+        
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+    <span class="toggle-line"></span>
+  </div>
+
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A0%86%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">堆基础知识</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A0%86%E7%AE%A1%E7%90%86%E7%9A%84%E5%9F%BA%E6%9C%AC%E7%BB%93%E6%9E%84"><span class="nav-number">1.1.</span> <span class="nav-text">堆管理的基本结构</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%A0%86%E5%9D%97"><span class="nav-number">1.1.1.</span> <span class="nav-text">堆块</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#bin"><span class="nav-number">1.1.2.</span> <span class="nav-text">bin</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#fast-bin"><span class="nav-number">1.1.2.1.</span> <span class="nav-text">fast bin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#small-bin"><span class="nav-number">1.1.2.2.</span> <span class="nav-text">small bin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#large-bin"><span class="nav-number">1.1.2.3.</span> <span class="nav-text">large bin</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#unsorted-bin"><span class="nav-number">1.1.2.4.</span> <span class="nav-text">unsorted bin</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#top-chunk"><span class="nav-number">1.1.3.</span> <span class="nav-text">top chunk</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%9B%B8%E5%85%B3%E7%B3%BB%E7%BB%9F%E8%B0%83%E7%94%A8"><span class="nav-number">1.2.</span> <span class="nav-text">相关系统调用</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#s-brk"><span class="nav-number">1.2.1.</span> <span class="nav-text">(s)brk</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#mmap"><span class="nav-number">1.2.2.</span> <span class="nav-text">mmap</span></a></li></ol></li></ol></li></ol></div>
+        </section>
+        <!--/noindex-->
+
+        <section class="site-overview-wrap sidebar-panel">
+          <div class="site-author site-overview-item animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">ykx</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap site-overview-item animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives">
+          <span class="site-state-item-count">4</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">1</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+
+
+        </section>
+      </div>
+    </div>
+  </aside>
+  <div class="sidebar-dimmer"></div>
+
+
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+    <div class="main-inner post posts-expand">
+      
+
+      
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/463ab4ed/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ykx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lsh">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          堆基础
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2020-11-15 15:33:03" itemprop="dateCreated datePublished" datetime="2020-11-15T15:33:03+08:00">2020-11-15</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2020-11-16 10:45:24" itemprop="dateModified" datetime="2020-11-16T10:45:24+08:00">2020-11-16</time>
+      </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
+        </span>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="堆基础知识"><a href="#堆基础知识" class="headerlink" title="堆基础知识"></a>堆基础知识</h1><p>在程序运行过程中，堆可以提供动态分配的内存，允许程序申请大小未知的内存。堆其实就是程序虚拟地址空间的一块连续的线性区域，它由低地址向高地址方向增长。一般称管理堆的那部分程序为堆管理器。不同操作系统对于堆的管理方式不尽相同，以下为ctf比赛中常用的Linux的堆基础知识。</p>
+<a id="more"></a>
+
+<h2 id="堆管理的基本结构"><a href="#堆管理的基本结构" class="headerlink" title="堆管理的基本结构"></a>堆管理的基本结构</h2><p>堆的管理主要涉及两个，堆表和堆块。堆区（heap）的内存都以堆块为单位进行分配存储，堆块有堆身和堆首，堆首记录堆块的信息，如大小、是否空闲等，堆身存储数据。堆表一般位于堆区的开始，用于存储所有堆块的重要信息，如大小、是否可用、位置等。</p>
+<h3 id="堆块"><a href="#堆块" class="headerlink" title="堆块"></a>堆块</h3><p>在glibc中，堆管理器为<strong>ptmalloc2</strong>。申请堆使用函数malloc,将由malloc申请的内存称为chunk</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  malloc(size_t n)</span></span><br><span class="line"><span class="comment">  Returns a pointer to a newly allocated chunk of at least n bytes, or null</span></span><br><span class="line"><span class="comment">  if no space is available. Additionally, on failure, errno is</span></span><br><span class="line"><span class="comment">  set to ENOMEM on ANSI C systems.</span></span><br><span class="line"><span class="comment">  If n is zero, malloc returns a minumum-sized chunk. (The minimum</span></span><br><span class="line"><span class="comment">  size is 16 bytes on most 32bit systems, and 24 or 32 bytes on 64bit</span></span><br><span class="line"><span class="comment">  systems.)  On most systems, size_t is an unsigned type, so calls</span></span><br><span class="line"><span class="comment">  with negative arguments are interpreted as requests for huge amounts</span></span><br><span class="line"><span class="comment">  of space, which will often fail. The maximum supported value of n</span></span><br><span class="line"><span class="comment">  differs across systems, but is in all cases less than the maximum</span></span><br><span class="line"><span class="comment">  representable value of a size_t.</span></span><br><span class="line"><span class="comment">*/</span></span><br></pre></td></tr></table></figure>
+
+
+
+<p>malloc函数返回对应申请的大小字节的内存块的指针（不包括chunk头）。同时还有异常处理：</p>
+<ul>
+<li>当 n=0 时，返回当前系统允许的堆的最小内存块。</li>
+<li>当 n 为负数时，由于在大多数系统上，<strong>size_t 是无符号数（这一点非常重要）</strong>，所以程序就会申请很大的内存空间，但通常来说都会失败，因为系统没有那么多的内存可以分配。</li>
+</ul>
+<p>另外，malloc调用时输入的n是用户空间大小，即是堆身大小。</p>
+<p>chunk的结构都是统一的</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">  This struct declaration is misleading (but accurate and necessary).</span></span><br><span class="line"><span class="comment">  It declares a &quot;view&quot; into memory allowing access to necessary</span></span><br><span class="line"><span class="comment">  fields at known offsets from a given base. See explanation below.</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span> &#123;</span></span><br><span class="line"></span><br><span class="line">  INTERNAL_SIZE_T      prev_size;  <span class="comment">/* Size of previous chunk (if free).  */</span></span><br><span class="line">  INTERNAL_SIZE_T      size;       <span class="comment">/* Size in bytes, including overhead. */</span></span><br><span class="line"></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">fd</span>;</span>         <span class="comment">/* double links -- used only if free. */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">bk</span>;</span></span><br><span class="line"></span><br><span class="line">  <span class="comment">/* Only used for large blocks: pointer to next larger size.  */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">fd_nextsize</span>;</span> <span class="comment">/* double links -- used only if free. */</span></span><br><span class="line">  <span class="class"><span class="keyword">struct</span> <span class="title">malloc_chunk</span>* <span class="title">bk_nextsize</span>;</span></span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+
+<p><img src="/posts/463ab4ed/RlseGG7.png"></p>
+<p>关于INTERNAL_SIZE_T的说明:</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/* INTERNAL_SIZE_T is the word-size used for internal bookkeeping of</span></span><br><span class="line"><span class="comment">   chunk sizes.</span></span><br><span class="line"><span class="comment">   The default version is the same as size_t.</span></span><br><span class="line"><span class="comment">   While not strictly necessary, it is best to define this as an</span></span><br><span class="line"><span class="comment">   unsigned type, even if size_t is a signed type. This may avoid some</span></span><br><span class="line"><span class="comment">   artificial size limitations on some systems.</span></span><br><span class="line"><span class="comment">   On a 64-bit machine, you may be able to reduce malloc overhead by</span></span><br><span class="line"><span class="comment">   defining INTERNAL_SIZE_T to be a 32 bit `unsigned int&#x27; at the</span></span><br><span class="line"><span class="comment">   expense of not being able to handle more than 2^32 of malloced</span></span><br><span class="line"><span class="comment">   space. If this limitation is acceptable, you are encouraged to set</span></span><br><span class="line"><span class="comment">   this unless you are on a platform requiring 16byte alignments. In</span></span><br><span class="line"><span class="comment">   this case the alignment requirements turn out to negate any</span></span><br><span class="line"><span class="comment">   potential advantages of decreasing size_t word size.</span></span><br><span class="line"><span class="comment">   Implementors: Beware of the possible combinations of:</span></span><br><span class="line"><span class="comment">     - INTERNAL_SIZE_T might be signed or unsigned, might be 32 or 64 bits,</span></span><br><span class="line"><span class="comment">       and might be the same width as int or as long</span></span><br><span class="line"><span class="comment">     - size_t might have different width and signedness as INTERNAL_SIZE_T</span></span><br><span class="line"><span class="comment">     - int and long might be 32 or 64 bits, and might be the same width</span></span><br><span class="line"><span class="comment">   To deal with this, most comparisons and difference computations</span></span><br><span class="line"><span class="comment">   among INTERNAL_SIZE_Ts should cast them to unsigned long, being</span></span><br><span class="line"><span class="comment">   aware of the fact that casting an unsigned int to a wider long does</span></span><br><span class="line"><span class="comment">   not sign-extend. (This also makes checking for negative numbers</span></span><br><span class="line"><span class="comment">   awkward.) Some of these casts result in harmless compiler warnings</span></span><br><span class="line"><span class="comment">   on some systems.  */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">ifndef</span> INTERNAL_SIZE_T</span></span><br><span class="line"><span class="meta"># <span class="meta-keyword">define</span> INTERNAL_SIZE_T size_t</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">endif</span></span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* The corresponding word size.  */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> SIZE_SZ (sizeof (INTERNAL_SIZE_T))</span></span><br><span class="line"></span><br><span class="line"><span class="comment">/* The corresponding bit mask value.  */</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> MALLOC_ALIGN_MASK (MALLOC_ALIGNMENT - 1)</span></span><br></pre></td></tr></table></figure>
+
+<p>因此，一般为64位的无符整数或32位的</p>
+<ul>
+<li> prev_size 前一个（物理相邻，较低地址的chunk）的大小，free时有用。包括了chunk头。</li>
+<li>size当前chunk的大小，一定是2*size_sz的整数倍，因此最后3位的值对于大小没有影响，从高到低分别表示<ul>
+<li>NON_MAIN_ARENA，记录当前 chunk 是否不属于主线程，1表示不属于，0表示属于</li>
+<li>IS_MAPPED，记录当前 chunk 是否是由 mmap 分配的</li>
+<li>PREV_INUSE，记录前一个 chunk 块是否被分配。1为被分配，每个chunk创建时都默认置1,为0时表示空闲。</li>
+</ul>
+</li>
+<li><strong>fd，bk</strong>。 chunk 处于分配状态时，从 fd 字段开始是用户的数据。chunk 空闲时，会被添加到对应的空闲管理链表中，其字段的含义如下:<ul>
+<li>fd 指向下一个（非物理相邻）空闲的 chunk</li>
+<li>bk 指向上一个（非物理相邻）空闲的 chunk</li>
+<li>通过 fd 和 bk 可以将空闲的 chunk 块加入到空闲的 chunk 块链表进行统一管理</li>
+</ul>
+</li>
+<li><strong>fd_nextsize， bk_nextsize</strong>，也是只有 chunk 空闲的时候才使用，不过其用于较大的 chunk（large chunk）。<ul>
+<li>fd_nextsize 指向前一个与当前 chunk 大小不同的第一个空闲块，不包含 bin 的头指针。</li>
+<li>bk_nextsize 指向后一个与当前 chunk 大小不同的第一个空闲块，不包含 bin 的头指针。</li>
+<li>一般空闲的 large chunk 在 fd 的遍历顺序中，按照由大到小的顺序排列。<strong>这样做可以避免在寻找合适chunk 时挨个遍历。</strong></li>
+</ul>
+</li>
+</ul>
+<p><strong>一般情况下</strong>，<strong>物理相邻</strong>的两个空闲 chunk 会被合并为一个 chunk 。堆管理器会通过 prev_size 字段以及 size 字段合并两个物理相邻的空闲 chunk 块。（unlink）</p>
+<h3 id="bin"><a href="#bin" class="headerlink" title="bin"></a>bin</h3><p>释放的chunk不会马上归还给系统，ptmalloc会回收统一管理，当之后用户在申请内存时，就会先在这些回收的chunk中尽量找合适的给用户。以避免频繁的系统调用，降低开销。</p>
+<p>ptmalloc根据chunk的大小分为4类：fast bins、small bins、large bins、unsorted bin。在每个类中大小相似的会用链表连接起来。</p>
+<p><img src="https://img-blog.csdnimg.cn/20190724161429389.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3FxXzQxNDUzMjg1,size_16,color_FFFFFF,t_70" alt="img"></p>
+<p>对于 small bins，large bins，unsorted bin 来说，ptmalloc 将它们维护在同一个数组中。这些bin对应的数据结构在 malloc_state 中，如下</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> &#123;</span></span><br><span class="line">    <span class="comment">/* Serialize access.  */</span></span><br><span class="line">    __libc_lock_define(, mutex);  <span class="comment">/* Flags (formerly in max_fast).  */</span></span><br><span class="line">    <span class="keyword">int</span> flags;   <span class="comment">/* Fastbins */</span></span><br><span class="line">    mfastbinptr fastbinsY[ NFASTBINS ];    <span class="comment">/* Base of the topmost chunk -- not otherwise kept in a bin */</span></span><br><span class="line">    mchunkptr top;    <span class="comment">/* The remainder from the most recent split of a small request */</span></span><br><span class="line">    mchunkptr last_remainder;    <span class="comment">/* Normal bins packed as described above */</span></span><br><span class="line">    mchunkptr bins[ NBINS * <span class="number">2</span> - <span class="number">2</span> ];    <span class="comment">/* Bitmap of bins, help to speed up the process of determinating if a given bin is definitely empty.*/</span></span><br><span class="line">    <span class="keyword">unsigned</span> <span class="keyword">int</span> binmap[ BINMAPSIZE ];    <span class="comment">/* Linked list, points to the next arena */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">next</span>;</span>    <span class="comment">/* Linked list for free arenas.  Access to this field is serialized</span></span><br><span class="line"><span class="comment">       by free_list_lock in arena.c.  */</span></span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">malloc_state</span> *<span class="title">next_free</span>;</span>    <span class="comment">/* Number of threads attached to this arena.  0 if the arena is on</span></span><br><span class="line"><span class="comment">       the free list.  Access to this field is serialized by</span></span><br><span class="line"><span class="comment">       free_list_lock in arena.c.  */</span></span><br><span class="line">    INTERNAL_SIZE_T attached_threads;    <span class="comment">/* Memory allocated from the system in this arena.  */</span></span><br><span class="line">    INTERNAL_SIZE_T system_mem;</span><br><span class="line">    INTERNAL_SIZE_T max_system_mem;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>注意： malloc_state不在堆段，而是一个全局变量存在数据段中</p>
+<p>数组中的 bin 依次如下</p>
+<ol>
+<li>第一个为 unsorted bin，字如其面，这里面的 chunk 没有进行排序，存储的 chunk 比较杂。</li>
+<li>索引从 2 到 63 的 bin 称为 small bin，同一个 small bin 链表中的 chunk 的大小相同。两个相邻索引的 small bin 链表中的 chunk 大小相差的字节数为<strong>2个机器字长</strong>，即32位相差8字节，64位相差16字节。</li>
+<li>small bins 后面的 bin 被称作 large bins。large bins 中的每一个 bin 都包含一定范围内的 chunk，其中的chunk 按 fd 指针的顺序从大到小排列。相同大小的chunk同样按照最近使用顺序排列。</li>
+</ol>
+<p>此外，上述这些bin的排布都会遵循一个原则：<strong>任意两个物理相邻的空闲chunk不能在一起</strong></p>
+<h4 id="fast-bin"><a href="#fast-bin" class="headerlink" title="fast bin"></a>fast bin</h4><p>对于一些小的chunk释放后<strong>优先</strong>放到fast bin中，为了避免小的chunk和相邻空闲chunk合并，下一次再申请需要堆chunk进行分割的情况。</p>
+<p>fastbin所包含chunk的大小为16 Bytes, 24 Bytes, 32 Bytes, … , 80 Bytes。当分配一块较小的内存(mem&lt;=64 Bytes)时，会首先检查对应大小的fastbin中是否包含未被使用的chunk，如果存在则直接将其从fastbin中移除并返回；否则通过其他方式（剪切top chunk）得到一块符合大小要求的chunk并返回。</p>
+<p><img src="https://i.imgur.com/KYQmNPN.png" alt="img"></p>
+<p>如图所示fastbin的特性有：</p>
+<ul>
+<li>用单链表维护释放的堆块</li>
+<li>链表采用先进后出的方式，最近释放的 chunk 会更早地被分配，所以会更加适合于局部性。</li>
+<li>不会对free的chunk进行合并。</li>
+</ul>
+<h4 id="small-bin"><a href="#small-bin" class="headerlink" title="small bin"></a>small bin</h4><p>mall bins 中每个 chunk 的大小与其所在的 bin 的 index 的关系为：chunk_size = 2 * SIZE_SZ *index，具体如下</p>
+<table>
+<thead>
+<tr>
+<th>下标</th>
+<th align="center">SIZE_SZ=4（32位）</th>
+<th align="center">SIZE_SZ=8（64位）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2</td>
+<td align="center">16</td>
+<td align="center">32</td>
+</tr>
+<tr>
+<td>3</td>
+<td align="center">24</td>
+<td align="center">48</td>
+</tr>
+<tr>
+<td>4</td>
+<td align="center">32</td>
+<td align="center">64</td>
+</tr>
+<tr>
+<td>……</td>
+<td align="center">……</td>
+<td align="center">……</td>
+</tr>
+<tr>
+<td>63</td>
+<td align="center">504</td>
+<td align="center">1008</td>
+</tr>
+</tbody></table>
+<p>small bin的特性：</p>
+<ul>
+<li>采用循环双向链表</li>
+<li>采用FIFO</li>
+<li>small的free比较特殊。当释放small chunk的时候，先检查该chunk相邻的chunk是否为free，如果是的话就进行合并操作：将这些chunks合并成新的chunk，然后将它们从small bin中移除，最后将新的chunk添加到unsorted bin中，之后unsorted bin进行整理再添加到对应的bin链上。</li>
+<li>与fast bin大小重合的部分，是有可能放入fast bin中的chunk的。</li>
+</ul>
+<h4 id="large-bin"><a href="#large-bin" class="headerlink" title="large bin"></a>large bin</h4><p>large bins 中一共包括 63 个 bin，每个 bin 中的 chunk 的大小不一致，而是处于一定区间范围内。此外，这 63 个 bin 被分成了 6 组，每组 bin 中的 chunk 大小之间的公差一致，具体如下：</p>
+<table>
+<thead>
+<tr>
+<th align="left">组</th>
+<th align="center">数量</th>
+<th align="center">公差</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">1</td>
+<td align="center">32</td>
+<td align="center">64B</td>
+</tr>
+<tr>
+<td align="left">2</td>
+<td align="center">16</td>
+<td align="center">512B</td>
+</tr>
+<tr>
+<td align="left">3</td>
+<td align="center">8</td>
+<td align="center">4096B</td>
+</tr>
+<tr>
+<td align="left">4</td>
+<td align="center">4</td>
+<td align="center">32768B</td>
+</tr>
+<tr>
+<td align="left">5</td>
+<td align="center">2</td>
+<td align="center">262144B</td>
+</tr>
+<tr>
+<td align="left">6</td>
+<td align="center">1</td>
+<td align="center">不限制</td>
+</tr>
+</tbody></table>
+<h4 id="unsorted-bin"><a href="#unsorted-bin" class="headerlink" title="unsorted bin"></a>unsorted bin</h4><p>unsorted bin 可以视为空闲 chunk 回归其所属 bin 之前的缓冲区。</p>
+<p>unsorted bin中的chunk处于乱序状态。</p>
+<p>当 fast bin、small bin 中的 chunk 都不能满足用户请求 chunk 大小时，堆管理器就会考虑使用 unsorted bin 。它会在分配 large chunk 之前对堆中碎片 chunk 进行合并，以便减少堆中的碎片。</p>
+<p>特性：</p>
+<ul>
+<li>unsorted bin是一个由free chunks组成的循环双链表</li>
+<li>在unsorted bin中，对chunk的大小并没有限制，任何大小的chunk都可以归属到unsorted bin中</li>
+<li>unsortedbin采用的遍历顺序是FIFO</li>
+</ul>
+<h3 id="top-chunk"><a href="#top-chunk" class="headerlink" title="top chunk"></a>top chunk</h3><p>程序第一次进行 malloc 的时候，heap 会被分为两块，一块给用户，剩下的那块就是 top chunk。其实，所谓的top chunk 就是处于当前堆的物理地址最高的 chunk。这个 chunk 不属于任何一个 bin，它的作用在于当所有的bin 都无法满足用户请求的大小时，如果其大小不小于指定的大小，就进行分配，并将剩下的部分作为新的 top chunk。否则，就对heap进行扩展后再进行分配。在main arena中通过sbrk扩展heap，而在thread arena中通过mmap分配新的heap。</p>
+<p>需要注意的是，top chunk 的 prev_inuse 比特位始终为1，否则其前面的chunk就会被合并到top chunk中。</p>
+<h2 id="相关系统调用"><a href="#相关系统调用" class="headerlink" title="相关系统调用"></a>相关系统调用</h2><p>malloc、free函数背后的系统调用主要是(s)brk、mmap、munmap函数。</p>
+<p><img src="/posts/463ab4ed/brk&mmap.png" alt="img"></p>
+<h3 id="s-brk"><a href="#s-brk" class="headerlink" title="(s)brk"></a>(s)brk</h3><p>对于堆的操作，操作系统提供了 brk 函数，glibc 库提供了 sbrk 函数，我们可以通过增加 brk 的大小来向操作系统申请内存。</p>
+<p>brk和sbrk是在Unix和类Unix操作系统中使用的基本内存管理系统调用，用于控制分配给进程数据段的内存量。</p>
+<p>初始时，堆的起始地址 start_brk 以及堆的当前末尾 brk 指向同一地址。根据是否开启ASLR，两者的具体位置会有所不同</p>
+<ul>
+<li>不开启ASLR：start_brk 以及 brk 会指向 data/bss 段的结尾。</li>
+<li>开启ASLR：start_brk 以及 brk 也会指向同一位置，只是这个位置是在 data/bss 段结尾后的随机偏移处。</li>
+</ul>
+<p><img src="/posts/463ab4ed/program_virtual_address_memory_space.png" alt="img"></p>
+<h3 id="mmap"><a href="#mmap" class="headerlink" title="mmap"></a>mmap</h3><p>malloc 会使用 mmap来创建独立的匿名映射段。匿名映射的目的主要是可以申请以0填充的内存，并且这块内存仅被调用进程所使用。</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/heap-pwn-ctf/" rel="tag"># -heap -pwn -ctf</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/7fabda03/" rel="prev" title="格式化字符串">
+                  <i class="fa fa-chevron-left"></i> 格式化字符串
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+      
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      const activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      const commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+      
+
+      
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">ykx</span>
+</div>
+<!--
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" class="theme-link" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+-->
+
+    </div>
+  </footer>
+
+  
+  <script src="//cdn.jsdelivr.net/npm/animejs@3.2.0/lib/anime.min.js"></script>
+<script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  <script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  
+
+<script src="/live2dw/lib/L2Dwidget.min.js?094cbace49a39548bed64abff5988b05"></script><script>L2Dwidget.init({"pluginRootPath":"live2dw/","pluginJsPath":"lib/","pluginModelPath":"assets/","tagMode":false,"log":false,"model":{"jsonPath":"/live2dw/assets/hijiki.model.json"},"display":{"position":"right","width":150,"height":300},"mobile":{"show":true}});</script></body>
+</html>

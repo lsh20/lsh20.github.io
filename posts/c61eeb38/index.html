@@ -24,26 +24,27 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"8.0.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta name="description" content="off by oneoff-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。">
+  <meta name="description" content="unlink 原理我们在利用 unlink 所造成的漏洞时，其实就是对 chunk 进行内存布局（伪造chunk等），然后借助 unlink 操作来达成修改指针的效果。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="off by one">
-<meta property="og:url" content="http://example.com/posts/a1c78337/index.html">
+<meta property="og:title" content="unlink原理">
+<meta property="og:url" content="http://example.com/posts/c61eeb38/index.html">
 <meta property="og:site_name" content="Lsh">
-<meta property="og:description" content="off by oneoff-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。">
+<meta property="og:description" content="unlink 原理我们在利用 unlink 所造成的漏洞时，其实就是对 chunk 进行内存布局（伪造chunk等），然后借助 unlink 操作来达成修改指针的效果。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/posts/a1c78337/image-20201116122936249.png">
-<meta property="article:published_time" content="2020-11-16T03:06:57.000Z">
-<meta property="article:modified_time" content="2020-11-16T08:41:52.430Z">
+<meta property="og:image" content="http://example.com/posts/c61eeb38/unlink_smallbin_intro.png">
+<meta property="og:image" content="http://example.com/posts/c61eeb38/image-20201116175232943.png">
+<meta property="article:published_time" content="2020-11-16T08:40:21.000Z">
+<meta property="article:modified_time" content="2020-11-16T10:12:49.202Z">
 <meta property="article:author" content="ykx">
 <meta property="article:tag" content="heap">
 <meta property="article:tag" content="pwn">
 <meta property="article:tag" content="ctf">
-<meta property="article:tag" content="offbyone">
+<meta property="article:tag" content="unlink">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/posts/a1c78337/image-20201116122936249.png">
+<meta name="twitter:image" content="http://example.com/posts/c61eeb38/unlink_smallbin_intro.png">
 
 
-<link rel="canonical" href="http://example.com/posts/a1c78337/">
+<link rel="canonical" href="http://example.com/posts/c61eeb38/">
 
 
 <script class="page-configurations">
@@ -56,7 +57,7 @@
   };
 </script>
 
-  <title>off by one | Lsh</title>
+  <title>unlink原理 | Lsh</title>
   
 
 
@@ -202,7 +203,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#off-by-one"><span class="nav-number">1.</span> <span class="nav-text">off by one</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%96%B9%E5%90%91"><span class="nav-number">1.1.</span> <span class="nav-text">利用方向</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#unlink-%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">unlink 原理</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#unlink%E7%9A%84%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">unlink的过程</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%95%E8%BF%87%E6%A3%80%E6%9F%A5"><span class="nav-number">1.1.1.</span> <span class="nav-text">绕过检查</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%88%A9%E7%94%A8%E6%80%9D%E8%B7%AF"><span class="nav-number">1.1.2.</span> <span class="nav-text">利用思路</span></a></li></ol></li></ol></li></ol></div>
         </section>
         <!--/noindex-->
 
@@ -269,7 +270,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/a1c78337/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/c61eeb38/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -282,7 +283,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          off by one
+          unlink原理
         </h1>
 
         <div class="post-meta-container">
@@ -294,7 +295,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2020-11-16 11:06:57 / 修改时间：16:41:52" itemprop="dateCreated datePublished" datetime="2020-11-16T11:06:57+08:00">2020-11-16</time>
+      <time title="创建时间：2020-11-16 16:40:21 / 修改时间：18:12:49" itemprop="dateCreated datePublished" datetime="2020-11-16T16:40:21+08:00">2020-11-16</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
@@ -316,28 +317,63 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <h1 id="off-by-one"><a href="#off-by-one" class="headerlink" title="off by one"></a>off by one</h1><p>off-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。</p>
+        <h1 id="unlink-原理"><a href="#unlink-原理" class="headerlink" title="unlink 原理"></a>unlink 原理</h1><p>我们在利用 unlink 所造成的漏洞时，其实就是对 chunk 进行内存布局（伪造chunk等），然后借助 unlink 操作来达成修改指针的效果。</p>
 <a id="more"></a>
 
-<p>常见的边界验证不严谨有：</p>
-<ul>
-<li>使用循环语句向堆块中写入数据时，循环的次数设置错误（这在 C 语言初学者中很常见）导致多写入了一个字节。</li>
-<li>字符串操作不合适</li>
-</ul>
-<p>off by one漏洞可以出现在各种缓冲区中，但ctf中常用于堆的题目。因此，主要是说明堆上的off by one。</p>
-<h2 id="利用方向"><a href="#利用方向" class="headerlink" title="利用方向"></a>利用方向</h2><p>根据溢出字节是否可控分为两种情况：</p>
-<ul>
-<li>溢出字节为可控制任意字节：通过修改大小造成块结构之间出现重叠，从而泄露其他块数据，或是覆盖其他块数据。也可使用 NULL 字节溢出的方法</li>
-<li>溢出字节为 NULL 字节：在 size 为 0x100 的时候，溢出 NULL 字节可以使得 <code>prev_in_use</code> 位被清，这样前块会被认为是 free 块。（1） 这时可以选择使用 unlink 方法（见 unlink 部分）进行处理。（2） 另外，这时 <code>prev_size</code> 域就会启用，就可以伪造 <code>prev_size</code> ，从而造成块之间发生重叠。此方法的关键在于 unlink 的时候没有检查按照 <code>prev_size</code> 找到的块的大小与<code>prev_size</code> 是否一致。</li>
-</ul>
-<p>这里的0x100是一个例子，原理是，申请chunk时对于申请大小不是2*size_sz的会自动补全，同时对于正在使用的chunk来说，<code>prev_size</code>是没有意义的，因此是与前一块chunk共用。</p>
-<p>size为0x100，用户申请的大小是0xf8。补到0x100，由于chunk头需要0x10的空间，因此正常情况，用户的输入是可以到下一个chunk 的<code>prev_size</code>的。这时候溢出的null字节<code>\x00</code>会覆盖size的最低字节即 <code>prev_in_use</code>。</p>
-<p>一个简单实验说明chunk的实际size大小。</p>
-<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">void</span> *chunk1,*chunk2;</span><br><span class="line">    chunk1 = <span class="built_in">malloc</span>(<span class="number">56</span>);</span><br><span class="line">    chunk2 = <span class="built_in">malloc</span>(<span class="number">48</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="unlink的过程"><a href="#unlink的过程" class="headerlink" title="unlink的过程"></a>unlink的过程</h2><p>unlink的目的是把一个双向链表中的空闲块拿出来。常用到的是在free当前chunk时，与物理相邻的chunk进行合并为一个大的chunk的情况。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> unlink(P, BK, FD)                                                     \</span></span><br><span class="line">&#123;                                                                             \</span><br><span class="line">  BK = P-&gt;bk;                                                                 \</span><br><span class="line">  FD = P-&gt;fd;                                                                 \</span><br><span class="line">  FD-&gt;bk = BK;                                                                \</span><br><span class="line">  BK-&gt;fd = FD;                                                                \</span><br><span class="line">&#125;                                                                             \</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
-<p><img src="/posts/a1c78337/image-20201116122936249.png" alt="image-20201116122936249"></p>
-<p>无论是哪种情况，off by one本身很难实现攻击，一般只是为之后的攻击创造条件。</p>
-<p>如实现堆交叉之后的UAF、修改<code>prev_in_use</code>之后使用unlink等。</p>
+<p>基本过程如图所示：</p>
+<p><img src="/posts/c61eeb38/unlink_smallbin_intro.png" alt="img"></p>
+<p>结果就是P和BK合并成一块chunk，其chunk头部在BK。</p>
+<p>最开始的unlink如上代码所示，是没有进行检查。</p>
+<p>而现在的unlink会对chunk 的 size 检查和双向链表检查。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 由于 P 已经在双向链表中，所以有两个地方记录其大小，所以检查一下其大小是否一致(size检查)</span></span><br><span class="line"><span class="keyword">if</span> (__builtin_expect (chunksize(P) != prev_size (next_chunk(P)), <span class="number">0</span>))      \</span><br><span class="line">      malloc_printerr (<span class="string">&quot;corrupted size vs. prev_size&quot;</span>);               \</span><br><span class="line"><span class="comment">// 检查 fd 和 bk 指针(双向链表完整性检查)</span></span><br><span class="line"><span class="keyword">if</span> (__builtin_expect (FD-&gt;bk != P || BK-&gt;fd != P, <span class="number">0</span>))                      \</span><br><span class="line">  malloc_printerr (check_action, <span class="string">&quot;corrupted double-linked list&quot;</span>, P, AV);  \</span><br><span class="line"></span><br><span class="line">  <span class="comment">// largebin 中 next_size 双向链表完整性检查 </span></span><br><span class="line">              <span class="keyword">if</span> (__builtin_expect (P-&gt;fd_nextsize-&gt;bk_nextsize != P, <span class="number">0</span>)              \</span><br><span class="line">                || __builtin_expect (P-&gt;bk_nextsize-&gt;fd_nextsize != P, <span class="number">0</span>))    \</span><br><span class="line">              malloc_printerr (check_action,                                      \</span><br><span class="line">                               <span class="string">&quot;corrupted double-linked list (not small)&quot;</span>,    \</span><br><span class="line">                               P, AV);</span><br></pre></td></tr></table></figure>
+
+<p>假设在没有检查的情况下，以32位为例子。</p>
+<p><img src="/posts/c61eeb38/image-20201116175232943.png" alt="image-20201116175232943"></p>
+<p>堆的状态如图，此时free（Q）。</p>
+<ul>
+<li>glibc 判断这个块是 small chunk</li>
+<li>判断前向合并，发现前一个 chunk 处于使用状态，不需要前向合并</li>
+<li>判断后向合并，发现后一个 chunk 处于空闲状态，需要合并</li>
+<li>继而对 Nextchunk 采取 unlink 操作</li>
+</ul>
+<p>unlink的结果：</p>
+<ul>
+<li>FD=N-&gt;fd（即FD=a）</li>
+<li>BK=N-&gt;bk（BK=b）</li>
+<li>FD-&gt;bk = BK（<code>*（a+4*3）=b</code>）</li>
+<li>BK-&gt;fd = FD（<code>*(b+4*2)=a</code>）</li>
+</ul>
+<p>如果能够修改N的fd和bk，如果将fd修改为目标地址-12（如某got）bk修改为期望的值（如另一个地址）。那么执通过FD-&gt;bk = BK就能做到修改目标地址的值的目的。</p>
+<h3 id="绕过检查"><a href="#绕过检查" class="headerlink" title="绕过检查"></a>绕过检查</h3><p>但是由于会检查fd和bk指针，上述的修改方法就不成立了，使用伪造的方法。</p>
+<p>首先我们通过覆盖，将 nextchunk 的 FD 指针指向了 fakeFD，将 nextchunk 的 BK 指针指向了 fakeBK 。那么为了通过验证，我们需要</p>
+<ul>
+<li><code>fakeFD -&gt; bk == P</code> &lt;=&gt; <code>*(fakeFD + 12) == P</code></li>
+<li><code>fakeBK -&gt; fd == P</code> &lt;=&gt; <code>*(fakeBK + 8) == P</code></li>
+</ul>
+<p>当满足上述两式时，可以进入 Unlink 的环节，进行如下操作：</p>
+<ul>
+<li><code>fakeFD -&gt; bk = fakeBK</code> &lt;=&gt; <code>*(fakeFD + 12) = fakeBK</code></li>
+<li><code>fakeBK -&gt; fd = fakeFD</code> &lt;=&gt; <code>*(fakeBK + 8) = fakeFD</code></li>
+</ul>
+<p>如果让 fakeFD + 12 和 fakeBK + 8 指向同一个指向P的指针，那么：</p>
+<ul>
+<li><code>*P = P - 8</code></li>
+<li><code>*P = P - 12</code></li>
+</ul>
+<p>最终将p指针指向了比自己低12位的地址。</p>
+<h3 id="利用思路"><a href="#利用思路" class="headerlink" title="利用思路"></a>利用思路</h3><p>条件：</p>
+<ul>
+<li><p>UAF ，可修改 free 状态下 smallbin 或是 unsorted bin 的 fd 和 bk 指针</p>
+</li>
+<li><p>已知位置存在一个指针指向可进行 UAF 的 chunk（通常是一个存储申请chunk的数组）</p>
+</li>
+</ul>
+<p>条件并不绝对，也可以是通过溢出修改下一个chunk的prev_in_use、prev_size，unlink前一个伪造的chunk。</p>
+<p>本质上，是将准备的free的chunk的物理相邻的free的chunk的fd、bk指针修改。</p>
+<p>有了上述条件之后，那么就可以修改数组内容，如果有类似修改chunk内容的函数，就可以做到任意地址写。</p>
 
     </div>
 
@@ -350,21 +386,18 @@
               <a href="/tags/heap/" rel="tag"># heap</a>
               <a href="/tags/pwn/" rel="tag"># pwn</a>
               <a href="/tags/ctf/" rel="tag"># ctf</a>
-              <a href="/tags/offbyone/" rel="tag"># offbyone</a>
+              <a href="/tags/unlink/" rel="tag"># unlink</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/posts/463ab4ed/" rel="prev" title="堆基础">
-                  <i class="fa fa-chevron-left"></i> 堆基础
+                <a href="/posts/a1c78337/" rel="prev" title="off by one">
+                  <i class="fa fa-chevron-left"></i> off by one
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/posts/c61eeb38/" rel="next" title="unlink原理">
-                  unlink原理 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>

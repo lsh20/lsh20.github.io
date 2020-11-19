@@ -191,8 +191,6 @@
       </categories>
       <tags>
         <tag>heap</tag>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
       </tags>
   </entry>
   <entry>
@@ -365,8 +363,6 @@
         <category>pwn</category>
       </categories>
       <tags>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
         <tag>stack</tag>
       </tags>
   </entry>
@@ -415,8 +411,6 @@
         <category>pwn</category>
       </categories>
       <tags>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
         <tag>fmtstr</tag>
       </tags>
   </entry>
@@ -451,8 +445,6 @@
       </categories>
       <tags>
         <tag>heap</tag>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
         <tag>offbyone</tag>
       </tags>
   </entry>
@@ -522,8 +514,21 @@
       </categories>
       <tags>
         <tag>heap</tag>
-        <tag>pwn</tag>
-        <tag>ctf</tag>
+        <tag>unlink</tag>
+      </tags>
+  </entry>
+  <entry>
+    <title>unlink练习</title>
+    <url>/posts/6cd531ad/</url>
+    <content><![CDATA[<h1 id="unlink练习"><a href="#unlink练习" class="headerlink" title="unlink练习"></a>unlink练习</h1><p>记录ctf-wiki上的unlink练习题。</p>
+<a id="more"></a>
+
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>heap</tag>
         <tag>unlink</tag>
       </tags>
   </entry>

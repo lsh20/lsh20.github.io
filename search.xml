@@ -314,7 +314,10 @@
   <entry>
     <title>攻防世界pwn进阶</title>
     <url>/posts/5600bec/</url>
-    <content><![CDATA[<h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><h2 id="反应釜开关控制"><a href="#反应釜开关控制" class="headerlink" title="反应釜开关控制"></a>反应釜开关控制</h2><p><img src="/posts/5600bec/image-20201123091050404.png" alt="image-20201123091050404"></p>
+    <content><![CDATA[<h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><p>攻防世界的pwn进阶题目的记录</p>
+<a id="more"></a>
+
+<h2 id="反应釜开关控制"><a href="#反应釜开关控制" class="headerlink" title="反应釜开关控制"></a>反应釜开关控制</h2><p><img src="/posts/5600bec/image-20201123091050404.png" alt="image-20201123091050404"></p>
 <h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>先查看一下保护。</p>
 <p><img src="/posts/5600bec/image-20201123091430114.png" alt="image-20201123091430114"></p>
 <p>只开启了堆栈不可执行。</p>

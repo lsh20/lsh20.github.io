@@ -24,29 +24,79 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"8.0.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":false,"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"},"path":"/search.xml","localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false}};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="Lsh">
-<meta property="og:url" content="http://example.com/index.html">
+  <meta name="description" content="攻防世界——pwn进阶反应釜开关控制 代码分析先查看一下保护。  只开启了堆栈不可执行。     这道题感觉应该是不给附件中的可执行文件盲打才对，不然知道可执行文件用ida反编译，就知道是很就简单的栈溢出。通过三次栈溢出，覆盖返回地址跳转到后门函数。 思路及利用首先保护只有堆栈不可执行。同时是使用gets函数获取输入。那么就可以随意的进行栈溢出。那么思路就很简单了。先通过栈溢出覆盖返回地址，从ma">
+<meta property="og:type" content="article">
+<meta property="og:title" content="攻防世界pwn进阶">
+<meta property="og:url" content="http://example.com/posts/5600bec/index.html">
 <meta property="og:site_name" content="Lsh">
+<meta property="og:description" content="攻防世界——pwn进阶反应釜开关控制 代码分析先查看一下保护。  只开启了堆栈不可执行。     这道题感觉应该是不给附件中的可执行文件盲打才对，不然知道可执行文件用ida反编译，就知道是很就简单的栈溢出。通过三次栈溢出，覆盖返回地址跳转到后门函数。 思路及利用首先保护只有堆栈不可执行。同时是使用gets函数获取输入。那么就可以随意的进行栈溢出。那么思路就很简单了。先通过栈溢出覆盖返回地址，从ma">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123091050404.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123091430114.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123091242758.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123231711816.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123091319181.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123091712759.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123094300324.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123094345375.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123094603206.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123094616274.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123094627108.png">
+<meta property="og:image" content="http://example.com/posts/5600bec/image-20201123095347070.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123223112703.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123223457054.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123223736816.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123223844741.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123224225947.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123224310040.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123231022120.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084832598.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084904525.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123231554223.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125083325372.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125083521011.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125083728103.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084015380.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084321047.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084627078.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125084651226.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125094546610.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201204833485.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201205229762.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201125094520178.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201211551807.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213201788.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213310802.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213328651.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213346639.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213401902.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213619289.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201214918029.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201222619001.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201223133135.png">
+<meta property="og:image" content="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201223434405.png">
+<meta property="article:published_time" content="2020-11-23T01:09:48.000Z">
+<meta property="article:modified_time" content="2020-12-01T14:34:38.664Z">
 <meta property="article:author" content="ykx">
+<meta property="article:tag" content="-攻防世界">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/posts/5600bec/image-20201123091050404.png">
 
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/posts/5600bec/">
 
 
 <script class="page-configurations">
   // https://hexo.io/docs/variables.html
   CONFIG.page = {
     sidebar: "",
-    isHome : true,
-    isPost : false,
+    isHome : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>Lsh</title>
+  <title>攻防世界pwn进阶 | Lsh</title>
   
 
 
@@ -179,7 +229,7 @@
 
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -192,6 +242,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <section class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C%E2%80%94%E2%80%94pwn%E8%BF%9B%E9%98%B6"><span class="nav-number">1.</span> <span class="nav-text">攻防世界——pwn进阶</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%BA%94%E9%87%9C%E5%BC%80%E5%85%B3%E6%8E%A7%E5%88%B6"><span class="nav-number">1.1.</span> <span class="nav-text">反应釜开关控制</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90"><span class="nav-number">1.1.1.</span> <span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%E5%8F%8A%E5%88%A9%E7%94%A8"><span class="nav-number">1.1.2.</span> <span class="nav-text">思路及利用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dice-game"><span class="nav-number">1.2.</span> <span class="nav-text">dice_game</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-1"><span class="nav-number">1.2.1.</span> <span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%E5%8F%8A%E5%88%A9%E7%94%A8-1"><span class="nav-number">1.2.2.</span> <span class="nav-text">思路及利用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#note-service2"><span class="nav-number">1.3.</span> <span class="nav-text">note-service2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-2"><span class="nav-number">1.3.1.</span> <span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%E5%8F%8A%E5%88%A9%E7%94%A8-2"><span class="nav-number">1.3.2.</span> <span class="nav-text">思路及利用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E6%97%B6%E6%95%B0%E6%8D%AE%E7%9B%91%E6%B5%8B"><span class="nav-number">1.4.</span> <span class="nav-text">实时数据监测</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-3"><span class="nav-number">1.4.1.</span> <span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%E5%8F%8A%E5%88%A9%E7%94%A8-3"><span class="nav-number">1.4.2.</span> <span class="nav-text">思路及利用</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#greeting-150"><span class="nav-number">1.5.</span> <span class="nav-text">greeting-150</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-4"><span class="nav-number">1.5.1.</span> <span class="nav-text">代码分析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#hacknote"><span class="nav-number">1.6.</span> <span class="nav-text">hacknote</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81%E5%88%86%E6%9E%90-5"><span class="nav-number">1.6.1.</span> <span class="nav-text">代码分析</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%80%9D%E8%B7%AF%E5%8F%8A%E5%88%A9%E7%94%A8-4"><span class="nav-number">1.6.2.</span> <span class="nav-text">思路及利用</span></a></li></ol></li></ol></li></ol></div>
         </section>
         <!--/noindex-->
 
@@ -245,11 +296,12 @@
 </noscript>
 
 
-    <div class="main-inner index posts-expand">
+    <div class="main-inner post posts-expand">
       
 
       
-    
+
+  
 
 
 <div class="post-block">
@@ -269,10 +321,9 @@
       <meta itemprop="name" content="Lsh">
     </span>
       <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/5600bec/" class="post-title-link" itemprop="url">攻防世界pwn进阶</a>
-        </h2>
+        <h1 class="post-title" itemprop="name headline">
+          攻防世界pwn进阶
+        </h1>
 
         <div class="post-meta-container">
           <div class="post-meta">
@@ -311,7 +362,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><h2 id="反应釜开关控制"><a href="#反应釜开关控制" class="headerlink" title="反应釜开关控制"></a>反应釜开关控制</h2><p><img src="/posts/5600bec/image-20201123091050404.png" alt="image-20201123091050404"></p>
+        <h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><h2 id="反应釜开关控制"><a href="#反应釜开关控制" class="headerlink" title="反应釜开关控制"></a>反应釜开关控制</h2><p><img src="/posts/5600bec/image-20201123091050404.png" alt="image-20201123091050404"></p>
 <h3 id="代码分析"><a href="#代码分析" class="headerlink" title="代码分析"></a>代码分析</h3><p>先查看一下保护。</p>
 <p><img src="/posts/5600bec/image-20201123091430114.png" alt="image-20201123091430114"></p>
 <p>只开启了堆栈不可执行。</p>
@@ -434,7 +485,6 @@
 <p>结果</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201223434405.png" alt="image-20201201223434405"></p>
 
-      
     </div>
 
     
@@ -442,625 +492,27 @@
     
 
     <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
+          <div class="post-tags">
+              <a href="/tags/%E6%94%BB%E9%98%B2%E4%B8%96%E7%95%8C/" rel="tag"># -攻防世界</a>
+          </div>
 
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/6cd531ad/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ykx">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lsh">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/6cd531ad/" class="post-title-link" itemprop="url">unlink练习</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-11-18 22:52:51" itemprop="dateCreated datePublished" datetime="2020-11-18T22:52:51+08:00">2020-11-18</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-19 16:34:17" itemprop="dateModified" datetime="2020-11-19T16:34:17+08:00">2020-11-19</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="unlink练习"><a href="#unlink练习" class="headerlink" title="unlink练习"></a>unlink练习</h1><p>记录ctf-wiki上的unlink练习题。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/6cd531ad/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
         
-      
-    </div>
 
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/c61eeb38/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ykx">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lsh">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/c61eeb38/" class="post-title-link" itemprop="url">unlink原理</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-11-16 16:40:21" itemprop="dateCreated datePublished" datetime="2020-11-16T16:40:21+08:00">2020-11-16</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-18 22:54:59" itemprop="dateModified" datetime="2020-11-18T22:54:59+08:00">2020-11-18</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="unlink-原理"><a href="#unlink-原理" class="headerlink" title="unlink 原理"></a>unlink 原理</h1><p>我们在利用 unlink 所造成的漏洞时，其实就是对 chunk 进行内存布局（伪造chunk等），然后借助 unlink 操作来达成修改指针的效果。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/c61eeb38/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/posts/6cd531ad/" rel="prev" title="unlink练习">
+                  <i class="fa fa-chevron-left"></i> unlink练习
+                </a>
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/a1c78337/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ykx">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lsh">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/a1c78337/" class="post-title-link" itemprop="url">off by one</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-11-16 11:06:57" itemprop="dateCreated datePublished" datetime="2020-11-16T11:06:57+08:00">2020-11-16</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-18 22:54:49" itemprop="dateModified" datetime="2020-11-18T22:54:49+08:00">2020-11-18</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="off-by-one"><a href="#off-by-one" class="headerlink" title="off by one"></a>off by one</h1><p>off-by-one 是指单字节缓冲区溢出，这种漏洞的产生往往与边界验证不严和字符串操作有关，当然也不排除写入的 size 正好就只多了一个字节的情况。总之，是输入的范围超出申请的缓冲区的大小。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/a1c78337/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
+            <div class="post-nav-item">
             </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
+          </div>
     </footer>
   </article>
 </div>
 
 
 
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/463ab4ed/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ykx">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lsh">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/463ab4ed/" class="post-title-link" itemprop="url">堆基础</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-11-15 15:33:03" itemprop="dateCreated datePublished" datetime="2020-11-15T15:33:03+08:00">2020-11-15</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-18 22:54:27" itemprop="dateModified" datetime="2020-11-18T22:54:27+08:00">2020-11-18</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="堆基础知识"><a href="#堆基础知识" class="headerlink" title="堆基础知识"></a>堆基础知识</h1><p>在程序运行过程中，堆可以提供动态分配的内存，允许程序申请大小未知的内存。堆其实就是程序虚拟地址空间的一块连续的线性区域，它由低地址向高地址方向增长。一般称管理堆的那部分程序为堆管理器。不同操作系统对于堆的管理方式不尽相同，以下为ctf比赛中常用的Linux的堆基础知识。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/463ab4ed/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/7fabda03/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ykx">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lsh">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/7fabda03/" class="post-title-link" itemprop="url">格式化字符串</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-11-13 22:33:27" itemprop="dateCreated datePublished" datetime="2020-11-13T22:33:27+08:00">2020-11-13</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-18 22:54:33" itemprop="dateModified" datetime="2020-11-18T22:54:33+08:00">2020-11-18</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="格式化字符串"><a href="#格式化字符串" class="headerlink" title="格式化字符串"></a>格式化字符串</h1><h2 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h2><p>在printf函数中，format字符串中有的参数，如果没有给出会自动访问在format之后的内存作为参数。</p>
-<h3 id="实验说明"><a href="#实验说明" class="headerlink" title="实验说明"></a>实验说明</h3><figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> s[<span class="number">100</span>] = <span class="string">&quot;world&quot;</span>;</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;hello%s\n&quot;</span>,s);</span><br><span class="line">    <span class="built_in">puts</span>(<span class="string">&quot;new format:&quot;</span>);</span><br><span class="line">    <span class="built_in">scanf</span>(<span class="string">&quot;%s&quot;</span>, s);</span><br><span class="line">    <span class="built_in">printf</span>(s);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-
-<p>进入调试，首先可以看到正常的printf函数调用：</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/7fabda03/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/c68c5dc4/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ykx">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lsh">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/c68c5dc4/" class="post-title-link" itemprop="url">栈溢出基础</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-10-30 17:14:58" itemprop="dateCreated datePublished" datetime="2020-10-30T17:14:58+08:00">2020-10-30</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-18 22:54:38" itemprop="dateModified" datetime="2020-11-18T22:54:38+08:00">2020-11-18</time>
-      </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-folder"></i>
-      </span>
-      <span class="post-meta-item-text">分类于</span>
-        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
-        </span>
-    </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="栈溢出基础总结"><a href="#栈溢出基础总结" class="headerlink" title="栈溢出基础总结"></a>栈溢出基础总结</h1><h2 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h2><h3 id="栈结构"><a href="#栈结构" class="headerlink" title="栈结构"></a>栈结构</h3><p>需要注意的是</p>
-<p>函数调用过程中，调用函数的参数在其自身栈帧，即被调用函数的形参。被调用函数栈帧存放自身的局部变量，需要使用参数时，根据偏移向调用函数的栈帧中寻找。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/posts/c68c5dc4/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ykx">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lsh">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/0/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-10-30 13:11:11" itemprop="dateCreated datePublished" datetime="2020-10-30T13:11:11+08:00">2020-10-30</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-11-16 16:36:49" itemprop="dateModified" datetime="2020-11-16T16:36:49+08:00">2020-11-16</time>
-      </span>
-
-  
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><h2 id="1-新建文章"><a href="#1-新建文章" class="headerlink" title="1 新建文章"></a>1 新建文章</h2><p>以hello world为例，在hexo目录下命令行输入<code>hexo new &quot;hello_world&quot;</code>，然后会在source的_posts目录下生成一个hello_world.md文件,在该markdown文件中就可以编辑这篇文章的内容了。编辑完成后刷新博客，博客里便会出现这篇文章，同时hexo也会直接为这篇文章生成一个页面。</p>
-<h2 id="2-新建草稿"><a href="#2-新建草稿" class="headerlink" title="2 新建草稿"></a>2 新建草稿</h2><p>hexo默认配置是新建文章，所以如果需要新建一篇草稿，需要输入<code>hexo new draft &quot;文章名称&quot;</code>，然后再source的目录下会生成一个_drafts文件夹，里面会有所有新建的草稿，如果想要预览草稿，可以输入<code>hexo server --draft</code>命令来预览草稿文件</p>
-<p>当草稿完成以后，可以通过输入<code>hexo publish &quot;文章名称&quot;</code>来发布草稿，然后这篇草稿会从_drafts中被删除，出现在_posts目录下。</p>
-<h2 id="3-删除文章"><a href="#3-删除文章" class="headerlink" title="3 删除文章"></a>3 删除文章</h2><p>删除文章十分简单，只需要把_posts目录下需要删除的markdown删除，然后刷新博客之后这篇文章就不会出现在博客中了。</p>
-<p>当然还有更多的教程可以直接去<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/writing.html">官网</a>学习。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-  
 
 
 

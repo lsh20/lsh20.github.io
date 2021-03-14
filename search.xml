@@ -2353,9 +2353,9 @@
   <entry>
     <title>gdb命令表</title>
     <url>/posts/2002e51d/</url>
-    <content><![CDATA[<a id="more"></a>
+    <content><![CDATA[<h2 id="启动-GDB"><a href="#启动-GDB" class="headerlink" title="启动 GDB"></a>启动 GDB</h2><a id="more"></a>
 
-<h2 id="启动-GDB"><a href="#启动-GDB" class="headerlink" title="启动 GDB"></a>启动 GDB</h2><table>
+<table>
 <thead>
 <tr>
 <th>命令</th>
